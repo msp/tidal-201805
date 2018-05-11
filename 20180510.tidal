@@ -1,0 +1,280 @@
+cps (140/60/4)
+
+-- SC SYNTH MAPPINGS
+let (freq, _) = pF "freq" (Just 440)
+let (cutoff, _) = pF "cutoff" (Just 200)
+let (fatt, _) = pF "fatt" (Just 0.75)
+
+-- TEST
+d1 $ sound "bd"
+# orbit j15_16
+
+
+-- KEYS ------------------------------------------------------------------------
+d8
+$ every 2 (const
+  $ degradeBy 0
+  $ rarely (# n "[-1, 0, 4]")
+  $ sound "~ [rhodes, rhodes, rhodes]"
+  # n "[-1, 3, 5]"
+  # sustain (scale 0.05 0.3 (slow 32 (sine)))
+  # begin (scale 0 0.3 (slow 8 (sine)))
+  # end (scale 0.5 1 (slow 3 (sine)))
+  # vowel "o u"
+  # hpf (scale 500 1500 (slow 5 (sine)))
+  # speed 1
+  # room (scale 0.7 0.1 (slow 3 (rand)))
+  # size (scale 0.8 0 (slow 5 (rand)))
+  # delay 0.4
+  # delaytime (scale 0.1 0.3 $ slow 3 $ sine1)
+  # delayfeedback (scale 0 0.6 $ slow 10 $ sine1)
+  # gain 0.9
+  # orbit out8
+  )
+$ sound "~"
+# orbit out8
+
+d8 silence
+
+-- SWEEP AND STABS -------------------------------------------------------------
+
+d7
+-- sweep up
+$ every 5 (const
+  $ sound "~ cs80lead*1"
+  # freq "40"
+  # gain 1.1
+  # attack 0.15
+  # decay 0.2
+  # sustain 0.7
+  # fatt 0.15
+  # orbit out7
+  )
+-- stabs
+$ every 3 (const
+  $ degradeBy 0.3
+  $ sometimes (fast 2)
+  $ iter 4
+  $ sound "~ [imp, [imp:1 imp:1 imp:50 imp:1]]"
+  # freq "140 100 440 880"
+  # vowel "[a e i o u]/2"
+  # sustain 0.08
+  # begin (scale 0 0.1 (slow 8 (sine)))
+  # end (scale 0.5 0.7 (slow 3 (sine)))
+  # speed 1
+  # accelerate "1"
+  # hpf 6000
+  # gain 0.9
+  # orbit out7
+  )
+$ sound "~"
+# orbit out7
+
+
+d7 silence
+
+-- CLICKER ---------------------------------------------------------------------
+d6
+$ rarely (slow 2)
+$ juxBy 0.9 (# shape (scale 0 0.8 (slow 8 (sine))))
+$ degradeBy 0.5
+$ sound "~ ~ ~ <click:2*4 click:2*6>"
+# gain 0.9
+# orbit out6
+
+d6 silence
+
+-- SUBZ ------------------------------------------------------------------------
+d5
+$ every 5 (const
+  $ sound "~"
+  )
+$ every 2 (const
+  $ slow 3
+  $ degradeBy 0.1
+  $ sound "tutorial3" # n (choose [-27,-27,-26])
+  # sustain 1
+  # shape 0.2
+  # coarse 4
+  # sustain 1
+  # gain 1.2
+  # orbit out5
+  )
+$ degradeBy 0.3
+$ slow 1
+$ sometimes (fast 2)
+$ every 4 (0.5 <~)
+$ sound "<tutorial5 ~> tutorial5?> <tutorial5 ~> tutorial5>"
+# f "[50] 40"
+# sustain 2
+# accelerate 0.3
+# cutoff 50
+# gain 1.4
+# orbit out5
+
+
+-- DOWNBEAT --------------------------------------------------------------------
+d4
+$ slow 1
+$ rarely (slow 2)
+$ degradeBy 0.8
+$ sound "[form-msp7:1 form-msp7:1?]?"
+# begin (scale 0.30 0 (slow 5 (sine)))
+# speed 0.9
+# gain "0.8 0.9"
+# accelerate "-1 0"
+# crush 4
+# shape "0.8 0.6"
+# orbit out4
+
+d4 silence
+
+
+-- BOOM! -----------------------------------------------------------------------
+d3
+$ slow 1
+$ jux (# shape 0.5)
+$ degradeBy 0.7
+$ sound "[m-boom]"
+# begin "0.05"
+# speed (choose [0.8, 0.7, 0.9])
+# cutoff (scale 500 20000 (slow 8 (sine)))
+# gain (choose [0.8, 1, 1])
+# size (scale 0.7 0.1 (slow 3 (rand)))
+# room (scale 0.8 0 (slow 5 (rand)))
+# orbit out3
+
+d2 silence
+
+
+-- WONKY CHORD / INTRO FX / ACID -----------------------------------------------
+d2
+$ slow 2
+$ sometimes (fast 1)
+-- Acid
+$ every 64 (const
+  $ fast 4
+  $ sometimes (# crush 5)
+  $ degradeBy 0.1
+  $ sound "acid309*4 acid309"
+  # freq "50 80 55"
+  # sustain "0.5 0.6 1"
+  # shape 0.3
+  # hpf 300
+  # gain 1
+  # orbit out2)
+-- FX
+$ every 31 (const
+  $ slow 32
+  $ jux rev
+  $ striateL 128 4
+  $ sound "m-r-play:2"
+  # begin (scale 0 1 (slow 5 (sine)))
+  # speed 0.4
+  # accelerate (choose [1, -1])
+  # hpf 4000
+  # orbit out2)
+$ loopAt (choose [16, 32, 64, 16, 32, 32, 32, 32])
+$ chop 16
+$ sound "m-r-play:5"
+# gain 1.1
+# vowel "e o u"
+# size (scale 0.4 0.1 (slow 3 (rand)))
+# room (scale 0.8 0 (slow 5 (rand)))
+# orbit out2
+
+d1 silence
+
+-- RHYTHM ----------------------------------------------------------------------
+-- degrade me!
+d1
+$ every 4 (const
+  $ sound "808bd:1:0*4"
+  # gain "1.1 1 1.1 1"
+  # speed 0.9
+  # shape 0.3
+  # cutoff "50 150 50 80"
+  # room (scale 0.4 0.1 (slow 3 (sine)))
+  # size (scale 0.2 0.8 (slow 8 (sine)))
+  # orbit out1
+  )
+$ sometimes (fast 2)
+$ rarely (slow 2)
+$ sometimesBy 0.5 (# shape 0.8)
+$ sometimesBy 0.33 (# crush 1)
+-- HERE
+$ degradeBy 0.1
+$ sound "[m-hard:2*8]"
+# begin (scale 0.93 0.93 (slow 5 (sine)))
+# end (scale 0.05 1 (slow 3 (sine)))
+# speed (choose [1, 0.5])
+# gain (choose [0.9, 1])
+# shape 0.2
+# cutoff (scale 20000 2180 (slow 16 (rand)))
+# room (scale 0.4 0.1 (slow 3 (sine)))
+# size (scale 0.2 0.8 (slow 8 (sine)))
+# orbit out1
+
+d1 silence
+
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--------------------------------------------------------------------------------
+-- RECYCLE BIN -----------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+-- chords
+d1 $ s "pluck"
+# up (slow 6 "0 3 5 7 9 11")
+
+-- acid
+d8
+$ every 8 (const
+  $ degradeBy 0.1
+  $ sound "~ acid309 acid309*2 acid309*4"
+  # freq "0 50 55 80 120 100"
+  # sustain (choose [0.05, 0.25, 0.15])
+  # gain 1.1)
+$ sound "~"
+
+
+
+
+d1
+$ every 31 (const
+  $ slow 32
+  $ jux rev
+  $ striateL 128 4
+  $ sound "m-r-play:2"
+  # begin (scale 0 1 (slow 5 (sine)))
+  # speed 0.4
+  # accelerate (choose [1, -1])
+  # hpf 4000)
+$ sound "~"
+
+
+
+d5
+$ slow 4
+$ sometimesBy 0.25 (# crush 5)
+$ degradeBy 0
+$ sound "sine:2*6"
+# speed (choose [0.9, 1, 1.1])
+# gain 1.3
