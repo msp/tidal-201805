@@ -1,0 +1,173 @@
+cps (140/60/4)
+
+-- SC SYNTH MAPPINGS
+let (freq, _) = pF "freq" (Just 440)
+let (cutoff, _) = pF "cutoff" (Just 200)
+let (fatt, _) = pF "fatt" (Just 0.75)
+let (amp, _) = pF "amp" (Just 0.75)
+let (attack, _) = pF "attack" (Just 0.001)
+
+let (phaserrate, _) = pF "phaserrate" (Just 1.0)
+let (phaserdepth, _) = pF "phaserdepth" (Just 0.75)
+let (tremelorate, _) = pF "tremelorate" (Just 1.0)
+let (tremelodepth, _) = pF "tremelodepth" (Just 0.75)
+let (leslie, _) = pF "leslie" (Just 0.5)
+let (lrate, _) = pF "lrate" (Just 6.7)
+let (lsize, _) = pF "lsize" (Just 0.3)
+=
+
+-- COUNT IN!
+d1
+$ slow 4
+$ sound
+   "[numbers:4, click:2] [click:2] [click:2] [click:2] \
+  \ [numbers:3, click:2] [click:2] [click:2] [click:2] \
+  \ [numbers:2, click:2] [click:2] [click:2] [click:2] \
+  \ [numbers:1, click:2] [click:2] [click:2] [click:2]"
+# orbit out2
+
+
+-- KICK ------------------------------------------------------------------------
+-- mutiply kicks n 2s and claps i 2s & 3s
+d1
+$ degradeBy 0
+$ sound "[super808msp*1]"
+-- $ sound "[super808msp*1 superclap*2]"
+# amp 0.7
+# gain "1 0.6"
+--
+-- SWEEP
+# speed (scale 8 1 (slow 64 (sine)))
+# sustain (scale 1 2 (slow 64 (sine)))
+# voice (scale 0.7 0 (slow 64 (sine)))
+# shape (scale 0 0.7 (slow 64 (sine)))
+--
+-- SOFT
+-- # speed 8 # sustain 1 # voice 0.7 # shape 0
+--
+-- HARD
+-- # speed 1 # sustain 2 # voice 0 # shape 0.7
+--
+-- OUTPUT
+# orbit out2
+
+d1 silence
+
+-- PERC ------------------------------------------------------------------------
+d2
+$ sometimesBy 0.5 (# crush 4)
+$ degradeBy 0.5
+$ sound "[~ superclap*2]"
+-- $ sound "[~ supersnare*2, superhat*2, superstatic*4]"
+# speed (scale 8 0.3 (slow 32 (sine)))
+# sustain (scale 0.1 2 (slow 32 (sine)))
+# decay 0.2
+# accelerate 3
+# orbit out4
+
+d2 silence
+
+-- SYNTH -----------------------------------------------------------------------
+d3
+$ every 6 (const
+  $ sometimesBy 0.4 (# crush 4)
+  $ sometimesBy 0.5 (# freq 45)
+  $ sometimesBy 0.4 (# freq 65)
+  $ degradeBy 0.3
+  $ sound "[~ supersquaremsp*3]"
+  -- # n 10
+  # pitch1 2
+  # freq 55
+  -- # semitone 12
+  -- # lfo 1
+  # sustain (scale 0.2 0.8 (slow 16 (sine)))
+  # speed (scale 0.1 1.6 (slow 16 (sine)))
+  -- # sustain 0.1
+  # voice (scale 0.9 0.1 (slow 16 (sine)))
+  -- # decay 0.4
+  -- # accelerate 3
+  # gain 0.8
+  # orbit out5
+  )
+$ sound "~"
+# orbit out5
+
+d3 silence
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------
+-- RECYCLE BIN -----------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+d2
+$ sound "kick2*4"
+# gain 1
+# amp 0.8
+# pan 0.5
+-- # attack (scale 0.01 0.4 (slow 32 (sine)))
+-- # sustain 14
+-- # amp 0.1
+-- # phaserrate 7
+-- # phaserdepth 0.6
+-- # tremelorate 10
+-- # tremelodepth 3
+-- # leslie 0.9
+-- # lrate 6.7
+-- # lsize 0.3
+# orbit out1
+
+-- KEYS ------------------------------------------------------------------------
+
+d2
+$ every (choose [1,1,1,1,2]) (const
+  $ degradeBy 0
+  $ sometimesBy 0.1 (# n "[-1, 0.5, 4]")
+  -- $ rarely (# n "[1, 0, 6]")
+  -- $ rarely (# n "[7, 3, 5]")
+  $ rarely (# shape 0.1)
+  -- $ rarely (# crush 0.2)
+  $ sound "rhodes(7,12)"
+  # sustain (scale 0.3 3.5 (slow 32 (sine)))
+  # begin (scale 0.5 0.3 (slow 8 (sine)))
+  # end (scale 0.1 0.3 (slow 8 (sine)))
+  # n "[-1, 3, 5]"
+  -- # crush (scale 0 4 (slow 32 (sine)))
+  # cutoff (scale 500 20000 (slow 8 (rand)))
+  # resonance (scale 0 0.7 (slow 8 (rand)))
+  # gain 0.8
+  # orbit out2
+  )
+$ sound "~"
+
+d8
+$ every 2 (const
+  $ degradeBy 0
+  $ rarely (# n "[-1, 0, 4]")
+  $ sound "~ [rhodes, rhodes, rhodes]"
+  # n "[-1, 3, 5]"
+  # sustain (scale 0.05 0.3 (slow 32 (sine)))
+  # begin (scale 0 0.3 (slow 8 (sine)))
+  # end (scale 0.5 1 (slow 3 (sine)))
+  # vowel "o u"
+  # hpf (scale 500 1500 (slow 5 (sine)))
+  # speed 1
+  # room (scale 0.7 0.1 (slow 3 (rand)))
+  # size (scale 0.8 0 (slow 5 (rand)))
+  # delay 0.4
+  # delaytime (scale 0.1 0.3 $ slow 3 $ sine1)
+  # delayfeedback (scale 0 0.6 $ slow 10 $ sine1)
+  # gain 0.9
+  # orbit out8
+  )
+$ sound "~"
+# orbit out8
