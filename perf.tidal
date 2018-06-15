@@ -4,14 +4,14 @@ cps (125/60/4)
 
 -- I/O: JACK multitrack recording
 -- Set Supercollider to output to Jack Router
-let out1 = 0
-let out2 = 1
-let out3 = 2
-let out4 = 3
-let out5 = 4
-let out6 = 5
-let out7 = 6
-let out8 = 7
+out1 = 0
+out2 = 1
+out3 = 2
+out4 = 3
+out5 = 4
+out6 = 5
+out7 = 6
+out8 = 7
 
 -- PANIC !
 --
@@ -32,4 +32,7 @@ nudger (-0.01)
 -- sync test
 
 d1
-$ sound "bd*4"
+$ sound pat
+
+
+sound pat

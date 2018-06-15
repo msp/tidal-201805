@@ -1,0 +1,134 @@
+-- 1. Import the Max Msp module which defines an osc stream and what to send + how
+-- It basically sends data off as a list of pairs (parameter, value) to the url /fromTidal/<streamNumber>
+import Sound.Tidal.MaxMspOsc
+
+-- 2. Open up a connection
+--
+-- You can make as many of these connections as you want, just remember to
+-- choose an unused stream (or port) when you make a new one
+max1 <- maxmspStream "127.0.0.1" 8020 1 -- Destination ip (default is your own computer), port and streamNumber
+
+max2 <- maxmspStream "127.0.0.1" 57121 2 -- SC Lang
+
+max3 <- maxmspStream "127.0.0.1" 57121 3
+
+
+let hush = mapM_ ($ silence) [d1,d2,d3,d4,d5,d6,d7,d8,d9,max1, max2, max3]
+
+
+
+max2
+$ fast 1
+-- $ sometimesBy 0.3 (slow 4)
+-- $ sometimesBy 0.2 (fast 5)
+$ degradeBy 0
+-- $ distrib [choose[3,4,7], 32, choose[60,64]]
+-- $ distrib [4, 32, 60]
+-- # note "<50 51> <90 75 80>"
+-- $ note "50 90 100"
+-- $ note (scaleP "minPent" "[30..26]" + chord "five")
+-- $ note (scaleP "minPent" "30*4" + chord "one")
+$ note "90*4"
+-- $ note "50" + chord "five"
+-- # param1 "<50 51> <90 75 80>" --note
+-- $ param1 Scales.minPent --note
+-- $ param1 "[50, 90]" --note
+# param1 (scale 0.3 0.9 (fast 1 (rand))) --filter
+-- # param1 0.5 --filter
+# param2 (scale 0.2 0.1 (slow 8 (sine))) --decay
+-- # param2 0.1 --decay
+-- # param3 0.6 --release
+# param3 (scale 0.2 0.3 (slow 3 (sine))) --release
+-- # param4 0.5 --pick morph
+# param4 (scale 0.2 0.3 (slow 11 (saw))) --pick morph
+
+
+-- sync test -------------------------------------------------------------------
+cps (140/60/4)
+
+d1 $ sound "808:5*4"
+-- # shape 0.4
+# gain 1.0
+
+d1 silence
+
+max3
+$ degradeBy 0
+$ note "60 50 60 50"
+
+-- sync test -------------------------------------------------------------------
+hush
+
+
+-- test timing
+-- seems SuperDirt is 1/2 a beat behind?
+d1 $ sound "super808*4"
+
+do
+  d2 $ sound "supersnare"
+  max2
+    $ note "90*4"
+    -- # nudge 0
+
+    # param1 0.5
+    # param2 0.1
+    # param3 0.1
+    # param4 0.1
+
+
+
+
+
+
+-- defaults to middle C
+-- d1 $ note (scaleP "minPent" "[12..8?, -10 7 9, [~? <-4..-6, -4..-2, 0..3>]?]" + chord "five")
+d1
+$ degradeBy 0.3
+$ note (scaleP "minPent" "24..8, -10 7 9, [~? <-4..-6, -4..-2, 0..3>]?]" + chord "five")
+# sound "supersaw"
+|+| n "e2"
+-- # sustain 0.5
+# sustain (scale 0.3 0.5 (fast 3 (sine)))
+# lpf (scale 2000 15000 (slow 3 (sine)))
+-- # lpq (scale 0.3 0.3 (slow 2 (sine)))
+# gain 0.8
+
+d1 silence
+
+d2
+$ degradeBy 0.3
+$ sound "supersnare*16"
+# speed 0.1
+# sustain (scale 0.1 0.4 (slow 16 (rand)))
+# lpf (scale 2000 3000 (slow 16 (rand)))
+# shape 0.7
+
+d2 silence
+
+(freq, _) = pF "freq" (Just 440)
+
+
+
+-- change to E4
+d1 $ n (scaleP "minPent" "0 .. 4") # sound "superpiano"
+|+| n "e4"
+
+-- the same, expressed diff
+d1
+$ n ((scaleP "minPent" "0 .. 4") + "e4")
+# sound "superpiano"
+
+-- pick the Nth note of the scale
+d1
+$ n (scaleP "minPent" "2")
+# sound "superpiano"
+|+| n "e4"
+
+-- play chords
+-- see Sound.Tidal.Chords chordTable
+d1 $ n ("e4" + chord "plus") # sound "superpiano"
+
+d1 $ n (off 0.125 (+ chord "<minor major>") $ "c3 [~ e4] a5 a4" )
+# sound "superpiano"
+# lpf (slow 2 $ scale 1000 3000 sine)
+# lpq 0.1

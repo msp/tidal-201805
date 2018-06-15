@@ -1,3 +1,39 @@
+MIDIClient.init
+
+
+MIDIIn.connectAll
+
+
+
+
+
+(
+SynthDef(\fmSynth, { |carrierFreq=100, carrierLvl=0.5, modulatorRatio=5, modulatorIndex=1.5, outputAmp=0.8, sig, out=0|
+
+	// the simple FM core
+	sig = LFSaw.ar(carrierFreq, 1, 0.5, 0.5) * carrierLvl;
+	sig = sig + SinOsc.ar(carrierFreq * modulatorRatio) * modulatorIndex;
+	sig = cos( sig * 2pi) * outputAmp * 0.06;
+	Out.ar(out, sig);
+},1!5).add;
+)
+
+// At first start the synth:
+g = Synth(\fmSynth);
+
+// Play with the parameters:
+g.set(\carrierFreq, 800);
+g.set(\carrierFreq, 50);
+g.set(\carrierFreq, 100, \modulatorRatio, 5, \modulatorIndex, 0.5);
+g.set(\carrierFreq, 40, \modulatorRatio, 7, \modulatorIndex, 1.5);
+g.set(\carrierFreq, 955, \carrierLvl, 0.4, \modulatorRatio, 3, \modulatorIndex, 4);
+// ... etc.
+
+// To stop:
+g.free;
+
+
+
 (
 SynthDef(\kick, {
     |out = 0, pan = 0, amp = 0.3|

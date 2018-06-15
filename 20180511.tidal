@@ -171,3 +171,5 @@ $ every 2 (const
   )
 $ sound "~"
 # orbit out8
+
+d8 silence

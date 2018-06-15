@@ -119,6 +119,9 @@ $ s "sine"
 -- discretise :: Time -> Pattern a -> Pattern a
 d1 $ discretise 4 (sound "bd sd bd sd")
 
+d1 $ sound "bd sd bd sd"
+# show
+
 -- choose :: [a] -> Pattern a
 -- I can;t plug in a choose here as that returns a pattern!
 
@@ -128,3 +131,9 @@ d1 $ discretise 4 (sound "bd sd bd sd")
 -- nope! So back to discretise
 
 d1 $ discretise 1000 (sound "sine")
+
+d1 $ e 4 8 $ sound "bd"
+
+d1 $ e 5 (choose[8,16]) $ sound "bd"
+
+d1 $ e 5 (choose[7]) $ sound "bd"
