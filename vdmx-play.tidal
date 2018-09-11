@@ -1,0 +1,31 @@
+import Sound.Tidal.MaxMspOsc
+
+vdmx1 <- maxmspStream "127.0.0.1" 1234 4
+
+let hush = mapM_ ($ silence) [d1,d2,d3,d4,d5,d6,d7,d8,d9, vdmx1]
+
+
+cps (120/60/4)
+let apat = "bd*5"::Pattern String
+
+d1
+$ every 3 (# crush 2)
+$ sound "[super808*3, form-msp5:1/10, m-metal:1]"
+# speed (scale 0.1 0.2 (slow 3 (rand)))
+# sustain (scale 0.5 1 (slow 16 (sine)))
+# shape 0.7
+
+vdmx1
+$ param1 (scale 0.9 0 (fast 1 (square))) -- starts from list item 7 in VDMX
+# param2 (scale 0 0.99 (slow 1 (sine))) -- list item 9
+# param3 (scale 0 0.5 (slow 2 (sine))) -- list item 11
+# param4 (scale 0 0.5 ((square))) -- list item 13
+
+vdmx1 silence
+
+
+-- end VDMX
+
+--------------------------------------------------------------------------------
+-- RECYCLE BIN -----------------------------------------------------------------
+--------------------------------------------------------------------------------

@@ -1,0 +1,99 @@
+-- MAIN -----------------------------------------------------------------------
+-- 140
+
+-- use stack, cat & fastcat to layer or seq !
+
+d1
+$ slow 8
+$ degradeBy 0.1
+$ cat [
+  sound "m-boom"
+  ,sound "m-boom*4"
+]
+# shape 0.3
+# lpf (scale 300 2000 (slow 16 (rand)))
+# speed (choose [1,2,3])
+# room (scale 0.4 0.1 (slow 3 (sine)))
+# size (scale 0.2 0.8 (slow 8 (sine)))
+# gain 0.8
+# orbit out1
+
+d1 silence
+
+d4
+$ fast 1
+$ degradeBy 0.4
+$ sometimesBy 0.1 (# crush (choose [2, 4, 8]))
+$ sometimesBy 0.5 (# sustain "0.1 0.1 0.6")
+$ sound "[super808 super808/3 ~ super808 ~ ~ ~ super808/3]*2"
+# speed   "1 0.5"
+-- less boom
+-- # sustain "0.1 0.1 0.6"
+-- more boom
+# sustain "0.8 0.1 1 0.5 0.1 1"
+-- # sustain 0.05
+# shape 0.2
+# orbit out1
+
+d4 silence
+
+d5
+$ fast 1
+$ degradeBy 0.2
+$ stack [
+  sound "[~ ho ~ ~]*4" # n (irand 10) #cut 1 #end 0.6 #speed 5 #hpf 3000 #gain 0.8
+  -- ,sound "[ho]*16?" # n (irand 10) #cut 1 #end 0.6 #speed 5 #hpf 3000 #gain 0.5
+  ,sound "[superhat? ~ superhat*2 ~ ~ ~ superhat/3]*2" # shape 0.6
+  ,sound "<[psr ~]*2 ~ ~>" # n (irand 20) # bpf 2000
+  ,sound "<~ ~ ~ ~ [~ ~ ~ rave2]*2>" # n (irand 5) # bpf 2000
+]
+-- # speed   "1 0.6"
+-- # sustain "0.1 0.1 1"
+# orbit out1
+
+d5 silence
+
+d6
+$ every 4 (const
+  $ degradeBy 0.1
+  $ sound "superclap*4? hh:2*16"
+  # shape 0.3
+  # gain "1 [1 0.6]*8"
+  # speed (scale 1 2 (slow 16 (saw)))
+  # hpf (scale 2500 4000 (slow 16 (rand)))
+  # pan (scale 0 1 (slow 4 (rand)))
+  # orbit out3
+  )
+$ sound "808:3"
+# speed 1.2
+# shape 0.5
+# orbit out1
+
+d6 silence
+
+
+d7
+$ every 4 (const
+  $ degradeBy 0.2
+  $ fast 2
+  $ e 7 16
+  $ sound "~ supersaw*2"
+  # n (
+      every 18
+        (+ 1)
+        "[-12, -3, 7]"
+      )
+  # slide 1
+  -- # attack (scale 0.1 0.2 (slow 6 (sine)))
+  # attack 0.4
+  # decay 0.9
+  # sustain (scale 0.7 1.1 (slow 16 (sine)))
+  # hpf (scale 00 1500 (slow 3 (rand)))
+  # crush 2
+  # gain "1.1"
+  # orbit out1
+  )
+$ sound "~"
+# orbit out3
+
+d7 silence

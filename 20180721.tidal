@@ -1,0 +1,63 @@
+d4
+-- $ degradeBy 0.2
+-- $ chunk 2 (density 2)
+$ sometimesBy 0.3 (# crush (choose [2, 4, 8]))
+$ sometimesBy 0.5 (# sustain "0.1 0.1 0.6")
+$ sound "[~ ~ ~ ~ ~ super808 ~ super808/3]*2"
+# speed  (scale 0.25 0.4 (slow 3 (rand)))
+-- less boom
+-- # sustain "0.1 0.1 0.6"
+# sustain 0.3
+# shape 0.6
+# hpf 1000
+# gain "0.7 0.8 0.8"
+# orbit out1
+
+d4 silence
+
+d3
+$ fast 1
+$ degradeBy 0.0
+$ sound "super808 ~ ~ super808*2?"
+# speed "[0.8 2 3 2]"
+# sustain "1.5 0.4 0.3 0.3"
+# shape 0.6
+# gain "[1 0.9]*2"
+# orbit out1
+
+d3 silence
+
+d5
+$ chunk 2 (density 2)
+$ sound "[bd:2 ~ ~ bd ~ ~ 808bd:1 ~ ]"
+# speed "[4 2 3 2]"
+# sustain "[1.5 1]*2"
+# shape 0.5
+# gain "0.7 0.8 1 1"
+# accelerate (slow 4 $ sine)
+# hpf 180
+# orbit out1
+
+d5 silence
+
+
+d6
+$ fast 1
+$ stack [
+  sound "[superhat ~ ~ ~]*16" # hpf (scale 5000 9000 (slow 3 (sine))) #accelerate 0.2 #sustain (scale 0.3 0.7 (slow 32 (sine))) # gain 0.6
+  -- ,sound "[~ ~ ho ~]*4" # n (irand 10) #cut 1 #sustain 0.3 #hpf 2000 #gain 0.765
+  -- ,sound "[~ ~ lt ~ lt ht? ~ lt]*2" # n (irand 10) # shape 0.8 # gain 0.61
+  ,sound "[~ ~ ~ ~ ~ ~ ~ haw:4]*2" # shape 0.9 # gain 0.65
+  ,sound "[~ ~ ~ ~ haw:5 ~ haw:0 ~]*2" # shape 0.9  # hpf (scale 1000 5000 (slow 3 (sine))) # gain 0.65
+  -- ,sound "[superhat? ~ superhat*2 ~ ~ ~ superhat/3]*2" # shape 0.6
+  -- ,sound "[superhat? ~ superhat*2 ~ ~ ~ superhat/3]*2" # shape 0.6
+  ,sound "<[psr ~]*2 ~ ~>" # n (irand 20) # bpf 2000 # gain 0.7
+  -- ,sound "<~ ~ ~ ~ [~ ~ ~ rave2?]*2>" # n (irand 5) # bpf 2000
+]
+-- # speed   "1 0.6"
+-- # sustain "[1 0.1 0.3]*8"
+-- # shape 0.5
+# pan (choose [0.3,0.7])
+# orbit out1
+
+d6 silence

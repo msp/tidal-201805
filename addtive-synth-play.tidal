@@ -1,0 +1,77 @@
+d1
+$ sometimesBy 0.3 (# crush 4)
+$ sometimesBy 0.3 (fast 2)
+$ sometimesBy 0.2 (slow 2)
+$ degradeBy 0.3
+$ sound "bd*8"
+# sustain (scale 0.45 0.1 $ slow 3 $ rand)
+# speed (choose [0.5, 0.8, 0.8, 0.9, 1, 1.1])
+# shape 0.89
+# lpf 100
+# gain 1
+
+d1 silence
+
+
+-- LEFT --
+d2
+$ sometimesBy 0.4 (fast 2)
+$ sometimesBy 0.2 (slow 2)
+$ degradeBy 0.3
+$ sound "[percussiveOut*4]"
+# attack 0.6
+-- # attack (scale 0.08 0.4 $ slow 8 $ rand)
+# release 1
+-- # sustain 1
+-- # release 5
+-- # sustain (scale 0.40 0.15 $ slow 3 $ rand)
+-- # sustain 0.4
+-- # shape (scale 0.1 0.3 $ slow 1 $ rand)
+-- # hpf 800
+# room 0.5
+# size 0.3
+# pan 0
+-- # gain 0.8
+
+d2 silence
+
+-- RIGHT --
+d3
+-- $ slow 8
+-- $ sometimesBy 0.3 (fast 2)
+-- $ sometimesBy 0.2 (slow 2)
+-- $ degradeBy 0.3
+-- $ fast 1
+$ every 16 (# attack 0.6)
+$ every 16 (# release 2)
+$ sound "[percussiveOut*2]"
+# attack 0.01
+-- # attack (scale 0.08 0.01 $ slow 3 $ sine)
+# release 0.6
+-- # sustain 2
+# nudge (slow 8 $ sine)
+# pan 1
+# gain 1
+
+d3 silence
+
+d3
+$ fast 4
+$ degradeBy 0.2
+$ sound "[~ superhat ~ superhat]"
+-- # sustain (scale 0.2 1.2 $ slow 20 $ sine)
+# shape 0.2
+-- # speed 3
+# hpf 9000
+# orbit out1
+
+d3 silence
+
+
+d1
+$ degradeBy 0.0
+$ fast 2
+$ sound pat
+# shape 0.7
+# orbit out1
+-- # orbit 10

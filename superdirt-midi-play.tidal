@@ -1,0 +1,12 @@
+-- SuperDirt MIDI Test
+d6
+$ degradeBy 0.5
+$ stack [
+  -- note "4 -12 24 9",
+  note "[~ [4, -12, 24, 9]]",
+  ccv (scale 110 50 (fast 3 (sine))) # ccn "30", -- freq
+  -- ccv "50 100" # ccn "31" ]
+  ccv (scale  127 70 (fast 1 (rand))) # ccn "31" ]
+# s "midi"
+
+d6 silence
