@@ -4,7 +4,177 @@ MIDIClient.init
 MIDIIn.connectAll
 
 
+SynthDef("tom", {
+    arg startPitch = 6000, endPitch=60, clickLevel=0.7, pitchRel = 0.11, noiseLevel=1, noiseRel= 0.3;
+    var pitchEnv = EnvGen.ar(Env.perc(0.01, pitchRel));
 
+    var clickOsc = SinOsc.ar(pitchEnv*(startPitch-endPitch)+endPitch);
+    var clickEnv = EnvGen.ar(Env.perc(0.001, pitchRel))*clickLevel;
+    var noiseOsc = PinkNoise.ar();
+    var noiseEnv = EnvGen.ar(Env.perc(0.01, noiseRel))*noiseLevel;
+    var snd =  noiseOsc * noiseEnv +clickOsc *clickEnv;
+    Out.ar(0,Pan2.ar(snd, 0, 1));
+}).add;
+
+{
+    16.do{
+x = Synth.new("tom",["startPitch", rrand(500,60),"endPitch", rrand(500,50), "clickLevel",rrand(1,0.5), "pitchRel",rrand(0.05,0.9), "noiseLevel",rrand(0.5,0.1),"noiseRel",rrand(0.1,0.06)]);
+        1.5.wait;
+    }
+}.fork
+
+
+Synth.new("tom", ["startPitch", rrand(200,60)])
+
+Synth.new("tom")
+
+Synth.new("tom",["startPitch", rrand(600,60),"
+endPitch", rrand(600,50),"clickLevel",rrand(1,0.9), "pitchRel",rrand(0.9,0.1), "noiseLevel",rrand(1.5,0.1),"noiseRel",rrand(0.01,0.06)]);
+//
+
+(
+SynthDef.new("xxbd", {
+    arg  out, pan, nn=0.8, nl = 0.02, start=110, end=1, l1=0.1, l2=0.3, nexp=1.7;
+    var boom;
+    e = pow(Line.ar(0.9,0,l2),nexp);
+
+    boom = BBandPass.ar(WhiteNoise.ar(), freq: Line.ar(100,10,nl))*Line.ar(1,0,nl)*nn+SinOsc.ar(Line.ar(start, end, l1))*e;
+    // Out.ar(0,[boom,boom])
+
+    OffsetOut.ar(out, DirtPan.ar([boom, boom], ~dirt.numChannels, pan, e))
+
+}).add;
+)
+
+(
+SynthDef.new("ding", {
+    arg out, freq = #[1600,200,177,384,730,1255,60], release=0.1, noiseRel=0.01, noiseLevel=0.7, sustain=1, pan;
+
+    var osc = Mix.arFill(7, { arg i;
+        SinOsc.ar(freq[i])*0.3;
+    });
+    var e = EnvGen.ar(Env.perc(0.01, release), timeScale: sustain, doneAction: 2);
+
+    var noiseOsc = PinkNoise.ar();
+    var noiseEnv = EnvGen.ar(Env.perc(0.01, noiseRel))*noiseLevel;
+
+    var snd =  noiseOsc * noiseEnv + osc;
+    // var snd =  noiseOsc * noiseEnv + osc*e;
+    // Out.ar(0,Pan2.ar(snd))
+    OffsetOut.ar(out, DirtPan.ar(snd, ~dirt.numChannels, pan, e))
+}).add;
+)
+
+(
+{
+    64.do{
+        x = Synth.new("ding", ["rel", rrand(1,0.05), "noiseRel",rrand(0.1,0), "noiseLevel", rrand(0,0.4)]);
+        // x = Synth.new("ding", ["freq",Array.fill(7,{rrand(2000,60)}), "rel", rrand(1,0.05), "noiseRel",rrand(0.1,0), "noiseLevel", rrand(0,0.4)]);
+        rrand(0.1, 0.6).wait
+    }
+}.fork
+)
+
+(
+var foo = 400;
+
+Synth(\ding,  [
+
+    freq: Array.fill(7,{rrand(1500,600)})
+    // freq: [foo, 388, 300, 200, 220]
+    , rel: rrand(0.1, 0.6)
+    , noiseRel: 0.001
+    , noiseLevel: 0.001
+]
+)
+)
+
+Synth(\ding, [freq: [1000]])
+
+// Interesting!
+(
+{
+    var bd, tama;
+
+    64.do {
+
+        bd = Synth.new("xxbd", ["nn":rrand(0.8,0),"nl",rrand(0.03,0), "start",rrand(100.0,50.0),"end",rrand(100,10), "l1", rrand(0.1,0), "l2", rrand(0.8,0.1),"nexp", rrand(1,4)]);
+
+        // tama = Synth(\tama, [\note: rrand(125,120), \tension: 0.01, \loss: 5, \dur:  rrand(0.1,0.5)]);
+
+        // Synth(\dxkKalimba1, [freq: rrand(800, 1000), amp: 4.5 ]);
+
+        0.2.wait;
+        // rrand(0.2, 0.2).wait;
+
+        // bd.free;
+        // tama.free;
+    }
+}.fork()
+)
+
+(
+SynthDef(\tama,
+         {|note = 52, amp = 1, out_bus = 0, pan=0.0, gate=1, tension=0.05, loss=0.9, vel=1, dur=1 |
+		var signal, freq;
+		var lossexp=LinLin.ar(loss,0.0,1.0,0.9,1.0);
+		var env = Env([0, 1, 0.5, 1, 0], [0.01, 0.5, 0.02, 0.5]);
+		var excitation = EnvGen.kr(Env.perc, gate, timeScale: 1, doneAction: 0) * PinkNoise.ar(0.4);
+		freq=note.midicps;
+		signal = amp*MembraneCircle.ar(excitation, tension*(freq/60.midicps), lossexp);
+		DetectSilence.ar(signal,doneAction:2);
+		signal = signal * EnvGen.ar(Env.perc, gate, vel*0.5, 0, dur, 2);
+		signal=Pan2.ar(signal, pan);
+        Out.ar(out_bus,signal);
+	}
+).add;
+)
+
+Synth(\tama);
+
+Synth(\tama, [\note: rrand(125,65), \tension: 0.01, \loss: 5, \dur:  rrand(0.1,2)]);
+
+(
+SynthDef(\neurosnare, {
+    var snd;
+    // a percussive click to give it some attack
+    snd = LPF.ar(HPF.ar(WhiteNoise.ar, 300), 8000) * Env.linen(0.001, 0.01, 0.001).ar;
+    // sine sweep body. very important!
+    snd = snd + (SinOsc.ar(Env([400, 196, 160], [0.04, 0.2], \exp).ar) * Env.perc(0.04, 0.2).ar * 6.dbamp).tanh;
+    // sound of snare coils rattling
+    snd = snd + (HPF.ar(BPeakEQ.ar(WhiteNoise.ar, 4000, 0.5, 3), 300) * Env.perc(0.05, 0.2).delay(0.01).ar(2) * -3.dbamp);
+    // another sound sweep to improve the attack, optional
+    snd = snd + (SinOsc.ar(XLine.kr(3000, 1500, 0.01)) * Env.perc(0.001, 0.02).ar);
+    // distortion helps glue everything together and acts as a compressor
+    snd = (snd * 1.4).tanh;
+    snd = Pan2.ar(snd, \pan.kr(0), \amp.kr(0.1));
+    Out.ar(\out.kr(0), snd);
+}).add;
+)
+
+Synth(\neurosnare, [amp: 0.4]);
+
+
+SynthDef(\dxkKalimba1, {
+    |out = 0, freq = 440, amp = 0.1, mix = 0.1, pan = 0|
+    var snd, click;
+    // Basic tone is a SinOsc
+    snd = SinOsc.ar(freq) * EnvGen.ar(Env.perc(0.03, Rand(3.0, 4.0), 1, -7), doneAction: 2);
+	snd = HPF.ar( LPF.ar(snd, 380), 120);
+    // The "clicking" sounds are modeled with a bank of resonators excited by enveloped white noise
+	click = DynKlank.ar(`[
+        // the resonant frequencies are randomized a little to add variation
+        // there are two high resonant freqs and one quiet "bass" freq to give it some depth
+        [240*ExpRand(0.97, 1.02), 2020*ExpRand(0.97, 1.02), 3151*ExpRand(0.97, 1.02)],
+        [-9, 0, -5].dbamp,
+        [0.8, 0.07, 0.08]
+	], BPF.ar(PinkNoise.ar, 6500, 0.1) * EnvGen.ar(Env.perc(0.001, 0.01))) * 0.1;
+    snd = (snd*mix) + (click*(1-mix));
+	snd = Pan2.ar(snd*amp, pan);
+    Out.ar(out, snd);
+}).add;
+
+Synth(\dxkKalimba1, [freq: rrand(40, 500), amp: 4.5 ]);
 
 
 (

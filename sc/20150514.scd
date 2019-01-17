@@ -57,7 +57,7 @@ Pdef (
 	Pbind(
 		\instrument, \kckmsp,
 		\dur, 2,
-		\freq, 150,
+		\freq, 550,
 		\out, 3,
 		\amp, 0.7
 	);
@@ -76,6 +76,7 @@ p = Pdef (
 		// \amp, Pkey(\harmonic).reciprocal * 0.4,
 		\amp, Pexprand(0.01, 0.15, inf),
 		\pan, Pwhite(-0.9, 0.9, inf),
+        \out , 18,
 	);
 ).play;
 

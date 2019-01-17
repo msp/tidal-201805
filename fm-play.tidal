@@ -1,0 +1,99 @@
+d1
+$ sometimesBy 0.3 (# crush 4)
+$ sometimesBy 0.3 (fast 2)
+$ sometimesBy 0.2 (slow 2)
+$ degradeBy 0.3
+$ sound "bd*8"
+# sustain (scale 0.45 0.1 $ slow 3 $ rand)
+# speed (choose [0.5, 0.8, 0.8, 0.9, 1, 1.1])
+# shape 0.89
+# lpf 100
+# gain 1
+
+d1 silence
+
+(freq, _) = pF "freq" (Just 440)
+(fratio, _) = pF "fratio" (Just 0)
+
+(t1, _) = pF "t1" (Just 0.01)
+(t2, _) = pF "t2" (Just 0.2)
+(t3, _) = pF "t3" (Just 0.1)
+
+d1
+-- $ s "rlpf"
+$ slow 2
+$ s "mspFM*8 super808?"
+# nudge (slow (choose [5,6,7]) $ sine)
+# speed 0.3
+# shape 0.5
+# gain 1
+
+# t1 0.01
+# t2 0.1
+# t3 0.04
+
+
+d1
+$ slow 2
+$ s "gendy"
+# legato "1.2"
+# freq 40
+-- # fratio 2.3
+-- # hpf (scale 10 8000 $ slow 32 $ saw)
+# nudge (slow 8 $ rand)
+# gain 0.9
+
+d1 silence
+
+
+
+d3
+-- $ slow 8
+-- $ sometimesBy 0.3 (fast 2)
+-- $ sometimesBy 0.2 (slow 2)
+-- $ degradeBy 0.3
+-- $ fast 1
+-- $ every 16 (# attack 0.6)
+-- $ every 16 (# release 2)
+$ sound "mspFoo"
+-- $ sound "[freq-mod-with-envs*2]"
+
+d3
+-- $ slow 8
+-- $ sometimesBy 0.3 (fast 2)
+-- $ sometimesBy 0.2 (slow 2)
+-- $ degradeBy 0.3
+-- $ fast 1
+$ every 16 (# attack 0.6)
+$ every 16 (# release 2)
+$ sound "[freq-mod-with-envs*2]"
+# attack 0.01
+-- # attack (scale 0.08 0.01 $ slow 3 $ sine)
+# release 0.6
+-- # sustain 2
+# nudge (slow 8 $ sine)
+# pan 1
+# gain 1
+
+d3 silence
+
+d3
+$ fast 4
+$ degradeBy 0.2
+$ sound "[~ superhat ~ superhat]"
+-- # sustain (scale 0.2 1.2 $ slow 20 $ sine)
+# shape 0.2
+-- # speed 3
+# hpf 9000
+# orbit out1
+
+d3 silence
+
+
+d1
+$ degradeBy 0.0
+$ fast 2
+$ sound pat
+# shape 0.7
+# orbit out1
+-- # orbit 10

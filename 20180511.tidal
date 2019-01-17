@@ -1,20 +1,30 @@
-cps (140/60/4)
+setcps (140/60/4)
 
 -- SC SYNTH MAPPINGS
-let (freq, _) = pF "freq" (Just 440)
-let (cutoff, _) = pF "cutoff" (Just 200)
-let (fatt, _) = pF "fatt" (Just 0.75)
-let (amp, _) = pF "amp" (Just 0.75)
-let (attack, _) = pF "attack" (Just 0.001)
+freq = pF "freq"
+cutoff = pF "cutoff"
+fatt = pF "fatt"
+amp = pF "amp"
+attack = pF "attack"
+phaserrate = pF "phaserrate"
+phaserdepth = pF "phaserdepth"
+tremelorate = pF "tremelorate"
+tremelodepth = pF "tremelodepth"
+leslie = pF "leslie"
+lrate = pF "lrate"
+lsize = pF "lsize"
+nn = pF "n"
+nl = pF "nl"
+start = pF "start"
+end = pF "end"
+l1 = pF "l1"
+l2 = pF "l2"
+nexp = pF "nexp"
+noiseRel = pF "noiseRel"
+noiseLevel = pF "noiseLevel"
 
-let (phaserrate, _) = pF "phaserrate" (Just 1.0)
-let (phaserdepth, _) = pF "phaserdepth" (Just 0.75)
-let (tremelorate, _) = pF "tremelorate" (Just 1.0)
-let (tremelodepth, _) = pF "tremelodepth" (Just 0.75)
-let (leslie, _) = pF "leslie" (Just 0.5)
-let (lrate, _) = pF "lrate" (Just 6.7)
-let (lsize, _) = pF "lsize" (Just 0.3)
-=
+
+
 
 -- COUNT IN!
 d1
@@ -24,23 +34,28 @@ $ sound
   \ [numbers:3, click:2] [click:2] [click:2] [click:2] \
   \ [numbers:2, click:2] [click:2] [click:2] [click:2] \
   \ [numbers:1, click:2] [click:2] [click:2] [click:2]"
-# orbit out2
+# orbit out1
 
+
+let rate = 64
 
 -- KICK ------------------------------------------------------------------------
 -- mutiply kicks n 2s and claps i 2s & 3s
 d1
+-- $ spin 2
+-- $ spin (choose [2, 4, 8])
 $ degradeBy 0
 $ sound "[super808msp*1]"
--- $ sound "[super808msp*1 superclap*2]"
-# amp 0.7
+-- $ sound "[super808msp*16]"
+-- $ sound "[super808msp*2 superclap*3]"
+-- # amp 0.5
 # gain "1 0.6"
 --
 -- SWEEP
-# speed (scale 8 1 (slow 64 (sine)))
-# sustain (scale 1 2 (slow 64 (sine)))
-# voice (scale 0.7 0 (slow 64 (sine)))
-# shape (scale 0 0.7 (slow 64 (sine)))
+# speed (range 8 1 (slow rate (sine)))
+# sustain (range 1 2 (slow rate (sine)))
+# voice (range 0.7 0 (slow rate (sine)))
+# shape (range 0 0.7 (slow rate (sine)))
 --
 -- SOFT
 -- # speed 8 # sustain 1 # voice 0.7 # shape 0
@@ -51,25 +66,31 @@ $ sound "[super808msp*1]"
 -- OUTPUT
 # orbit out2
 
-d1 silence
+
+d5 silence
 
 -- PERC ------------------------------------------------------------------------
 d2
+-- $ spin 8
 $ sometimesBy 0.5 (# crush 4)
-$ degradeBy 0.5
+-- $ degradeBy 0  .5
+$ degradeBy 0.6
 $ sound "[~ superclap*2]"
 -- $ sound "[~ supersnare*2, superhat*2, superstatic*4]"
-# speed (scale 8 0.3 (slow 32 (sine)))
-# sustain (scale 0.1 2 (slow 32 (sine)))
+-- $ sound "[~ superhat, superstatic*4]"
+# speed (range 8 0.3 (slow rate (sine)))
+# sustain (range 0.1 2 (slow rate (sine)))
 # decay 0.2
 # accelerate 3
-# orbit out4
+-- # cps (slow 32 $ range 1 (wchoose [(2, 1), (10, 0.5)]) rand)
+-- # cps (slow 32 $ range 1 (wchoose [(1.5, 1), (10, 0.4), (15, 0.3), (30, 0.1)]) rand)
+# orbit out3
 
 d2 silence
 
 -- SYNTH -----------------------------------------------------------------------
 d3
-$ every 6 (const
+$ every 3 (const
   $ sometimesBy 0.4 (# crush 4)
   $ sometimesBy 0.5 (# freq 45)
   $ sometimesBy 0.4 (# freq 65)
@@ -77,13 +98,14 @@ $ every 6 (const
   $ sound "[~ supersquaremsp*3]"
   -- # n 10
   # pitch1 2
-  # freq 55
+  # freq "55"
+  -- # cutoff "55"
   -- # semitone 12
   -- # lfo 1
-  # sustain (scale 0.2 0.8 (slow 16 (sine)))
-  # speed (scale 0.1 1.6 (slow 16 (sine)))
+  # sustain (range 0.2 0.8 (slow 16 (sine)))
+  # speed (range 0.1 1.6 (slow 16 (sine)))
   -- # sustain 0.1
-  # voice (scale 0.9 0.1 (slow 16 (sine)))
+  # voice (range 0.9 0.1 (slow 16 (sine)))
   -- # decay 0.4
   -- # accelerate 3
   # gain 0.8
@@ -173,3 +195,4 @@ $ sound "~"
 # orbit out8
 
 d8 silence
+--

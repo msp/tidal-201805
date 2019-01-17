@@ -4,14 +4,16 @@ cps (125/60/4)
 
 -- I/O: JACK multitrack recording
 -- Set Supercollider to output to Jack Router
-out1 = 0
-out2 = 1
-out3 = 2
-out4 = 3
-out5 = 4
-out6 = 5
-out7 = 6
-out8 = 7
+out1 = 9
+out2 = 10
+out3 = 11
+out4 = 12
+out5 = 13
+out6 = 14
+out7 = 15
+out8 = 16
+-- not enough loopback channels for this!
+-- out8 = 16
 
 -- PANIC !
 --
