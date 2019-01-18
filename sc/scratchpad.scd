@@ -46,6 +46,8 @@ SynthDef.new("xxbd", {
 }).add;
 )
 
+Synth.new("xxbd", ["out", 18])
+
 (
 SynthDef.new("ding", {
     arg out, freq = #[1600,200,177,384,730,1255,60], release=0.1, noiseRel=0.01, noiseLevel=0.7, sustain=1, pan;
@@ -68,7 +70,7 @@ SynthDef.new("ding", {
 (
 {
     64.do{
-        x = Synth.new("ding", ["rel", rrand(1,0.05), "noiseRel",rrand(0.1,0), "noiseLevel", rrand(0,0.4)]);
+        x = Synth.new("ding", ["rel", rrand(1,0.05), "noiseRel",rrand(0.1,0), "noiseLevel", rrand(0,0.4), "out": 20]);
         // x = Synth.new("ding", ["freq",Array.fill(7,{rrand(2000,60)}), "rel", rrand(1,0.05), "noiseRel",rrand(0.1,0), "noiseLevel", rrand(0,0.4)]);
         rrand(0.1, 0.6).wait
     }
@@ -85,11 +87,13 @@ Synth(\ding,  [
     , rel: rrand(0.1, 0.6)
     , noiseRel: 0.001
     , noiseLevel: 0.001
+    , out: 20
 ]
 )
 )
 
-Synth(\ding, [freq: [1000]])
+Synth(\ding, [freq: [1000], out: 20])
+
 
 // Interesting!
 (
@@ -98,7 +102,7 @@ Synth(\ding, [freq: [1000]])
 
     64.do {
 
-        bd = Synth.new("xxbd", ["nn":rrand(0.8,0),"nl",rrand(0.03,0), "start",rrand(100.0,50.0),"end",rrand(100,10), "l1", rrand(0.1,0), "l2", rrand(0.8,0.1),"nexp", rrand(1,4)]);
+        bd = Synth.new("xxbd", ["nn":rrand(0.8,0),"nl",rrand(0.03,0), "start",rrand(100.0,50.0),"end",rrand(100,10), "l1", rrand(0.1,0), "l2", rrand(0.8,0.1),"nexp", rrand(1,4), "out", 18]);
 
         // tama = Synth(\tama, [\note: rrand(125,120), \tension: 0.01, \loss: 5, \dur:  rrand(0.1,0.5)]);
 

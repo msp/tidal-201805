@@ -1,6 +1,6 @@
 cps 1
 
-cps (125/60/4)
+setcps (140/60/4)
 
 -- I/O: JACK multitrack recording
 -- Set Supercollider to output to Jack Router

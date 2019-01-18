@@ -1,0 +1,199 @@
+setcps (144/60/4) --2.4
+
+rate = 128
+
+-- PULSE -----------------------------------------------------------------------
+
+p "pulse"
+-- $ spin 2
+-- $ spin (choose [2, 4, 8])
+$ degradeBy 0.1
+$ sound "[super808msp*1, superclap*8]"
+-- $ sound "[super808msp*2, superclap*8]"
+-- SWEEP
+# speed (range 8 1 (slow rate (sine)))
+-- # sustain (range 1 2 (slow rate (sine)))
+# sustain (range 0.4 1 (slow rate (sine)))
+# voice (range 0.7 0 (slow rate (sine)))
+# shape (range 0 0.7 (slow rate (sine)))
+--
+-- SOFT
+-- # speed 8 # sustain 1 # voice 0.7 # shape 0
+--
+-- HARD
+-- # speed 1 # sustain 2 # voice 0 # shape 0.7
+-- # speed 1 # shape 0.7
+--
+-- OUTPUT
+# orbit out2
+
+p "pulse" $ silence
+
+-- MAIN ========================================================================
+p "main"
+-- $ spin (choose [0,2,4])
+$ degradeBy 0
+$ every 8 (0.25 <~)
+$ every 8 (# gain "0.7 0.8 0.9")
+$ sometimesBy 0.1 (fast 2)
+$ sometimesBy 0.2 (# n (irand 6))
+$ every 31 (
+  const $ sound "[bd([5 7], 8), sn([3 5], 8)]" # shape 0.6 # gain "0.82 0.8 0.7" # orbit out1
+)
+$ every 32 (
+  const
+  $ slow 2
+  $ sound "[sn([7 14 7]/3, 16)]"
+  # speed "0.4 0.8 0.5 0.6"
+  # shape 0.6
+  # gain 0.75
+  # pan (choose [0, 1])
+  # orbit out1
+)
+$ sound "[bd:1(3, 8, 0)]" -- change last param LIVE!
+# speed (range 1 1.02 $ slow 2 $ rand)
+# shape 0.6
+# gain "0.9 0.8 0.7"
+# orbit out1
+
+p "main" $ silence
+
+p "clicker" --------------------------------------------------------------------
+$ slow 4
+$ sound
+   "[click:2] [click:2] [click:2] [click:2] \
+  \ [click:2] [click:2] [click:2] [click:2] \
+  \ [click:2] [click:2] [click:2] [click:2] \
+  \ [click:2] [click:2] [click:2] [click:2]"
+# speed (range 0.1 0.8 (slow 16 (cosine)))
+# shape (range 0.9 0.2 (slow 32 (cosine)))
+# hpf 4000
+# gain 0.9
+# pan (choose [0,1])
+# orbit out3
+
+p "clicker" silence
+
+p "hatters" --------------------------------------------------------------------
+$ stack [
+  sound "~"
+  -- ,sound "[superhat ~ ~ ~]*16" # hpf (range 5000 9000 (slow 3 (sine))) #accelerate 0.2 #sustain (range 0.3 0.7 (slow 32 (sine))) # gain 0.5
+  -- ,sound "[~ ~ ho ~]*4" # n (irand 10) #cut 1 #sustain 0.3 #hpf 2000 #gain 0.55
+  -- ,sound "[~ ~ lt ~ lt ht? ~ lt]*2" # n (irand 10) # shape 0.7 # gain 0.71
+  ,sound "[~ ~ ~ ~ haw:5 ~ haw:0/2 ~]*2" # shape 0.9  # hpf (range 1000 5000 (slow 3 (sine))) # gain 0.65
+  ,sound "<[psr ~]*2 ~ ~>/4" # n (irand 20) # bpf 2000 # shape 0.8 # gain 0.6
+]
+# sustain "[1 0.1 0.3]*8"
+# pan (choose [0.3,0.7])
+# orbit out4
+
+p "hatters" $ silence
+
+
+p "snares" ---------------------------------------------------------------------
+$ slow 2
+$ sound "[[sn*2]]"
+# speed "0.1 0.3"
+# shape 0.6
+# gain 0.80
+# pan (choose [0, 1])
+# orbit out4
+
+p "snares" $ silence
+
+p "cumbia" ---------------------------------------------------------------------
+$ slow 6
+-- $ sound "dxkSd3(3,8)"
+$ sound "~ dxkSd3 dxkSd3"
+# gain 0.8
+# orbit out3
+
+p "cumbia" $ silence
+
+-- HYPNO =======================================================================
+p "bleeper"
+$ fast 6
+$ sound "[bleep:3]"
+# sustain (range 0.2 0.05 (slow 64 (cosine)))
+# shape (range 0 0.2 (slow 64 (cosine)))
+# speed (range 0.3 0.8 (slow 64 (cosine)))
+# hpf 1000
+# gain 0.9
+# pan (range 0 1 (slow 2 (saw)))
+# orbit out5
+
+p "bleeper" $ silence
+
+-- PADSZ =======================================================================
+p "pads"
+$ sometimesBy 0.1 (|+ speed 0.2)
+$ sometimesBy 0.15 (# crush 6)
+$ sound "form-msp8:7"
+# sustain "4 3 2 1"
+-- # speed (range 0.4 0.5 (slow 64 (cosine)))
+# speed "<0.4 0.5>"
+# shape 0.3
+# pan (slow 4 $ saw)
+# hpf 800
+# gain 0.8
+# orbit out6
+
+p "pads" $ silence
+
+p "dark-synth"
+$ every 8 (const
+  $ sometimesBy 0.4 (# crush 4)
+  $ sometimesBy 0.5 (# freq 45)
+  $ sometimesBy 0.4 (# freq 65)
+  $ degradeBy 0.3
+  $ sound "[~ supersquaremsp*3]"
+  -- # n 10
+  # pitch1 2
+  # freq "55"
+  -- # cutoff "55"
+  -- # semitone 12
+  -- # lfo 1
+  # sustain (range 0.2 0.8 (slow 16 (sine)))
+  # speed (range 0.1 1.6 (slow 16 (sine)))
+  # voice (range 0.9 0.1 (slow 16 (sine)))
+  -- # decay 0.4
+  -- # accelerate 3
+  # lpf 280
+  # gain 0.8
+  # orbit out6
+  )
+$ sound "~"
+# orbit out6
+
+p "dark-synth" $ silence
+
+
+-- DINGS =======================================================================
+
+p "dinger"
+$ slow 2
+$ sometimesBy 0.4 (# freq "<5000 10000 200 100 4000 500>")
+$ sometimesBy 0.3 (# silence)
+$ every 3 (# n "14 3 3 7 3")
+-- $ every 3 (0.25 <~)
+-- $ euclid "[3 3 2 3 1 5]/6" "8"
+$ euclid "[3 3 2 3 1 5]/6" "8"
+-- $ sound "[~ ding]"
+$ sound "[ding(7,8,7)]"
+# freq "<1000 202 300 440>"
+# sustain 0.8
+# release (range 0.02 2 $ rand)
+# noiseRel (range 0.1 0.3 $ sine)
+# noiseLevel (range 0.01 0.15 $ sine)
+# shape (range 0 0.2 (slow rate (rand)))
+# pan (range 0 0.7 (slow rate (rand)))
+# lpf 500
+-- # room 0.20
+# gain 0.9
+# orbit out6
+
+p "dinger" $ silence
+
+--------------------------------------------------------------------------------
+-- RECYCLE BIN -----------------------------------------------------------------
+--------------------------------------------------------------------------------
