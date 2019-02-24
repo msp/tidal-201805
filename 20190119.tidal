@@ -1,29 +1,48 @@
-setcps (144/60/4) --2.4
+setcps (-1)
 
-rate = 128
+setcps (175/60/4) --2.4
+
+rate = 8
+
+
+p "test"
+$ sound "bd*4"
+# orbit out1
 
 -- PULSE -----------------------------------------------------------------------
 
+unmute "pulse"
+unsolo "pulse"
+
 p "pulse"
+-- once
 -- $ spin 2
--- $ spin (choose [2, 4, 8])
+$ spin (choose [2, 4, 8])
 $ degradeBy 0.1
+-- $ sometimesBy 0.05 (fast 2)
+-- $ sometimesBy 0.05 (# gain 0.9)
 -- $ sound "[super808msp*1, superclap*8]"
-$ sound "[super808msp*1, superclap*8]"
+-- $ sound "[super808msp*4, superclap*8]"
+$ sound "[super808msp*1, superclap*4]"
 -- SWEEP
-# speed (range 8 1 (slow rate (sine)))
--- # sustain (range 1 2 (slow rate (sine)))
+-- # speed (range 16 "1" (slow rate (cosine)))
+# sustain (range 1 2 (slow rate (sine)))
 # sustain (range 0.4 1 (slow rate (sine)))
 # voice (range 0.7 0 (slow rate (sine)))
-# shape (range 0 0.7 (slow rate (sine)))
+# shape (range 0 0.5 (slow rate (sine)))
+# crush (range 16 1 (slow (rate*2) (cosine)))
+# lpf (range 16000 150 (slow (rate*4) (cosine)))
+# lpq 0.1
 -- MAX MIX for test
 -- # speed 1
 -- # sustain 1
 -- # voice 0
 -- # shape 0.7
 --
+-- TECHNO
+-- # sustain 0.5 # voice 0.1 # shape 0.35
 -- SOFT
--- # speed 8 # sustain 1 # voice 0.7 # shape 0
+-- # speed 8 # sustain 0.5 # voice 0.1 # shape 0
 --
 -- HARD
 -- # speed 1 # sustain 2 # voice 0 # shape 0.7
@@ -38,14 +57,14 @@ p "pulse" $ silence
 p "main"
 -- $ spin (choose [0,2,4])
 $ degradeBy 0
-$ every 8 (0.25 <~)
-$ every 8 (# gain "0.7 0.8 0.9")
-$ sometimesBy 0.1 (fast 2)
+$ every 32 (0.25 <~)
+$ every 32 (# gain "0.7 0.8 0.9")
+-- $ sometimesBy 0.05 (fast 2)
 $ sometimesBy 0.2 (# n (irand 6))
-$ every 31 (
-  const $ sound "[bd([5 7], 8), sn([3 5], 8)]" # shape 0.6 # gain "0.82 0.8 0.7" # orbit out1
+$ every 63 (
+  const $ sound "[sn:2([5 7], 8), sn([3 5], 8)]" # shape 0.6 # gain "0.82 0.8 0.7" # orbit out1
 )
-$ every 32 (
+$ every 64 (
   const
   $ slow 2
   $ sound "[sn([7 14 7]/3, 16)]"
@@ -55,9 +74,9 @@ $ every 32 (
   # pan (choose [0, 1])
   # orbit out1
 )
-$ sound "[bd:1(3, 8, 0)]" -- change last param LIVE!
+$ sound "[bd:1( 3, 8, 0)]" -- change last param LIVE!
 # speed (range 1 1.02 $ slow 2 $ rand)
-# shape 0.6
+# shape 0.8
 # gain "0.9 0.8 0.7"
 # orbit out1
 
@@ -65,16 +84,21 @@ p "main" $ silence
 
 unsolo "main"
 
+unsolo "clicker"
+
 p "clicker" --------------------------------------------------------------------
+-- $ slow (range 1 64 $ slow 2048 $ sine)
 $ slow 4
+$ sometimesBy 0.4 (fast 2)
 $ sound
    "[click:2] [click:2] [click:2] [click:2] \
   \ [click:2] [click:2] [click:2] [click:2] \
   \ [click:2] [click:2] [click:2] [click:2] \
   \ [click:2] [click:2] [click:2] [click:2]"
 # speed (range 0.1 0.8 (slow 16 (cosine)))
+-- # speed 0.9
 # shape (range 0.9 0.2 (slow 32 (cosine)))
-# hpf 4000
+# hpf (range 1000 500 (slow 4 (saw)))
 # gain 0.9
 # pan (choose [0,1])
 # orbit out3
@@ -86,8 +110,8 @@ $ stack [
   sound "~"
   -- ,sound "[superhat ~ ~ ~]*16" # hpf (range 5000 9000 (slow 3 (sine))) #accelerate 0.2 #sustain (range 0.3 0.7 (slow 32 (sine))) # gain 0.4
   -- ,sound "[~ ~ ho ~]*4" # n (irand 10) #cut 1 #sustain 0.3 #hpf 2000 #gain 0.55
-  -- ,sound "[~ ~ lt ~ lt ht? ~ lt]*2" # n (irand 10) # shape 0.7 # gain 0.71
-  ,sound "[~ ~ ~ ~ haw:5 ~ haw:0/2 ~]*2" # shape 0.9  # hpf (range 1000 5000 (slow 3 (sine))) # gain 0.65
+  -- ,sound "[~ ~ lt ~ lt ht? ~ lt]*2" # n (irand 10) # shape 0.5 # hpf 450 # pan (choose [0.2,0.8]) # gain 0.85
+  ,sound "[~ ~ ~ ~ haw:5 ~ haw:0/2 ~]*2" # shape 0.9  # hpf (range 1000 5000 (slow 3 (sine))) # gain 0.90
   ,sound "<[psr ~]*2 ~ ~>/4" # n (irand 20) # bpf 2000 # shape 0.8 # gain 0.6
 ]
 # sustain "[1 0.1 0.3]*8"
@@ -147,7 +171,7 @@ $ sound "form-msp8:7"
 # shape 0.3
 # pan (slow 4 $ saw)
 # hpf 800
-# gain 0.85
+# gain 0.87
 # orbit out6
 
 p "pads" $ silence
@@ -155,13 +179,13 @@ p "pads" $ silence
 p "dark-synth"
 $ every 8 (const
   $ sometimesBy 0.4 (# crush 4)
-  $ sometimesBy 0.5 (# freq 45)
-  $ sometimesBy 0.4 (# freq 65)
+  $ sometimesBy 0.5 (# pF "freq" 45)
+  $ sometimesBy 0.4 (# pF "freq" 65)
   $ degradeBy 0.3
   $ sound "[~ supersquaremsp*3]"
   -- # n 10
   # pitch1 2
-  # freq "55"
+  # pF "freq" "55"
   -- # cutoff "55"
   -- # semitone 12
   -- # lfo 1
@@ -171,7 +195,7 @@ $ every 8 (const
   -- # decay 0.4
   -- # accelerate 3
   # lpf 280
-  # gain 0.8
+  # gain 0.9
   # orbit out6
   )
 $ sound "~"
@@ -184,7 +208,7 @@ p "dark-synth" $ silence
 
 p "dinger"
 $ slow 2
-$ sometimesBy 0.4 (# freq "<5000 10000 200 100 4000 500>")
+$ sometimesBy 0.4 (# pF "freq" "<5000 10000 200 100 4000 500>")
 $ sometimesBy 0.3 (# silence)
 $ every 3 (# n "14 3 3 7 3")
 -- $ every 3 (0.25 <~)
@@ -192,11 +216,11 @@ $ every 3 (# n "14 3 3 7 3")
 $ euclid "[3 3 2 3 1 5]/6" "8"
 -- $ sound "[~ ding]"
 $ sound "[ding(7,8,7)]"
-# freq "<1000 202 300 440>"
+# pF "freq" "<1000 202 300 440>"
 # sustain 0.8
 # release (range 0.02 2 $ rand)
-# noiseRel (range 0.1 0.3 $ sine)
-# noiseLevel (range 0.01 0.15 $ sine)
+# pF "noiseRel" (range 0.1 0.3 $ sine)
+# pF "noiseLevel" (range 0.01 0.15 $ sine)
 # shape (range 0 0.2 (slow rate (rand)))
 # pan (range 0 0.7 (slow rate (rand)))
 # lpf 500
@@ -214,7 +238,7 @@ $ every 8 (# release 0.5)
 $ sometimesBy 0.2 (|* pF "f1" 4)
 $ sometimesBy 0.7 (|* pF "f5" 7)
 $ sometimesBy 0.2 (|* pF "f6" 2)
-$ sound "[ding2([3 5]/3, 8, 0)]"
+$ sound "[ding2([3 5]/2, 8, 0)]"
 # pF "f1" (wchoose [(300, 0.3), (500, 1), (800, 0.4)])
 # pF "f2" "190 100 190 290"
 # pF "f3" 325
@@ -222,15 +246,16 @@ $ sound "[ding2([3 5]/3, 8, 0)]"
 # pF "f5" 625
 # pF "f6" 825
 # pF "f7" 60
-# sustain (range 1 0.3 $ slow 4 $ rand)
-# release (range 0.02 1 $ rand)
-# noiseRel (range 0.1 0.3 $ sine)
-# noiseLevel (range 0.01 0.15 $ sine)
+# sustain (range 2 0.3 $ slow 4 $ rand)
+# release (range 0.02 6 $ rand)
+# pF "noiseRel" (range 0.1 0.3 $ sine)
+# pF "noiseLevel" (range 0.01 0.15 $ sine)
 # shape (range 0 0.2 (slow rate (rand)))
 -- # pan (range 0 0.7 (slow rate (rand)))
--- # lpf 500
-# gain 0.75
-# orbit out3
+# lpf 2700
+# hpf 700
+# gain 0.60
+# orbit out6
 
 p "dinger2" $ silence
 

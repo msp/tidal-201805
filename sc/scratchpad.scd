@@ -94,6 +94,42 @@ Synth(\ding,  [
 
 Synth(\ding, [freq: [1000], out: 20])
 
+Synth(\ding2, [f1: 100, f2: 101, f3: 102, f4: 103, f5: 104, F6: 105, f7: 3006, out: 20])
+
+(
+SynthDef.new("ding2", {
+    arg out, f1=1600, f2=200, f3=177, f4=384, f5=730, f6=1255, f7=60, release=0.1, noiseRel=0.01, noiseLevel=0.7, sustain=1, pan;
+
+    var freq = [f1, f2, f3, f4, f5, f6, f7];
+
+    var osc = Mix.arFill(7, { arg i;
+        SinOsc.ar(freq[i]*15)*0.3;
+        // SinOsc.ar(freq[i])*0.3;
+    });
+    var e = EnvGen.ar(Env.perc(0.01, release), timeScale: sustain, doneAction: 2);
+
+    var noiseOsc = PinkNoise.ar();
+    var noiseEnv = EnvGen.ar(Env.perc(0.01, noiseRel))*noiseLevel;
+
+    // var resonance = 0;
+    var atk = 0.1, rel = 0.3, hold = 1.0, cutoff = 2500, resonance = 0.1;
+
+    var resonanceEnv = EnvGen.ar(Env.new([resonance, resonance, resonance, 0.9], [atk, hold, rel], curve: \sine)) ;
+
+
+    // var sig = DFM1.ar(BrownNoise.ar(1)*Decay.ar(Impulse.ar(0.01),0.1),cutoff,resonanceEnv);
+
+
+
+    var snd =  noiseOsc * noiseEnv + osc;
+    // var snd =  noiseOsc * noiseEnv + osc*e;
+
+    // snd = DFM1.ar(snd * 0.5, freq: cutoff );
+
+    // Out.ar(0,Pan2.ar(snd))
+    OffsetOut.ar(out, DirtPan.ar(snd, ~dirt.numChannels, pan, e))
+}).add;
+)
 
 // Interesting!
 (

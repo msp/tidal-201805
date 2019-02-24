@@ -7,6 +7,10 @@ setcps (144/60) --2.4
 
 setcps (155/60)
 
+d1
+$ sound "bd*4"
+
+
 -- METRO -----------------------------------------------------------------------
 d5
 $ slow 8
@@ -219,15 +223,16 @@ $ sound "[[~ form-msp8:3*2]]"
 -- # sustain "1 2 3 4"
 -- # sustain (range 0.08 0.2 $ slow 1 $ rand)
 # speed "2 1 1.5"
-|- speed "3"
--- # accelerate 0.8
+-- |- speed "3"
+# accelerate 0.2
 # shape 0.7
 # crush 4
 # pan (slow 4 $ saw)
-# hpf (range 150 500 $ slow 16 $ cosine)
--- # lpf (range 400 5000 $ slow 16 $ cosine)
--- # lpq 0.1
-# gain 0.55
+# hpf (range 300 600 $ slow 16 $ cosine)
+# lpf (range 400 5000 $ slow 16 $ cosine)
+# lpq 0.4
+# gain 0.75
+# orbit out5
 
 p "marimba-textures" $ silence
 

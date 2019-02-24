@@ -76,7 +76,7 @@ p = Pdef (
 		// \amp, Pkey(\harmonic).reciprocal * 0.4,
 		\amp, Pexprand(0.01, 0.15, inf),
 		\pan, Pwhite(-0.9, 0.9, inf),
-        \out , 18,
+        \out , 30,
 	);
 ).play;
 
