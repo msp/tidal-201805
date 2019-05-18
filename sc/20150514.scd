@@ -11,6 +11,8 @@ SynthDef(\sine, {
 }).add;
 )
 
+Synth(\sine)
+
 (
 // A vaguely 808-ish kick drum
 // "n" controls the chirp frequency, "sustain" the overall timescale, "speed" the filter sweep speed,
@@ -22,6 +24,22 @@ SynthDef(\super808msp, {|out, speed=1, sustain=1, pan, voice=0, n |
 	env = EnvGen.ar(Env.linen(0.01, 0, 1, 1, -3), timeScale:sustain, doneAction:2);
 	sound = LPF.ar(SinOscFB.ar(XLine.ar(freq.expexp(10, 2000, 1000, 8000), freq, 0.025/speed), voice), 9000);
 	OffsetOut.ar(out, DirtPan.ar(sound, ~dirt.numChannels, pan, env))
+}).add;
+
+
+SynthDef(\super808msp2, {|out, speed=1, sustain=1, pan, voice=0, att = 0.01, n |
+    var env, sound, freq, freqCurve;
+    n = ((n>0)*n) + ((n<1)*3);
+    freq = (n*10).midicps;
+    env = EnvGen.ar(Env.linen(att, 0, 1, 1, -3), timeScale:sustain, doneAction:2);
+    // sound = LPF.ar(SinOscFB.ar(XLine.ar(freq.expexp(10, 2000, 1000, 8000), freq, 0.025/speed), voice), 9000);
+
+   freqCurve = XLine.ar(freq.expexp(10, 2000, 1000, 8000), freq, 0.025/speed);
+
+    // SinOscFB.ar(freqCurve, voice),
+    sound = Mix.new([ DynKlank.ar(`[[800, 1071, 1353, 3723], nil, [0.1, 0.1, 0.1, 1]], PinkNoise.ar([0.007, 0.007])) * 0.6 ]);
+
+    OffsetOut.ar(out, DirtPan.ar(sound, ~dirt.numChannels, pan, env))
 }).add;
 
 // a moog-inspired square-wave synth; variable-width pulses with filter frequency modulated by an LFO
@@ -75,8 +93,8 @@ p = Pdef (
 		\rel, Pwhite(5.0, 10.0, inf),
 		// \amp, Pkey(\harmonic).reciprocal * 0.4,
 		\amp, Pexprand(0.01, 0.15, inf),
-		\pan, Pwhite(-0.9, 0.9, inf),
-        \out , 30,
+		\pan, Pwhite(-0.9, 0.9, inf)
+        // \out , 30,
 	);
 ).play;
 

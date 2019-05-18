@@ -1,0 +1,239 @@
+setcps (-1)
+
+setcps (175/60/4) --2.4
+
+rate = 32
+
+-- PULSE -----------------------------------------------------------------------
+
+unmute "pulse"
+unsolo "pulse"
+
+p "pulse"
+-- once
+-- $ spin (choose [2, 4, 8])
+$ degradeBy 0
+-- $ sometimesBy 0.05 (fast 2)
+-- $ sound "[super808msp*4, superclap*8]"
+$ sound "[~ super808msp2/2]"
+-- SWEEP
+# pF "att" (range 0 0.3 (slow rate $ sine))
+# speed (range 3 1 (slow rate (cosine)))
+# sustain (range 0.8 1.5 (slow rate (sine)))
+-- # sustain (range 0.6 1 (slow rate (sine)))
+# voice (range 0 0.2 (slow rate (sine)))
+# shape (range 0 0.5 (slow rate (sine)))
+# lpf (range 16000 150 (slow (rate*4) (cosine)))
+# lpq 0.1
+-- MAX MIX for test
+-- # attack 2
+-- # n (choose [2.5, 2.6, 2.7, 2.8])
+-- # speed 1
+-- # sustain 1
+-- # voice 0
+-- # shape 0.6
+# orbit out2
+
+p "pulse" $ silence
+
+-- MAIN ========================================================================
+unsolo "main"
+
+p "main"
+$ degradeBy 0
+$ sometimesBy 0.2 (# n (irand 6))
+$ sound "[bd:1([1 1 1 2]/3, 7, 0)]"
+-- $ sound "[bd:1([3 3 5 3 1]/5, 7, 0)]"
+-- $ sound "[[bd:1([3 3 5 3 1]/5, 7, 0)], hh:3(14,14)]"
+-- $ sound "[[bd:1 bd:1 bd:1 bd:1 bd:1 bd:1 ~]]"
+# speed (range 1 1.02 $ slow 2 $ rand)
+# gain "1 0.5 0.5 0.5 0.5 0.5 0.5"
+# orbit out1
+
+p "main" $ silence
+
+unsolo "main"
+
+unsolo "clicker"
+
+p "clicker" --------------------------------------------------------------------
+-- $ slow (range 1 64 $ slow 2048 $ sine)
+$ slow 1
+$ sometimesBy 0.6 (fast 2)
+$ sound "click*4"
+# n (irand 4)
+# speed (range 0.9 1.8 (slow 16 (cosine)))
+# shape (range 0.9 0.2 (slow 32 (cosine)))
+# hpf (range 1000 500 (slow 4 (saw)))
+# gain 0.9
+# pan (choose [0.3,0.7])
+# orbit out3
+
+p "clicker" silence
+
+unsolo "hatters"
+
+p "hatters" --------------------------------------------------------------------
+$ stack [
+  sound "~"
+  ,sound "superhat*8" # hpf (range 5000 9000 (slow 3 (sine))) #accelerate 0.2 #sustain (range 0.3 0.9 (slow 32 (sine))) # gain 0.98
+  ,sound "[~ ~ ho ~]*2" # n (irand 10) #cut 1 #sustain 0.3 #hpf 2000 #gain 0.5
+  ,sound "[~ ~ ~ ~ ~ haw:5 haw:0/2]*2" # speed (range 0.8 1.3 (slow 16 cosine)) # shape 0.5  # hpf (range 500 8000 (slow 3 (sine))) # gain 0.95
+  ,sound "<[psr ~]*2 ~ ~>/4" # n (irand 20) # bpf 2000 # shape 0.8 # gain 0.6
+]
+-- # n "0 5"
+-- # sustain "[1 0.1 0.3]*8"
+# sustain "[0.2 0.1 0.4]*7"
+# pan (choose [0.1,0.9])
+# orbit out4
+
+p "hatters" $ silence
+
+p "wonky-hatz"
+$ degradeBy 0.5
+$ sometimesBy 0.05 (# n (irand 6))
+$ sound "[hh:3(14,14)]"
+# speed (range 1 1.02 $ slow 2 $ rand)
+# gain "1 0.5 0.5 0.5 0.6 0.5 0.5"
+# orbit out1
+
+p "wonky-hatz" $ silenc   e
+
+
+unmute "snares"
+
+p "snares" ---------------------------------------------------------------------
+$ every 5 (const
+  $ sound "sn:4([1 1 1 1 1 1 7]/7, 7)"
+  # speed "0.5"
+  # shape 0.8
+  # crush 2
+  # gain 0.85
+  # pan (choose [0, 1])
+  # orbit out4
+)
+$ sound "~"
+# orbit out4
+
+p "snares" $ silence
+
+p "snares2"
+$ every 1 (const
+  $ degradeBy 0
+  $ sound "~ sd ~ sd"
+  # n "2 4 2 0"
+  # gain 0.85
+  # shape 0.6
+  # orbit out4
+)
+$ sound "~"
+# orbit out4
+
+
+p "snares2" $ silence
+
+p "on-the-one" ---------------------------------------------------------------------
+$ slow 6
+$ sound "~ dxkSd3 dxkSd3"
+# gain 0.8
+# orbit out3
+
+p "on-the-one" $ silence
+
+unsolo "tama"
+
+p "tama"
+$ every 3 (const
+  $ sometimesBy 0.25 (slow 4)
+  $ sometimesBy 0.35 (fast 2)
+  $ sometimesBy 0.25 (|- pF "note" 5)
+  $ sometimesBy 0.15 (|+ pF "note" 5)
+  $ degradeBy 0.2
+  $ sound "~ tama*8"
+  -- $ sound "[tama([5 1 3 2]/4, 7)]"
+  -- # pF "note" (range 65 125 (rand))
+  # pF "note" "82 105 100 120"
+  # pF "tension" 0.01
+  # pF "loss" 5
+  # pF "dur" (range 0.2 3 (slow 16 $ rand))
+  # shape "0.4 0.4 0.8 0.8"
+  -- # crush 4
+  # gain 1.1
+  # orbit out5
+)
+$ sound "~"
+# orbit out5
+
+
+p "tama" $ silence
+
+-- HYPNO =======================================================================
+p "bleeper"
+$ sound "[[bleep:7*4], bleep:13*4]"
+-- # sustain (range 0.5 0.05 (slow 64 (cosine)))
+# begin (range 0 0.8 (slow 16 (cosine)))
+# shape (range 0 0.2 (slow 64 (cosine)))
+# speed (range 0.1 1.8 (slow 32 (cosine)))
+-- # hpf 1000
+# gain 0.65
+# pan (range 0 1 (slow 2 (saw)))
+# orbit out5
+
+p "bleeper" $ silence
+
+-- PADSZ =======================================================================
+p "pads"
+$ sometimesBy 0.1 (|+ speed 0.2)
+$ sometimesBy 0.15 (# crush 6)
+$ sound "form-msp8:7"
+# sustain "4 3 2 1"
+# speed (range 0.3 2.8 (slow 16 (cosine)))
+-- # speed "<0.4 0.5>"
+# shape 0.3
+# pan (slow 4 $ saw)
+# hpf 1500
+# gain 0.80
+# orbit out6
+
+p "pads" $ silence
+
+unsolo "moogy"
+
+p "moogy"
+$ every 5 (const
+  $ sometimesBy 0.6 (# crush 4)
+  $ sometimesBy 0.3 (|+ n 1)
+  $ sometimesBy 0.2 (|- n 1)
+  $ degradeBy 0.1
+  $ sound "[~ supersquaremsp*2]"
+  # n "~ [a3, df4, f4] [b3, e4, g4]"
+  # pitch1 (range 3 1 (slow 16 (rand)))
+  # decay 0.3
+  # sustain (range 0.2 0.6 (slow 16 (rand)))
+  # speed (range 0.1 1.6 (slow 16 (sine)))
+  # voice (range 0.4 0.1 (slow 16 (cosine)))
+  -- # decay 0.4
+  -- # sustain 1.5
+  -- # resonance 0.2
+  # gain 1
+  # orbit out6
+  )
+$ sound "~"
+# orbit out6
+
+p "moogy" $ silence
+
+--------------------------------------------------------------------------------
+unsolo "tester"
+
+p "tester"
+$ sound "[~ supersquaremsp*2]"
+# n "~ [g3, df4, e4] [a5, df5, e4]"
+# orbit out6
+
+p "tester" $ silence
+
+--------------------------------------------------------------------------------
+-- RECYCLE BIN -----------------------------------------------------------------
+--------------------------------------------------------------------------------
+--
