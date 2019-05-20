@@ -1,0 +1,75 @@
+-- ANALOG4 ---------------------------------------------------------------------
+
+-- perf
+perfa = 3
+perfb = 4
+perfc = 8
+perfd = 9
+perfe = 11
+perff = 64
+perfg = 65
+perfh = 66
+perfi = 67
+perfj = 68
+-- osc
+osc1tun = 16
+osc1lev = 69
+osc1wav = 70
+osc1sub = 71
+osc1pw = 72
+osc1spd = 73
+osc1pwm = 74
+noissah = 75
+noisfad = 76
+noislev = 77
+osc2tun = 17
+osc2lev = 78
+osc2wav = 79
+osc2sub = 80
+osc2pw = 81
+osc2spd = 82
+osc2pwm = 83
+oscsnc = 84
+oscbnd = 85
+oscsli = 5
+oscspd = 87
+oscvib = 88
+-- filter
+flt1frq = 18
+flt1res = 89
+flt1dep = 102
+flt2frq = 19
+flt2res = 90
+flt2dep = 103
+-- amp
+amp_atk = 104
+amp_dec = 105
+amp_sus = 106
+amp_rel = 107
+amp_cho = 91
+amp_del = 92
+amp_rev = 93
+amp_pan = 10
+amp_vol = 7
+-- env
+envfatk = 108
+envfdec = 109
+envfsus = 110
+envfrel = 111
+envfdepa = 20
+envfdepb = 21
+env2atk = 112
+env2dec = 113
+env2sus = 114
+env2rel = 115
+env2depa = 22
+env2depb = 23
+-- lfo
+lfo1spd = 116
+lfo1mul = 117
+lfo1depa = 24
+lfo1depb = 25
+lfo2spd = 118
+lfo2mul = 119
+lfo2depa = 26
+lfo2depb = 27
