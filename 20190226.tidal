@@ -2,7 +2,7 @@ setcps (-1)
 
 setcps (175/60/4) --2.4
 
-rate = 16
+= myRate = 16
 
 -- PULSE -----------------------------------------------------------------------
 
@@ -17,13 +17,13 @@ $ degradeBy 0
 -- $ sound "[super808msp*4, superclap*8]"
 $ sound "[super808msp2]"
 -- SWEEP
--- # pF "att" (range 0 0.5 (slow rate $ sine))
-# speed (range 3 1 (slow rate (cosine)))
--- # sustain (range 0.8 1.5 (slow rate (sine)))
--- # sustain (range 0.6 1 (slow rate (sine)))
-# voice (range 0 0.5 (slow rate (sine)))
--- # shape (range 0 0.5 (slow rate (sine)))
--- # lpf (range 3000 50 (slow (rate*4) (cosine)))
+-- # pF "att" (range 0 0.5 (slow = myRate $ sine))
+# speed (range 3 1 (slow = myRate (cosine)))
+-- # sustain (range 0.8 1.5 (slow = myRate (sine)))
+-- # sustain (range 0.6 1 (slow = myRate (sine)))
+# voice (range 0 0.5 (slow = myRate (sine)))
+-- # shape (range 0 0.5 (slow = myRate (sine)))
+-- # lpf (range 3000 50 (slow (= myRate*4) (cosine)))
 -- # lpq 0.3
 -- MAX MIX for test
 -- # n (choose [2.5, 2.6, 2.7, 2.8])
@@ -223,13 +223,6 @@ $ sound "~"
 p "moogy" $ silence
 
 --------------------------------------------------------------------------------
-unsolo "tester"
-
-p "tester-for-louise"
-$ sound "arpy:5 arpy arpy:*3"
-# orbit 0
-
-p "tester" $ silence
 
 --------------------------------------------------------------------------------
 -- RECYCLE BIN -----------------------------------------------------------------

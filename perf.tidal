@@ -7,25 +7,25 @@ setcps (140/60/4)
 --
 -- When using with UCX thru Live
 --
--- out1 = 9
--- out2 = 10
--- out3 = 11
--- out4 = 12
--- out5 = 13
--- out6 = 14
--- out7 = 15
--- out8 = 16
+out1 = 9
+out2 = 10
+out3 = 11
+out4 = 12
+out5 = 13
+out6 = 14
+out7 = 15
+out8 = 16
 --
 -- When using with headphones direct out
 --
-out1 = 0
-out2 = 0
-out3 = 0
-out4 = 0
-out5 = 0
-out6 = 0
-out7 = 0
-out8 = 0
+-- out1 = 0
+-- out2 = 0
+-- out3 = 0
+-- out4 = 0
+-- out5 = 0
+-- out6 = 0
+-- out7 = 0
+-- out8 = 0
 
 -- not enough loopback channels for this!
 -- out8 = 16
@@ -50,6 +50,6 @@ nudger (-0.01)
 
 d1
 $ sound pat
-
+# orbit out1
 
 sound pat
