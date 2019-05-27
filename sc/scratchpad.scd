@@ -3,6 +3,8 @@ MIDIClient.init
 
 MIDIIn.connectAll
 
+Line.ar(0, 1, 3, doneAction:2).plot();
+
 
 SynthDef("tom", {
     arg startPitch = 6000, endPitch=60, clickLevel=0.7, pitchRel = 0.11, noiseLevel=1, noiseRel= 0.3;

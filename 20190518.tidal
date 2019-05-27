@@ -1,7 +1,6 @@
 setcps (175/60/1)
 
-setcps 2
-
+setcps 3.8
 
 p "texture"
   $ fix (# gain 0.8) (s "form-msp8")
@@ -44,24 +43,24 @@ p "texture"
 p "texture" silence
 
 
-d2
-  $ slow 2
-  -- $ every 5 (fast 2)
-  -- $ every 3 (rev)
-  $ degradeBy 0
+p "main-beat"
+  $ every 5 (slow 2)
+  $ every 7 (rev)
   $ sound (
-      mask ("1 ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~")
-      "[bd:5 ~] [bd ~]?"
+      -- mask ("1 1")
+      "bd:5 bd?"
     )
   -- # speed "0.8 1"
-  -- # distort "0.4 0"
-  # distort (range 0 0.4 $ slow 3 rand)
-  # djf (range 0 1 $ slow 1 rand)
-  -- # djf "[0.05 0.5 0.05 0.3 0.2 0.2]"
+  -- # distort "0.4 0 0 0 "
+  -- # distort (range 0 0.1 $ slow 3 rand)
+  # djf (range 0 1 $ slow 4 rand)
+  # hpf 450
   # gain 1.1
   # orbit out3
 
-d2 silence
+p "main-beat" silence
+
+unsolo "main-beat"
 
 p "four-four"
   -- $ fast 3
@@ -147,8 +146,11 @@ p "bleeper"
 p "bleeper" $ silence
 
 p "snares" ---------------------------------------------------------------------
-  $ every 32 (const
-    $ sound "sn:4([1 1 1 1 1 1 7]/7, 7)"
+  $ every 1 (const
+    -- $ sound "sn:4(<1 1 1 1 1 1 2>, 7)"
+    -- $ sound "sn(<3 1 1 1 1 1 2>, 7)"
+    $ sound "sn"
+    # n (irand 30)
     # speed "0.5"
     # shape 0.8
     -- # crush 2
@@ -161,6 +163,8 @@ p "snares" ---------------------------------------------------------------------
   # orbit out4
 
 p "snares" $ silence
+
+solo "snares"
 
 -- NASAL -----------------------------------------------------------------------
 
