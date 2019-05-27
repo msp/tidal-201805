@@ -45,9 +45,9 @@ SynthDef(\super808msp2, {|out, speed=1, sustain=1, pan, voice=0, att = 0.01, n |
 // a moog-inspired square-wave synth; variable-width pulses with filter frequency modulated by an LFO
 // "voice" controls the pulse width (exactly zero or one will make no sound)
 (
-	SynthDef(\supersquaremsp, {|out, speed=1, decay=0, sustain=1, pan, accelerate, freq,
+	SynthDef(\supersquaremsp, {|out, speed=1, decay=0, sustain=1, att=0.05, pan, accelerate, freq,
 		voice=0.5, semitone=12, resonance=0.2, lfo=1, pitch1=1|
-		var env = EnvGen.ar(Env.pairs([[0,0],[0.05,1],[0.2,1-decay],[0.95,1-decay],[1,0]], -3), timeScale:sustain, doneAction:2);
+		var env = EnvGen.ar(Env.pairs([[0.5,0],[0.05,1],[0.2,1-decay],[0.95,1-decay],[1,0]], -3), timeScale:sustain, doneAction:2);
 		var basefreq = freq* Line.kr(1, 1+accelerate, sustain);
 		var basefreq2 = basefreq / (2**(semitone/12));
 		var lfof1 = min(basefreq*10*pitch1, 22000);
