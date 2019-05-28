@@ -7,11 +7,16 @@ setcps 1.10 -- 165 bpm
 
 -- setcps 3.8
 
--- this brings us to 169 BPM
+-- this brings us to 169 BPM (at cps 0.5625)
 tempoMulti = 5
 myRate = 16
 
-p "texture"
+d1
+$ sound "bd"
+
+-- MAIN ========================================================================
+
+p "texture" --------------------------------------------------------------------
   $ fix (# gain 0.8) (s "form-msp8")
   $ fast "<1 0.1 1 0.2 2>"
   -- $ every 5 (fast 2)
@@ -42,52 +47,50 @@ p "texture"
   # speed (wchoose [(1, 4), (0.5, 2), (-1, 1)])
   # djf (range 0 1 $ slow 3 rand)
   # distort (range 0.3 0 $ slow 3 rand)
-  -- # hpf (range 200 500 $ slow 3 rand)
-  # hpf 500
+  # hpf (range 200 500 $ slow 3 rand)
+  -- # hpf 500
   -- # cps (range 0.2 2.5 $ slow 2 $ cosine)
   -- # cps (range 0.2 3.5 $ slow 1 rand)
   # gain 0.90
-  # orbit out1
+  # orbit out6
 
 p "texture" silence
 
-p "playtime"
-  $ sound "bd:15 ~ bd ~ sd:4/8"
-  -- $ sound "808bd:5 bd bd bd bd"
+p "backbone" -------------------------------------------------------------------
+  $ sound "<808bd:1 ~ bd:15 ~> ~ <bd:3> ~ <sd:4 sd:1>/8"
+  -- $ sound "<808bd:1 ~ bd:15 ~> ~ <808bd:1 bd:3 808bd:3> ~ <sd:4 sd:1>/8"
   -- # speed "0.3 1 0.3 0.1 0.7"
-  # speed "0.3 1 0.6 1 0.7"
-  # gain 0.7
-  # distort "0 0 0 0 0.2"
-  # orbit out2
+  # speed "<1 0.3> 1 <0.6> 1 <0.7 0.3>"
+  -- # speed "<1 0.3> 1 <0.6 0.8 0.6 1> 1 <0.7 0.3>"
+  # gain "0.75 0.75 0.75 0.75 0.65"
+  # distort "<0 0> 0 0 0 0.2"
+  # orbit out1-------------------------------------------------------------------
 
-unsolo "playtime"
+p "backbone" silence
 
-p "playtime" silence
+unsolo "backbone"
 
-p "main-beat"
-  -- $ fast tempoMulti
+p "fast-beat" ------------------------------------------------------------------
   $ every 5 (slow 2)
   $ every 7 (rev)
   $ sound (
       -- mask ("1 1 1 1 1 1 1 1 1 1")
       mask ("1 0 0")
       -- mask ("1 0 0 0 0 1 0 0 0")
-      -- "bd:5 bd?"
       "bd:5 bd? bd:5 bd? bd:5 bd? bd:5 bd? bd:5 bd?"
     )
-  -- # speed "0.8 1"
-  -- # distort "0.4 0 0 0 "
-  # distort (range 0 0.1 $ slow 3 rand)
+  # distort (range 0 0.15 $ slow 3 rand)
   # djf (range 0 1 $ slow 4 rand)
   # hpf 450
-  # gain 1.1
-  # orbit out3
+  # gain 1
+  # pan (choose [0.2, 0.8])
+  # orbit out2
 
-p "main-beat" silence
+p "fast-beat" silence
 
-unsolo "main-beat"
+unsolo "fast-beat"
 
-p "four-four"
+p "on-the-one" -----------------------------------------------------------------
   $ fast (tempoMulti)
   -- $ every 3 (slow 2)
   $ every 5 (rev)
@@ -95,107 +98,50 @@ p "four-four"
   $ sometimesBy 0.05 (# speed "-1")
   $ degradeBy 0.3
   $ sound (
-      mask ("1 ~ ~ 1 ~ ")
+      -- mask ("1 ~ ~ 1 ~ ")
+      mask ("1 ~ ~ ~ ~ ")
       -- "[<808bd:1 808bd:5 808bd:1*2 808sd:*2>]"
       -- "[< <808bd:1 bd:1 bd:5 bd:2 bd:4> ~ X808bd:1*1? 808sd*2?>]"
       "[< <808bd:1 mspSnare:2/4 bd:5*2? 808sd:2 bd:4> ~ 808bd:1*1? hh/5>]"
     )
-  # speed "<0.8 0.9 0.5 0.7>"
-  # sustain "[1 0.1 0.5]/3"
-  # distort (range 0 0.10 $ slow 5 cosine)
-  -- # djf (range 0.3 0.8 $ slow 3 rand)
+  -- # speed "<0.8 0.9 0.5 0.7>"
+  # sustain "[1 0.4 0.5]/3"
+  -- # distort (range 0 0.10 $ slow 5 cosine)
+  # djf (range 0.3 0.8 $ slow 3 rand)
+  -- # lpf 50
+  # orbit out1
+
+p "on-the-one" silence
+
+unsolo "on-the-one"
+
+p "clicker" --------------------------------------------------------------------
+  -- $ slow (range 1 64 $ slow 2048 $ sine)
+  $ every 5 (fast 5)
+  $ sometimesBy 0.3 (fast 2)
+  $ sound "[click]"
+  # n (irand 4)
+  # speed (range 0.9 1.8 (slow 16 (cosine)))
+  # shape (range 0.9 0.2 (slow 32 (cosine)))
+  # hpf (range 1000 500 (slow 4 (saw)))
+  # gain 0.7
+  # pan (choose [0.3,0.7])
   # orbit out2
 
-p "four-four" silence
+p "clicker" silence
 
+unsolo "clicker"
 
--- ANA4 ========================================================================
+p "clicker-4/4" ----------------------------------------------------------------
+  $ sound "[click*4]"
+  # speed (range 0.3 1.8 (slow 64 (cosine)))
+  # hpf (range 3000 1500 (slow 64 (saw)))
+  # gain 0.8
+  # orbit out2
 
-p "melodies"
-  $ fix (# gain 0.7) (s "superpiano")
-  $ every 5 (rev)
-  $ sometimesBy 0.05 (fast 2)
-  $ every 7 (slow 2)
-  $ sometimesBy 0.2 (|- n 12)
-  $ sometimesBy 0.1 (|- n 24)
-  $ slow 5
-  $ n (
-        -- mask ("1 ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 1 1 ~")
-        (
-          -- arps ting
-          -- (arp "<converge diverge>" "<a'm9'8 e'7sus4'8>")
-          -- (arp "<converge diverge>" "<a'm9'8>")
-          --
-          -- snowball ting
-          -- scale "minor"
-          snowball 8 (+) (slow 3)
-            -- $ (run "<5 3 6 2 10>")
-            -- $ scale "major" "0 .. 7"
-            $ arp "<up down diverge>" "<a'm9'8 e'7sus4'8>"
-        )
-      )
-  -- $ n "[a'm9'8]"
-  -- $ n "<c'major d'minor d'major>"
-  -- # sound "[ana4]"
-  -- # sound "[superpiano]"
-  # sound "[ana4, superpiano]"
-  # velocity (wchoose [(0.6, 0.5), (0.8, 0.75), (1, 1)])
-  # sustain (range 7 1 $ slow 128 sine)
-  # midichan "<1 2 2 2 0 2 2>"
-  -- # midichan "1"
-  # ring (range 0 0.9 $ slow 128 sine)
-  # ringf 440
-  # ringdf 10
+p "clicker-4/4" silence
 
-p "melodies" silence
-
-unsolo "melodies"
-
-p "trk3-frq"
-  $ stack [
-        ccn flt2frq
-      # ccv (range 0 127 $ slow 256 sine)
-      , ccn flt1frq
-      # ccv (range 127 70 $ slow 100 sine)
-  ]
-  # s "ana4"
-  # midichan "2"
-
-p "trk3-frq" silence
-
--- HYPNO =======================================================================
-p "bleeper"
-  $ sound "[[bleep:7*4], bleep:13*4]"
-  # sustain (range 0.5 0.05 (slow 64 (cosine)))
-  # begin (range 0 0.8 (slow 16 (cosine)))
-  # shape (range 0 0.2 (slow 64 (cosine)))
-  # speed (range 0.1 1.8 (slow 32 (cosine)))
-  # hpf 1000
-  # gain 0.75
-  # pan (range 0 1 (slow 2 (saw)))
-  # orbit out5
-
-p "bleeper" $ silence
-
-p "timer" ---------------------------------------------------------------------
-  $ sound "[bleep:14*5]"
-  -- # speed (range 5.9 4.8 (slow 64 (cosine)))
-  # speed "5 4 5 8"
-  # hpf (range 1000 500 (slow 4 (saw)))
-  # end (range 1 0.1 (slow 64 (saw)))
-  -- # pan (choose [0.3,0.7])
-  # shape 0.1
-  # ring (range 0 0.9 $ slow 10 sine)
-  # ringf 440
-  # ringdf 10
-  # gain "0.41 0.65 0.7 0.8"
-  |+ gain 0.05
-  # orbit out3
-
-p "timer" silence
-
-solo "timer"
-unsolo "timer"
+unsolo "clicker-4/4"
 
 p "snares" ---------------------------------------------------------------------
   $ every 15 (const
@@ -218,9 +164,59 @@ p "snares" $ silence
 
 unsolo "snares"
 
--- NASAL -----------------------------------------------------------------------
+-- HYPNO =======================================================================
 
-p "nasal"
+p "pitch-sweep" ----------------------------------------------------------------
+  $ sound "[bleep:14*5]"
+  # speed (range 5.9 4.8 (slow 256 (cosine)))
+  -- # speed "5 4 5 8"
+  # hpf (range 3000 500 (slow 128 (saw)))
+  # end (range 1 0.1 (slow 128 (saw)))
+  # pan (range 1 0 (slow 32 (cosine)))
+  # shape 0.1
+  # ring (range 0 0.9 $ slow 32 sine)
+  # ringf 440
+  # ringdf 10
+  # gain "0.41 0.65 0.7 0.8"
+  |+ gain 0.18
+  # orbit out3
+
+p "pitch-sweep" silence
+
+unsolo "pitch-sweep"
+
+p "metro" ----------------------------------------------------------------------
+  $ slow 8
+  $ sound "[metro:0*20]"
+  # speed "6 4 4 4 6 4 4 4 6 4 4 4 6 4 4 4 6 4 4 4"
+  |- speed 3.1
+  # end (range 0.15 0.01 $ slow 16 sine)
+  # shape 0.5
+  # ring (range 0 0.2 $ slow 32 sine)
+  # ringf 440
+  # ringdf 10
+  # gain "0.70"
+  # orbit out7
+
+p "metro" silence
+
+unsolo "metro"
+
+p "bleeper" --------------------------------------------------------------------
+  $ every 32 (slow 2)
+  $ sound "[[bleep:7*4], bleep:13*4]"
+  # sustain (range 0.5 0.05 (slow 64 (cosine)))
+  # begin (range 0 0.8 (slow 16 (cosine)))
+  # shape (range 0 0.2 (slow 64 (cosine)))
+  # speed (range 0.1 1.8 (slow 32 (cosine)))
+  # hpf 1000
+  # gain 0.75
+  # pan (range 0 1 (slow 2 (saw)))
+  # orbit out3
+
+p "bleeper" $ silence
+
+p "nasal" ----------------------------------------------------------------------
   $ every 5 (rev)
   $ sometimesBy 0.05 (fast 2)
   $ every 7 (slow 2)
@@ -253,24 +249,71 @@ p "nasal" $ silence
 
 unsolo "nasal"
 
-unsolo "clicker"
+-- ANA4 ========================================================================
 
-p "clicker" --------------------------------------------------------------------
-  -- $ slow (range 1 64 $ slow 2048 $ sine)
-  $ every 5 (fast 5)
-  $ sometimesBy 0.3 (fast 2)
-  $ sound "[click]"
-  # n (irand 4)
-  # speed (range 0.9 1.8 (slow 16 (cosine)))
-  # shape (range 0.9 0.2 (slow 32 (cosine)))
-  # hpf (range 1000 500 (slow 4 (saw)))
-  # gain 0.9
-  # pan (choose [0.3,0.7])
-  # orbit out3
+p "melodies" -------------------------------------------------------------------
+  $ fix (# gain 0.7) (s "superpiano")
+  $ every 5 (rev)
+  $ sometimesBy 0.05 (fast 2)
+  $ every 7 (slow 2)
+  $ sometimesBy 0.2 (|- n 12)
+  $ sometimesBy 0.1 (|- n 24)
+  $ slow 5
+  $ n (
+        -- mask ("1 ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 1 1 ~")
+        (
+          -- arps ting
+          (arp "<converge diverge>" "<a'm9'8 e'7sus4'8>")
+          -- (arp "<converge diverge>" "<a'm9'8>")
+          --
+          -- snowball ting
+          -- scale "minor"
+          -- snowball 8 (+) (slow 3)
+            -- $ (run "<5 3 6 2 10>")
+            -- $ scale "major" "0 .. 7"
+            -- $ arp "<up down diverge>" "<a'm9'8 e'7sus4'8>"
+        )
+      )
+  -- $ n "[a'm9'8]"
+  -- $ n "<c'major d'minor d'major>"
+  # sound "[ana4]"
+  -- # sound "[superpiano]"
+  -- # sound "[ana4, superpiano]"
+  # velocity (wchoose [(0.6, 0.5), (0.8, 0.75), (1, 1)])
+  # sustain (range 7 1 $ slow 128 sine)
+  # midichan "<1 2 2 2 0 2 2>"
+  -- # midichan "0"
+  # ring (range 0 0.9 $ slow 128 sine)
+  # ringf 440
+  # ringdf 10
 
-unsolo "clicker"
+p "melodies" silence
 
-p "clicker" silence
+unsolo "melodies"
+
+p "ana4-trk3-frq"
+  $ stack [
+        ccn flt2frq
+      # ccv (range 0 127 $ slow 16 sine)
+      , ccn flt1frq
+      # ccv (range 127 70 $ slow 32 sine)
+  ]
+  # s "ana4"
+  # midichan "2"
+
+p "ana4-trk3-frq" silence
+
+
+
+
+
+
+
+
+
+
+
+
 
 --------------------------------------------------------------------------------
 -- RECYCLE BIN -----------------------------------------------------------------
@@ -279,6 +322,8 @@ p "clicker" silence
 --
 
 :t fix
+
+:t deconstruct
 
 d1
   $ fast 2
@@ -364,7 +409,7 @@ d1
 
 
 
-deconstruct 8 "bd(<3>, 8)"
+deconstruct 24 "[<1 2 3>]"
 
 d1 $ struct ("t f t*2 f") $ sound "cp"
 
