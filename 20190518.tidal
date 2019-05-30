@@ -11,9 +11,6 @@ setcps 1.10 -- 165 bpm
 tempoMulti = 5
 myRate = 16
 
-d1
-$ sound "bd"
-
 -- MAIN ========================================================================
 
 p "texture" --------------------------------------------------------------------
@@ -37,7 +34,8 @@ p "texture" --------------------------------------------------------------------
         -- $ (run "2")
       )
     )
-  # sound "[<ana4? ~ ~ ~ ~ >, 808bd, 808bd:8, <form-msp8:3 ~ ~ ~ ~ ~ form-msp8:7 >]"
+  -- # sound "[<ana4? ~ ~ ~ ~ >, 808bd, 808bd:8, <form-msp8:3 ~ ~ ~ ~ ~ form-msp8:7 >]"
+  # sound "[<~ ~ ~ ~ ~ >, 808bd, 808bd:8, <form-msp8:3 ~ ~ ~ ~ ~ form-msp8:7 >]"
   -- # sound "[ana4]"
   -- # sound "[ana4, 808bd:1, form-msp8:2]"
   -- # sound "[form-msp8:2]"
@@ -64,7 +62,7 @@ p "backbone" -------------------------------------------------------------------
   -- # speed "<1 0.3> 1 <0.6 0.8 0.6 1> 1 <0.7 0.3>"
   # gain "0.75 0.75 0.75 0.75 0.65"
   # distort "<0 0> 0 0 0 0.2"
-  # orbit out1-------------------------------------------------------------------
+  # orbit out5
 
 p "backbone" silence
 
@@ -82,7 +80,7 @@ p "fast-beat" ------------------------------------------------------------------
   # distort (range 0 0.15 $ slow 3 rand)
   # djf (range 0 1 $ slow 4 rand)
   # hpf 450
-  # gain 1
+  # gain 0.95
   # pan (choose [0.2, 0.8])
   # orbit out2
 
@@ -98,17 +96,13 @@ p "on-the-one" -----------------------------------------------------------------
   $ sometimesBy 0.05 (# speed "-1")
   $ degradeBy 0.3
   $ sound (
-      -- mask ("1 ~ ~ 1 ~ ")
       mask ("1 ~ ~ ~ ~ ")
-      -- "[<808bd:1 808bd:5 808bd:1*2 808sd:*2>]"
-      -- "[< <808bd:1 bd:1 bd:5 bd:2 bd:4> ~ X808bd:1*1? 808sd*2?>]"
       "[< <808bd:1 mspSnare:2/4 bd:5*2? 808sd:2 bd:4> ~ 808bd:1*1? hh/5>]"
     )
   -- # speed "<0.8 0.9 0.5 0.7>"
   # sustain "[1 0.4 0.5]/3"
   -- # distort (range 0 0.10 $ slow 5 cosine)
   # djf (range 0.3 0.8 $ slow 3 rand)
-  -- # lpf 50
   # orbit out1
 
 p "on-the-one" silence
@@ -133,7 +127,7 @@ p "clicker" silence
 unsolo "clicker"
 
 p "clicker-4/4" ----------------------------------------------------------------
-  $ sound "[click*4]"
+  $ sound "[click*2]"
   # speed (range 0.3 1.8 (slow 64 (cosine)))
   # hpf (range 3000 1500 (slow 64 (saw)))
   # gain 0.8
@@ -195,8 +189,8 @@ p "metro" ----------------------------------------------------------------------
   # ring (range 0 0.2 $ slow 32 sine)
   # ringf 440
   # ringdf 10
-  # gain "0.70"
-  # orbit out7
+  # gain "0.90"
+  # orbit out4
 
 p "metro" silence
 
@@ -249,7 +243,34 @@ p "nasal" $ silence
 
 unsolo "nasal"
 
--- ANA4 ========================================================================
+-- SYNTHS / ANA4 ===============================================================
+
+p "big-sweep" ------------------------------------------------------------------
+  $ sometimesBy 0.5 (|+ n 2)
+  -- $ sometimesBy 0.05 (fast 3)
+  $ slow 5
+  $ fix (|- gain 0.15) (s "supertron")
+  $ n ("<e4 ~ f4 ~ e4 ~ a4>" |+ "<'m9'8>")
+  -- $ n "<e4'm9'8 f4'm9'8>"
+  -- $ n "<a'maj ~>"
+  -- # sound "[superpwm]"
+  -- # sound "[superpwm, supertron]"
+  # sound "[supertron]"
+  -- # sound "[superpwm, superreese]"
+  -- # djf (range 0.2 1 $ slow 5 cosine)
+  # sustain (range 2 5 $ slow 6 sine)
+  -- # sustain 2
+  # pF "att" (range 0.8 0.15 $ slow 3 cosine)
+  -- # pF "att" 0.8
+  -- # detune (range 0 0.2 $ slow 6 sine)
+  -- # hpf (range 100 1200 $ slow 6 sine)
+  # pan (range 0.2 0.8 $ slow 6 sine)
+  # gain 0.85
+  # orbit out7
+
+p "big-sweep" silence
+
+unsolo "big-sweep"
 
 p "melodies" -------------------------------------------------------------------
   $ fix (# gain 0.7) (s "superpiano")
