@@ -255,8 +255,8 @@ p "big-sweep" ------------------------------------------------------------------
   -- $ n "<a'maj ~>"
   -- # sound "[superpwm]"
   -- # sound "[superpwm, supertron]"
-  # sound "[supertron]"
-  -- # sound "[superpwm, superreese]"
+  -- # sound "[mspsupertron]"
+  # sound "[mspsuperpwm, mspsuperreese]"
   -- # djf (range 0.2 1 $ slow 5 cosine)
   # sustain (range 2 5 $ slow 6 sine)
   -- # sustain 2
