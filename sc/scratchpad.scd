@@ -6,6 +6,91 @@ MIDIIn.connectAll
 Line.ar(0, 1, 3, doneAction:2).plot();
 
 
+// synthdef.art ////////////////////////////////////////////////////////////////
+
+(
+    play {
+        l = LocalIn.ar(8);
+        o = {|i| Pulse.ar(l[i]*16 + 95, 0.9.rand) } ! 8;
+        LocalOut.ar(o.reverse.tanh);
+        w = BLowShelf.ar(_, 447, 1, _);
+        p = BPeakEQ.ar(_, 285, 1, _);
+        h = BHiShelf.ar(_, 1200, 1, _);
+        o = Splay.ar(o);
+        o = h.(w.(p.(o, 48), -48), -48);
+        o = GVerb.ar(tanh(o)).flop.mean;
+        LeakDC.ar(Limiter.ar(h.(w.(p.(o, -48), 48), 48)))
+    }
+)
+
+
+(
+    play {
+        c = LFDNoise1.ar(_,0.5,0.5);
+        o = Saw.ar(_);
+        e = SelectX;
+    x = [1,2,3,4.5].collect {|i|
+            r = i * 95;
+            e.ar(c.(1/7), [
+                e.ar(c.(1/3), o.(r*[3,2])),
+                e.ar(c.(1/5), o.(r*[9/8,4/3])),
+            ]) * LFPulse.ar([0.5,0.51]).range(0, 1).lag(0.05);
+        };
+        x = Splay.ar(x.sum);
+        x = x * 0.5 + RLPF.ar(GVerb.ar(x.sum*0.1,60,10),7e3);
+        tanh(x)
+    }
+)
+
+(
+play {
+    o = SinOsc;
+    d = Decay;
+    x = (0..2).collect {|i|
+        TDuty.ar(1/8, 0, Dseq(scramble([1, 1] ++ (0!(9+i))), inf))
+    };
+
+    k = d.ar(x[0], 2);
+    m = d.ar(x[1]);
+
+    Limiter.ar(
+        9 * [
+            o.ar(80*k).tanh * k,
+            o.ar(2*80*m).sin * m,
+            GVerb.ar(o.ar(999) * d.ar(Impulse.ar(1/8)),99,10),
+            (BPF.ar(WhiteNoise.ar(2))).sin * d.ar(x[2],0.5)
+        ].sum.sin
+    )
+}
+)
+
+(
+play {
+    t = Impulse.ar(8/[5,4]);
+    o = BPF.ar(LFNoise1.ar(1e4), 1e3, 1.2);
+    p = WhiteNoise.ar(0.4) * Env([1,0,1,0,1,0.5], [1]/100).ar(0, t);
+    o = (o + p) * Env.asr(1e-5, 1, 0.5, -10).ar(0, t);
+    y = Decay.ar(TDelay.ar(t, 1), 2);
+    o = o + GVerb.ar(o*0.5,99,9).sum + (2*SinOsc.ar(80*y,y*0.5pi,2*y).tanh) * 4;
+    HPF.ar(o.softclip, 30)
+}
+)
+
+(
+play {
+    n = 8;
+    e = Env.perc(0.001, 0.1).ar(0, Impulse.ar(1));
+    x = n.collect {|i|
+        o = e * Pulse.ar(222*4*e, e*(i+1/n/2));
+        DelayC.ar(o, 1, round(i/n ** SinOsc.ar(1/30, 0.5pi).range(0.25,1), 0.125));
+    };
+    x = x + Klank.ar(`[111*(1..n)*[1,1,9/8], 1/n!n, 0.3!n], x*0.2 + WhiteNoise.ar(0.02!n));
+    Limiter.ar(4*Splay.ar(x.sin))
+}
+)
+
+// end synthdef.art ////////////////////////////////////////////////////////////
+
 SynthDef("tom", {
     arg startPitch = 6000, endPitch=60, clickLevel=0.7, pitchRel = 0.11, noiseLevel=1, noiseRel= 0.3;
     var pitchEnv = EnvGen.ar(Env.perc(0.01, pitchRel));
