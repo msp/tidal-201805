@@ -3,7 +3,59 @@ MIDIClient.init
 
 MIDIIn.connectAll
 
-Line.ar(0, 1, 3, doneAction:2).plot();
+(
+{
+	var scale, cycle;
+	//scale = Array.fill(12,{ arg i; 60 + i }).midicps; // we fill an array with a scale
+	scale = [60, 61, 63, 64, 65, 67, 68, 69, 70].midicps; // we fill an array with a scale
+	cycle = scale.size / 2;
+
+	SinOsc.ar(
+			Select.kr(
+				LFSaw.kr(0.4, 1, cycle, cycle),
+				scale
+			)
+	);
+}.play;
+)
+
+(
+{
+var source, filter;
+var freq;
+
+freq= IEnvGen.kr(InterplEnv([60,62,63,67,70,67,70,72,48].scramble,0.125.dup(8)),Phasor.ar(LFNoise0.kr(1)>0,0.5*(1.0/SampleRate.ir),0.0,1.0).round(1/8)).midicps;
+
+source= Mix.fill(5,{|i| Saw.ar(freq*(0.25*(2**(i))+SinOsc.ar(LFNoise1.kr([0.125,0.25,0.5].choose,7,8),pi.rand,0.01)),0.2)});
+
+filter= BLowPass.ar(0.5*source,1000+(2000*EnvGen.ar(Env([0,1,0],[0.01,0.25]),Impulse.kr(2))),0.2);
+
+Limiter.ar(GVerb.ar(filter*0.25) + Pan2.ar(filter))
+ }.play
+)
+
+(
+{
+    var trig, seq, freq;
+    trig = Impulse.kr(24);
+    seq = Drand([Dseq((1..5).mirror1, 1), Drand((4..10), 8)], 2000);
+    freq = Demand.kr(trig, 0, seq * 100);
+    SinOsc.ar(freq + [0,0.7]).cubed.cubed.scaleneg(MouseX.kr(-1,1)) * 0.1;
+}.play;
+)
+
+// audio rate
+(
+{
+    var a, freq, trig;
+    a = Dseq({ 10.rand } ! 32, inf);
+    trig = Impulse.ar(MouseX.kr(1, 10000, 1));
+    freq = Demand.ar(trig, 0, a) * 30 + 340;
+    SinOsc.ar(freq) * 0.1
+
+}.play;
+
+)
 
 
 // synthdef.art ////////////////////////////////////////////////////////////////

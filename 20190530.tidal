@@ -1,22 +1,31 @@
--- Tidal default. It's 135 bpm over 4 beats 135/60/4
--- setcps 0.5625 -- 169 bpm (only when *5)
--- setcps 1 -- 150 bpm
-setcps 1.10 -- 165 bpm
--- setcps 3.8
+setcps (175/60/4)
 
 -- PULSE =======================================================================
 
-unmute "pulse"
-unsolo "pulse"
+unsolo "pulse-sub"
+
+unmute "pulse-synth"
+
+do
+  unmute "pulse-sub"
+  unmute "pulse-synth"
+
+do
+  mute "pulse-sub"
+  mute "pulse-synth"
 
 do -- PULSE --------------------------------------------------------------------
   let myRate = 32
-  let attackMod = range 1 0.2 (slow (myRate) $ sine)
-  let speedMod = (range 3 1 (slow myRate (cosine)))
-  let sustainMod = (range 0.4 0.6 (slow myRate (sine)))
+  let attackMod = range 0.5 0.2 (slow (myRate) $ sine)
+  let speedMod = (range 4 0.65 (slow myRate (cosine)))
+  let sustainMod = (range 1.2 0.4 (slow myRate (sine)))
+  -- let sustainMod = (range 1.8 0.4 (slow myRate (sine)))
+  -- let sustainMod = (range 4 3 (slow myRate (sine)))
+  let slowMod = 2
+  -- let slowMod = 8
   --
   p "pulse-sub"
-    -- $ spin (choose [2, 4, 8])
+    $ slow (slowMod/1)
     $ sound "[msp808]"
     -- SWEEP
     # pF "att" attackMod
@@ -24,32 +33,30 @@ do -- PULSE --------------------------------------------------------------------
     # sustain sustainMod
     # voice (range 0.6 0.3 (slow myRate (sine)))
     # shape (range 0.05 0.5 (slow (myRate) (sine)))
-    -- # lpf (range 3000 50 (slow (myRate*4) (cosine)))
+    # lpf (range 3000 50 (slow (myRate*4) (cosine)))
     -- # lpq 0.3
     -- MAX MIX for test
-    -- # speed 1
+    -- # speed 0.5
     -- # sustain 1
     -- # voice 1
     -- # shape 0.6
     -- # resonance 0.5
-    # gain 0.9
+    # gain 0.8
     # orbit out2
   p "pulse-synth"
-    $ fast 1
+    $ slow slowMod
     -- $ struct "1 0 0 1 0"
     $ sometimesBy 0.1 (|+ n 2)
     $ sound "[mspsuperpwm]"
     -- *| n ("<g3 f4? [~ g3]? a4>" |+ "<'m9'6>")
     *| n ("<g3 f4 [g3] a4>" |+ "<'m9'6>")
     # pF "att" attackMod
-    -- # speed speedMod
     # sustain sustainMod
-    # voice (range 0 0.5 (slow myRate (sine)))
+    # voice (range 0.2 0.5 (slow myRate (sine)))
     # distort (range 0.05 0.1 (slow (myRate) (sine)))
-    -- # lpf (range 3000 450 (slow (myRate) (cosine)))
     # resonance 0.05
     # lfo 0.2
-    -- # rate 1
+    # rate 0.1
     -- # pitch1 9
     -- # semitone 16
     # gain 0.9
@@ -91,35 +98,73 @@ p "clicker" --------------------------------------------------------------------
 
 p "clicker" silence
 
-p "metro" --------------------------------------------------------------------
+p "metro" ----------------------------------------------------------------------
   $ sound "e*4"
   # n (irand 8)
   # hpf (range 1000 5000 (slow 3 (rand)))
   # sustain "[0.2 0.1 0.4]*7"
   # orbit out4
-  # gain (range 1 0.5 (slow (myRate*2) (sine)))
+  # gain (range 0.6 0.4 (slow (myRate*2) (sine)))
 
 p "metro" $ silence
 
 unsolo "metro"
 
-p "hatters" --------------------------------------------------------------------
+p "hat-fx" --------------------------------------------------------------------
   $ stack [
     sound "~"
+    -- ,sound "superhat*8" # hpf (range 5000 9000 (slow 3 (sine))) #accelerate 0.2 #sustain (range 0.4 0.1 (slow 32 (rand))) # gain 0.55
     ,sound "[haw:5 ~ ~ ~ ~ ~ haw:3/2 ~ ~]*2"
       # speed (range 0.8 1.3 (slow 16 cosine))
       # distort 0.8
       # hpf (range 200 2000 (slow 3 (sine)))
-      # gain (range 0.75 0.5 (slow (myRate*2) (sine)))
-    -- ,sound "<[psr ~]*2 ~ ~>/4" # n (irand 20) # bpf 2000 # shape 0.8 # gain 0.6
+      # gain (range 0.50 0.3 (slow (myRate*2) (sine)))
+    ,sound "<[<psr rave> ~]*2 ~ ~>/1" # n (irand 20) # bpf 2000 # shape 0.8 # speed 0.5 # gain 0.45
   ]
   # sustain "[0.2 0.1 0.4]*7"
   # pan (choose [0.1,0.9])
   # orbit out4
 
-p "hatters" $ silence
+p "hat-fx" $ silence
 
-unsolo "hatters"
+unsolo "hat-fx"
+
+p "hat-175" --------------------------------------------------------------------
+  $ sound "superhat*8"
+  # hpf (range 5000 9000 (slow 3 (sine)))
+  # accelerate 0.2
+  # sustain (range 0.4 0.1 (slow 32 (rand)))
+  -- # sustain "[0.2 0.1 0.4]*7"
+  # pan (choose [0.1,0.9])
+  # gain 0.55
+  # orbit out4
+
+p "hat-175" $ silence
+
+unsolo "hat-175"
+
+p "snares" ---------------------------------------------------------------------
+  $ sometimesBy 0.2 (fast 2)
+  $ every 3 (const
+  -- $ every 1 (const
+    $ sound "mspdxkSd3(<3 3 1 3 5 0 8>, 8 , <0 0 3 0>)"
+    -- $ sound "mspdxkSd3*8"
+    # shape 0.6
+    # pF "basefreq" 150
+    # pF "len" (range 0.3 0.2 $ slow 4 $ rand)
+    # pF "tone" (range 0.1 3 $ slow 16 $ cosine)
+    # pF "rq" (range 0.05 0.3 $ slow myRate $ cosine)
+    # gain "0.3 0.6 0.7"
+    |- gain 0.13
+    -- # pan (slow 3 $ rand) -- why does this not pan?!
+    # orbit out4
+  )
+  $ sound "~"
+  # orbit out4
+
+p "snares" $ silence
+
+unsolo "snares"
 
 -- HYPNO =======================================================================
 
