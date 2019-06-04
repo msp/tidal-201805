@@ -16,13 +16,16 @@ do
 
 do -- PULSE --------------------------------------------------------------------
   let myRate = 32
-  let attackMod = range 0.5 0.2 (slow (myRate) $ sine)
-  let speedMod = (range 4 0.65 (slow myRate (cosine)))
+  -- let attackMod = range 0.5 0.2 (slow (myRate) $ rand)
+  let attackMod = range 0.9 0.2 (slow (myRate) $ rand)
+  let speedMod = (range 4 0.65 (slow myRate (rand)))
   let sustainMod = (range 1.2 0.4 (slow myRate (sine)))
   -- let sustainMod = (range 1.8 0.4 (slow myRate (sine)))
-  -- let sustainMod = (range 4 3 (slow myRate (sine)))
-  let slowMod = 2
-  -- let slowMod = 8
+  -- let sustainMod = (range 4 0.4 (slow myRate (rand)))
+  -- let sustainMod = (range 0.05 0.1 (slow myRate (rand)))
+  -- let slowMod = 0.25
+  let slowMod = 4
+  let subMulti = 0.5
   --
   p "pulse-sub"
     $ slow (slowMod/1)
@@ -30,7 +33,7 @@ do -- PULSE --------------------------------------------------------------------
     -- SWEEP
     # pF "att" attackMod
     # speed speedMod
-    # sustain sustainMod
+    # sustain (sustainMod * subMulti)
     # voice (range 0.6 0.3 (slow myRate (sine)))
     # shape (range 0.05 0.5 (slow (myRate) (sine)))
     # lpf (range 3000 50 (slow (myRate*4) (cosine)))
@@ -45,22 +48,26 @@ do -- PULSE --------------------------------------------------------------------
     # orbit out2
   p "pulse-synth"
     $ slow slowMod
-    -- $ struct "1 0 0 1 0"
+    -- $ struct "1 0 1 1"
     $ sometimesBy 0.1 (|+ n 2)
+    $ sometimesBy 0.1 (rev)
     $ sound "[mspsuperpwm]"
     -- *| n ("<g3 f4? [~ g3]? a4>" |+ "<'m9'6>")
     *| n ("<g3 f4 [g3] a4>" |+ "<'m9'6>")
+    -- *| n ("<g3 f4 [~ g3] a4>" |+ "<'m9'6>")
+    -- *| n (scale "chromatic" "<g3 f4 [~ g3] a4>" |+ "<'m9'6>") --default scale
+    -- *| n (scale "egyptian" ("<g3 f4 [~ g3] a4>" |+ "<'m9'6>"))
     # pF "att" attackMod
     # sustain sustainMod
     # voice (range 0.2 0.5 (slow myRate (sine)))
     # distort (range 0.05 0.1 (slow (myRate) (sine)))
     # resonance 0.05
-    # lfo 0.2
-    # rate 0.1
+    # lfo (range 0.2 1 (slow (myRate) (sine)))
+    # rate (range 1 0.1 (slow (myRate) (sine)))
     -- # pitch1 9
     -- # semitone 16
     # gain 0.9
-    # orbit out5
+      # orbit out5
 
 p "pulse-sub" $ silence
 
@@ -97,6 +104,8 @@ p "clicker" --------------------------------------------------------------------
   # orbit out3
 
 p "clicker" silence
+
+unsolo "clicker"
 
 p "metro" ----------------------------------------------------------------------
   $ sound "e*4"
@@ -145,9 +154,14 @@ unsolo "hat-175"
 
 p "snares" ---------------------------------------------------------------------
   $ sometimesBy 0.2 (fast 2)
+  -- $ sometimesBy 0.05 (fast 3)
   $ every 3 (const
   -- $ every 1 (const
+  -- $ degradeBy 0
+  -- $ degradeBy 0.2
+  -- $ every 1 (const
     $ sound "mspdxkSd3(<3 3 1 3 5 0 8>, 8 , <0 0 3 0>)"
+    -- $ sound "mspdxkSd3(<8 8 1 3 5 0 8>, 8 , <0 0 3 0>)"
     -- $ sound "mspdxkSd3*8"
     # shape 0.6
     # pF "basefreq" 150
@@ -167,6 +181,34 @@ p "snares" $ silence
 unsolo "snares"
 
 -- HYPNO =======================================================================
+
+p "scales"
+  $ every 1 (const
+    $ slow 2
+    $ every 15 (rev)
+    -- $ n (scale "dorian" "0..12")
+    -- 5 note maj pentatonics
+    -- $ n (scale "egyptian" "0..12")
+    $ n (scale "ritusen" "0..12") -- 5 note maj pentatonic
+    -- $ n (scale "majPent" "0..12") -- 5 note maj pentatonic
+    -- END 5 note maj pentatonics
+    -- $ n (scale "chromatic" "0..12")
+    # sound "<wob>"
+    # sustain (range 0.7 3 $ slow 12 $ cosine)
+    -- # sustain 0.3
+    # djf (range 1 0 $ fast 4 $ rand)
+    # speed (range 1 0.99 $ fast 48 $ cosine)
+    # octave 6
+    # gain "0.7 0.6"
+    # orbit out6
+  )
+  $ sound "~"
+  # orbit out6
+
+p "scales" silence
+
+unsolo "scales"
+
 
 -- SYNTHS / ANA4 ===============================================================
 
@@ -274,17 +316,5 @@ d3
   # midichan "2"
   -- # cps (range 0.2 1.5 $ slow 10 cosine)
 
-
-d1
-  $ slow 4
-  $ every 15 (rev)
-  $ n (scale "dorian" "0..12")
-  # sound "<wob>"
-  # sustain (range 0.7 2 $ slow 12 $ cosine)
-  -- # sustain 0.3
-  # djf (range 1 0 $ fast 4 $ rand)
-  # speed (range 1 0.99 $ fast 48 $ cosine)
-  -- # octave 6
-  # gain "1 0.6"
-
 deconstruct 24 "[<1 2 3>]"
+--

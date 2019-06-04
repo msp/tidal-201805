@@ -44,6 +44,48 @@ SynthDef(\msp808, {|out, speed=1, sustain=1, pan, voice=0, att = 0.01, n |
 );
 
 
+//adapted+modified from snare2.pd pure data patch by user ichabod of pdpatchrepo
+SynthDef(\mspdxkSd3, {|t_trig = 1, basefreq = 150, att = 0.001, len = 0.3, lopfreq = 1200, rq = 0.3, tone = 0.7, snare = 0.5, amp = 1, pan = 0, out = 0, env|
+	var freqs, rqs, bpmuls, fenv, drumhead, snares, noise, nmul, lonoise, hinoise, output, nenv, rand,  lofreq, hifreq, loenv, hienv, lomul;
+
+	//random number
+	rand = TIRand.kr(0,101, t_trig);
+
+	freqs = basefreq * [1, 2.03, 3.26, 4.6];
+	rqs = rq * [1/2, 1, 1/2, 1/2];
+	bpmuls = 3 * [8.333, 10, 5, 1];
+	fenv = EnvGen.ar(Env.perc(att, len), t_trig, doneAction: 2);
+	noise = WhiteNoise.ar(1.4)+1.4;
+	noise = Select.ar(noise, [DC.ar(-1), DC.ar(0), DC.ar(1)]);
+	nmul = rand/800.0 + 0.875;
+	nenv = EnvGen.ar(Env.perc(att, len*0.46, nmul), t_trig);
+	noise = noise * nenv;
+
+	//drum head formants
+	drumhead = Resonz.ar(LPF.ar(noise, lopfreq), freqs, rqs, bpmuls);
+	drumhead = drumhead * tone;
+
+	//snares
+	lofreq = rand + 900;
+	hifreq = lofreq* 0.95;
+	lonoise = LPF.ar(noise, lofreq);
+	lomul = (rand/500.0) + 0.4;
+	loenv = EnvGen.ar(Env.perc(att, len*0.66,lomul), t_trig);
+	lonoise = lonoise * loenv;
+	hinoise = HPF.ar(noise, hifreq);
+	hienv = EnvGen.ar(Env.perc(att, len*0.466), t_trig);
+	hinoise = hinoise * hienv;
+	snares = lonoise + hinoise;
+	snares = snares * snare;
+	output = drumhead + snares;
+	output = Pan2.ar(output, pan);
+    // Out.ar(out, output);
+
+    OffsetOut.ar(out, DirtPan.ar(output, ~dirt.numChannels, pan))
+}).add;
+
+
+
 SynthDef(\mspsawpluck, {
     |out, sustain = 1, freq = 440, speed = 1, begin=0, end=1, pan, accelerate, offset|
     var line = Line.ar(begin, end, sustain, doneAction:2);
