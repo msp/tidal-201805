@@ -84,6 +84,22 @@ SynthDef(\mspdxkSd3, {|t_trig = 1, basefreq = 150, att = 0.001, len = 0.3, lopfr
     OffsetOut.ar(out, DirtPan.ar(output, ~dirt.numChannels, pan))
 }).add;
 
+// feedback PWM
+// can use "accelerate" "voice" and "detune" parameters
+// try `d1 $ s "supertron" # octave 3 # accelerate "0.2"`
+(
+SynthDef(\mspsupertron, {|out, pan, freq, sustain, voice, detune, accelerate, att = 0.05|
+	var sound, aenv, s1, s2;
+	aenv = EnvGen.ar(Env.linen(att, 0.85, 0.1, 1, 'lin'), timeScale:sustain, doneAction:2);
+	freq = freq * XLine.ar(1, exp(accelerate), sustain);
+	sound = LocalIn.ar(1);
+    sound = Mix.ar( Pulse.ar(freq+[1+detune,-1-detune], RLPF.ar(sound, freq/6.1, 1.5).range(0,1-(voice/1.5))) );
+    // sound = Mix.ar( Pulse.ar(freq+[1+detune,-1-detune], RHPF.ar(sound, 20000, 1.5) ) );
+	sound = LeakDC.ar(sound);
+	LocalOut.ar(sound);
+	OffsetOut.ar(out, DirtPan.ar(sound, ~dirt.numChannels, pan, aenv))
+}).add;
+);
 
 
 SynthDef(\mspsawpluck, {
@@ -107,16 +123,28 @@ SynthDef(\mspvibsawpluck, {
 
 
 SynthDef(\mspplucklead, {
-    |out, sustain = 1, freq = 440, speed = 1, begin=0, end=1, pan, accelerate, offset|
+    |out, sustain = 1, freq = 440, speed = 1, begin=0, end=1, pan, offset|
+
     var line = Line.ar(begin, end, sustain, doneAction:2);
     var env = Env([0, 1, 0.333, 0],[5, 70, 1000]);
+    // var env = Env([0, 1, 0.333, 0],[0, 10, 100]);
     var envGen = IEnvGen.ar(env, line*env.times.sum*abs(speed));
+
     var speedFreq = freq*abs(speed);
     var pulseLfo = SinOsc.ar(Rand(-1,1));
-    var sound = RLPF.ar(Pulse.ar([speedFreq*Rand(0.99,1.01)*2,speedFreq*Rand(0.99,1.01)*2],pulseLfo)*0.5+Saw.ar(speedFreq), (20000*(envGen**2.8))+DC.ar(10), 0.5);
+
+    var sound = LFPulse.ar([speedFreq*Rand(0.99,1.01)*2,speedFreq*Rand(0.99,1.01)*2],pulseLfo);
+
+    // sound = sound*0.5+LFPulse.ar(speedFreq*2);
+
+//    sound = RLPF.ar(sound, (20000*(envGen**2.8))+DC.ar(10), 0.5);
+    sound = RLPF.ar(sound, (2500*(envGen**4.8))+DC.ar(10), 0.2);
+
     Out.ar(out, DirtPan.ar(sound, ~dirt.numChannels, pan, envGen));
 }).add;
 
 )
+
+Line.ar(0, 1, 1, doneAction:2).plot
 
 Env([0, 1, 0.333, 0],[500, 700, 1000]).plot

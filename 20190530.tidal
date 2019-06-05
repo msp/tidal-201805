@@ -6,18 +6,10 @@ unsolo "pulse-sub"
 
 unmute "pulse-synth"
 
-do
-  unmute "pulse-sub"
-  unmute "pulse-synth"
-
-do
-  mute "pulse-sub"
-  mute "pulse-synth"
-
-do -- PULSE --------------------------------------------------------------------
+do -- pulse --------------------------------------------------------------------
   let myRate = 32
-  -- let attackMod = range 0.5 0.2 (slow (myRate) $ rand)
-  let attackMod = range 0.9 0.2 (slow (myRate) $ rand)
+  let attackMod = range 0.5 0.2 (slow (myRate) $ rand)
+  -- let attackMod = range 0.9 0.2 (slow (myRate) $ rand)
   let speedMod = (range 4 0.65 (slow myRate (rand)))
   let sustainMod = (range 1.2 0.4 (slow myRate (sine)))
   -- let sustainMod = (range 1.8 0.4 (slow myRate (sine)))
@@ -67,14 +59,13 @@ do -- PULSE --------------------------------------------------------------------
     -- # pitch1 9
     -- # semitone 16
     # gain 0.9
-      # orbit out5
+    # orbit out5
 
 p "pulse-sub" $ silence
 
 p "pulse-synth" $ silence
 
 -- MAIN ========================================================================
-unsolo "main"
 
 p "main" -----------------------------------------------------------------------
   $ degradeBy 0
@@ -119,7 +110,7 @@ p "metro" $ silence
 
 unsolo "metro"
 
-p "hat-fx" --------------------------------------------------------------------
+p "hat-fx" ---------------------------------------------------------------------
   $ stack [
     sound "~"
     -- ,sound "superhat*8" # hpf (range 5000 9000 (slow 3 (sine))) #accelerate 0.2 #sustain (range 0.4 0.1 (slow 32 (rand))) # gain 0.55
@@ -145,7 +136,7 @@ p "hat-175" --------------------------------------------------------------------
   # sustain (range 0.4 0.1 (slow 32 (rand)))
   -- # sustain "[0.2 0.1 0.4]*7"
   # pan (choose [0.1,0.9])
-  # gain 0.55
+  # gain 0.45
   # orbit out4
 
 p "hat-175" $ silence
@@ -180,9 +171,66 @@ p "snares" $ silence
 
 unsolo "snares"
 
+p "stabs" ----------------------------------------------------------------------
+  $ sometimesBy 0.1 (|+ n 2)
+  $ sometimesBy 0.05 (|- n 1)
+  $ every 7 (|+ sustain "1 0.5 0.6")
+  $ every 7 (0.25 <~)
+  -- $ struct "1 0 <1 0 1> 1/2 1 1 <1 0> <1 [1 1] 0>"
+  $ struct "t(<3 1 3 1 5 1 2 3>, 8, <0 0 0 2 0 0 0 3>)"
+  -- $ struct "t(3,8)"
+  $ sound "[mspsupertron]"
+  -- $ sound "[superpwm]"
+  *| n (scale "chromatic" "<[~ g3] [~ f4] [~ g3] a4>" |+ "<'m9'8>")
+  # pF "att" (attackMod / 2)
+  # sustain (sustainMod / 1.5)
+  # voice (range 1 0 (slow myRate (rand)))
+  # detune (range 0 3 (slow (myRate) (cosine)))
+  # djf (range 0.55 0.8 (slow 4 rand))
+  # octave 6
+  # room 0.2
+  # size 0.8
+  # gain 0.53
+  # orbit out7
+
+p "stabs" $ silence
+
+unsolo "stabs"
+
+p "sq-bass" --------------------------------------------------------------------
+  $ sometimesBy 0.08 (fast 2)
+  $ sometimesBy 0.05 (slow 3)
+  $ sometimesBy 0.05 (# speed (- 0.25))
+  $ sometimesBy 0.02 (# speed (- 0.5))
+  $ sometimesBy 0.1 (|+ n 2)
+  $ every 15 (|+ sustain "2 1 1.5")
+  $ every 5 (# begin "0.02 0 0.01")
+  $ every 3 (0.25 <~)
+  $ sometimesBy 0.1 (rev)
+  -- $ struct "t(<3 0 0 0 3 0 0 2>, 8, <0 0 0 2 0 0 0 3>)"
+  -- $ struct "t(<3 <2 0> 3 <0 3> 1 3 2 3>, 8, <0 0 0 2 0 0 0 3>)"
+  $ struct "t(<3 <2 4> 3 <5 3> 3 5 2 3>, 8, <0 0 0 2 0 0 0 3>)"
+  -- $ struct "t(4,8)"
+  -- $ struct "1 1 1 1"
+  $ sound "[mspplucklead]"
+  *| n (scale "chromatic" "<g2 f3 [~ g2] a3>")
+  -- *| n (scale "chromatic" "<g2 f3 g2 a3>")
+  # speed (0.5)
+  -- # sustain (sustainMod * 1.8)
+  # sustain (range 1 0.5 (slow myRate (rand)))
+  # begin (range 0 0.03 (slow 16 (rand)))
+  -- # djf (range 0.4 1 $ slow 7 rand)
+  # gain 0.95
+  # orbit out7
+
+p "sq-bass" $ silence
+
+solo "sq-bass"
+
+
 -- HYPNO =======================================================================
 
-p "scales"
+p "scales" ---------------------------------------------------------------------
   $ every 1 (const
     $ slow 2
     $ every 15 (rev)
@@ -203,7 +251,7 @@ p "scales"
     # orbit out6
   )
   $ sound "~"
-  # orbit out6
+    # orbit out6
 
 p "scales" silence
 
