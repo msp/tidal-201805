@@ -69,9 +69,13 @@ p "pulse-synth" $ silence
 
 p "main" -----------------------------------------------------------------------
   $ degradeBy 0
+  -- $ skip
+  -- $ skip
+  -- $ skip
+  -- $ skip
   $ sometimesBy 0.2 (# n (irand 6))
   $ sound "[bd:1(<3 3 3 3 3 3 3 2>, 8, <0 0 0 2 0 0 0 3>)]"
-  -- $ sound "[bd:1(3, 8, 0)]"
+  -- $ sound "[bd:1(<2 4 2 4 3>, 8, 0)]" -- use with 0 or 2 skips!
   # speed (range 1 0.8 $ slow 2 $ rand)
   # distort (range 0 0.1 $ slow 3 $ cosine)
   # gain "1 0.9 0.9 0.7 0.5 0.5 0.5"
@@ -146,11 +150,11 @@ unsolo "hat-175"
 p "snares" ---------------------------------------------------------------------
   $ sometimesBy 0.2 (fast 2)
   -- $ sometimesBy 0.05 (fast 3)
+  -- $ every 3 (const
   $ every 3 (const
   -- $ every 1 (const
   -- $ degradeBy 0
   -- $ degradeBy 0.2
-  -- $ every 1 (const
     $ sound "mspdxkSd3(<3 3 1 3 5 0 8>, 8 , <0 0 3 0>)"
     -- $ sound "mspdxkSd3(<8 8 1 3 5 0 8>, 8 , <0 0 3 0>)"
     -- $ sound "mspdxkSd3*8"
@@ -172,6 +176,9 @@ p "snares" $ silence
 unsolo "snares"
 
 p "stabs" ----------------------------------------------------------------------
+  -- $ skip
+  -- $ skip
+  -- $ skip
   $ sometimesBy 0.1 (|+ n 2)
   $ sometimesBy 0.05 (|- n 1)
   $ every 7 (|+ sustain "1 0.5 0.6")
@@ -180,18 +187,18 @@ p "stabs" ----------------------------------------------------------------------
   $ struct "t(<3 1 3 1 5 1 2 3>, 8, <0 0 0 2 0 0 0 3>)"
   -- $ struct "t(3,8)"
   $ sound "[mspsupertron]"
-  -- $ sound "[superpwm]"
   *| n (scale "chromatic" "<[~ g3] [~ f4] [~ g3] a4>" |+ "<'m9'8>")
-  # pF "att" (attackMod / 2)
-  # sustain (sustainMod / 1.5)
+  -- # pF "att" (attackMod * 2)
+  # pF "att" 0.8
+  -- # sustain (sustainMod)
+  # sustain 2
+  # release 1
   # voice (range 1 0 (slow myRate (rand)))
   # detune (range 0 3 (slow (myRate) (cosine)))
-  # djf (range 0.55 0.8 (slow 4 rand))
+  # djf (range 0.75 0.8 (slow 4 rand))
   # octave 6
-  # room 0.2
-  # size 0.8
-  # gain 0.53
-  # orbit out7
+  # gain 1.0
+  -- # orbit out7
 
 p "stabs" $ silence
 
@@ -207,25 +214,19 @@ p "sq-bass" --------------------------------------------------------------------
   $ every 5 (# begin "0.02 0 0.01")
   $ every 3 (0.25 <~)
   $ sometimesBy 0.1 (rev)
-  -- $ struct "t(<3 0 0 0 3 0 0 2>, 8, <0 0 0 2 0 0 0 3>)"
-  -- $ struct "t(<3 <2 0> 3 <0 3> 1 3 2 3>, 8, <0 0 0 2 0 0 0 3>)"
   $ struct "t(<3 <2 4> 3 <5 3> 3 5 2 3>, 8, <0 0 0 2 0 0 0 3>)"
-  -- $ struct "t(4,8)"
-  -- $ struct "1 1 1 1"
+  -- $ struct "t(<3 2 4>, 8)"
   $ sound "[mspplucklead]"
   *| n (scale "chromatic" "<g2 f3 [~ g2] a3>")
-  -- *| n (scale "chromatic" "<g2 f3 g2 a3>")
   # speed (0.5)
-  -- # sustain (sustainMod * 1.8)
   # sustain (range 1 0.5 (slow myRate (rand)))
   # begin (range 0 0.03 (slow 16 (rand)))
-  -- # djf (range 0.4 1 $ slow 7 rand)
   # gain 0.95
   # orbit out7
 
 p "sq-bass" $ silence
 
-solo "sq-bass"
+unsolo "sq-bass"
 
 
 -- HYPNO =======================================================================
@@ -241,7 +242,7 @@ p "scales" ---------------------------------------------------------------------
     -- $ n (scale "majPent" "0..12") -- 5 note maj pentatonic
     -- END 5 note maj pentatonics
     -- $ n (scale "chromatic" "0..12")
-    # sound "<wob>"
+    # sound "<mspwob>"
     # sustain (range 0.7 3 $ slow 12 $ cosine)
     -- # sustain 0.3
     # djf (range 1 0 $ fast 4 $ rand)
@@ -265,6 +266,18 @@ unsolo "scales"
 --------------------------------------------------------------------------------
 --
 --
+
+
+
+
+
+
+
+
+
+
+
+
 
 d1
 $ sound "odx"
