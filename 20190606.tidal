@@ -7,7 +7,7 @@ unsolo "pulse-sub"
 unmute "pulse-synth"
 
 do -- pulse --------------------------------------------------------------------
-  let myRate = 16
+  let myRate = 32
   let attackMod = range 0.5 0.01 (slow (myRate) $ rand)
   -- let attackMod = range 0.9 0.2 (slow (myRate) $ rand)
   let speedMod = (range 4 0.65 (slow myRate (rand)))
@@ -37,36 +37,43 @@ do -- pulse --------------------------------------------------------------------
     $ skip
     $ skip
     $ slow slowMod
-    $ every 4 (fast 4) $ struct "[1 1]"
-    -- $ struct "[1 1]*4"
+    $ every 30 (fast 2)
+    $ every 3 (skip)
+    -- $ every 16 (fast 4) $ struct "[1 1 1 1]"
+    $ struct "1 1? 1 1? [1] 1? 1 1?" --175
+    -- $ struct "1 1"
     $ sometimesBy 0.05 (|- n 4)
     $ sometimesBy 0.06 (|- n 2)
     $ sometimesBy 0.05 (rev)
     $ sound "mspsupergong"
-    *| n ("f3 d5" |+ "'minor")
+    *| n ("f3 d5 <f3 ff3> d5 f3 ef5 f3" |+ "'minor")
     # pF "att" (attackMod / 2)
     -- # sustain (1 / sustainMod)
-    # sustain "0.2 <0.1*3 <0.5 0.3 0.5>>"
+    # djf (range 1 0 $ fast 16 $ rand)
+    # sustain "0.25 <0.2*3 <0.5 0.3 0.5>>"
     # decay sustainMod
     -- # distort 0.8
-    -- # distort (range 0.05 0.1 (slow (myRate) (sine)))
+    -- # distort (range 0.05 0.2 (slow (myRate/3) (cosine)))
     # gain 0.9
     # orbit out5
 
-p "pulse-sub" $ silence
 
+p "pulse-sub" $ silence
 p "pulse-synth" $ silence
 
-d1 silence
+unsolo "pulse-synth"
 
 -- MAIN ========================================================================
 
 p "main" -----------------------------------------------------------------------
+  $ skip
+  -- $ every 15 (skip)
   $ degradeBy 0
   $ sometimesBy 0.2 (# n (irand 6))
-  -- $ sound "[bd:1(<3 3 3 3 3 3 3 2>, 8, <0 0 0 2 0 0 0 3>)]"
-  $ sound "[bd(<2 3 2>, 8, <0 0 0 2 0 0 0 3>)]"
-  -- $ sound "[bd:1(<2 4 2 4 3>, 8, 0)]" -- use with 0 or 2 skips!
+  -- $ sound "[bd(<2 3 2>, 8, <0 0 0 2 0 0 0 3>)]" -- main (old)
+  $ sound "[bd(<2 1 3>, 8)]"  -- 175 (minus skip)
+  -- $ sound "[bd(<2 1 2>, 8)]"  -- 175 on the one (minus skip)
+  -- $ sound "[bd(<2 3 2>, 8, <2>)]" -- main (intro 175)
   # speed (range 0.8 1 $ slow 2 $ rand)
   # distort (range 0 0.05 $ slow 3 $ cosine)
   # gain "1 0.9 0.9 0.7 0.5 0.5 0.5"
@@ -124,39 +131,51 @@ unsolo "hat-half"
 
 p "hat-fast" -------------------------------------------------------------------
   $ sound "mspsuperhat*8"
-  -- # hpf (range 5000 9000 (slow 3 (sine)))
+  -- # bpf (range 4500 2000 (slow 3 (sine))) # bpq 0.1
+  # hpf (range 4500 9000 (slow 3 (sine)))
   # accelerate 0.2
-  # sustain (range 0.15 0.1 (slow 32 (rand)))
+  -- # sustain (range 0.15 0.1 (slow 32 (rand)))
   # n (range 4 1 (slow 16 (rand)))
   # pan (choose [0.1,0.9])
-  # gain 0.45
+  # gain 0.55
   # orbit out4
 
 p "hat-fast" $ silence
 
-unsolo "hat-half"
+unsolo "hat-fast"
 
-p "snares-offbeat" -------------------------------------------------------------
+p "snares-175" -----------------------------------------------------------------
+  -- $ skip
+  -- $ skip
+  -- $ skip
   -- $ every 4 silent
   $ every 1 (const
     $ degradeBy 0
-    $ sound "~ sn ~ <sd odx>"
-    # n "2 <0 2 0 4> 2 <0 0>"
-    # shape "0.6 0.2"
-    # sustain 0.05
-    # gain "0.6 0.6 0.6 <0.6 0.5>"
+    -- $ sound "~ sn ~ <sn odx>"
+    $ sound "~ sn ~ <sn>"
+    -- # n "0 <2 3> 0 <1 0>"
+    -- $ sound "~ sn ~ <sn>"
+    # n "0 <2 3> 0 <<3 2> 3>"
+    -- $ sound "~ sd ~ <sd>"
+    -- # n "2 <0 2 0 4> 2 <0 0>"
+    # shape "0 <0.5 0.8> 0 <0.5 0>"
+    -- # sustain 0.05
+    # gain "0.6 0.6 0.6 <0.6 0.6>"
+    -- |- gain 0.05
+    -- # orbit out4
     |- gain 0.05
-    # orbit out4
+    # pan "0 0.15 0 0.8"
+    # orbit 2
   )
   $ sound "~"
   # orbit out4
 
-p "snares-offbeat" $ silence
+p "snares-175" $ silence
 
-unsolo "snares-offbeat"
+unsolo "snares-175"
 
 p "hard-snares" ----------------------------------------------------------------
-  $ every 4 (const
+  $ every 8 (const
     -- $ sound "sn:4(<1 1 1 1 1 1 2>, 7)"
     -- $ sound "sn(<3 1 1 1 1 1 2>, 7)"
     $ sound "sn"
@@ -166,24 +185,24 @@ p "hard-snares" ----------------------------------------------------------------
     # distort 0.2
     # gain 0.5
     # pan (choose [0.2, 0.8])
-    # orbit out4
+    # orbit 1
   )
   $ sound "~"
-  # orbit out4
+  # orbit 1
 
 p "hard-snares" $ silence
 
 unsolo "hard-snares"
 
 p "live-snares" ----------------------------------------------------------------
-  $ sometimesBy 0.2 (fast 2)
+  -- $ sometimesBy 0.2 (fast 2)
   -- $ sometimesBy 0.05 (fast 3)
   -- $ every 3 (const
   $ every 1 (const
   -- $ degradeBy 0
   -- $ degradeBy 0.2
-    -- $ sound "mspdxkSd3(<3 3 1 3 5 0 8>, 8 , <0 0 3 0>)"
-    $ sound "mspdxkSd3(<2>, 8 , <0 0 3 0>)"
+    $ sound "mspdxkSd3(<3 3 1 3 5 0 8>, 8 , <0 0 3 0>)"
+    -- $ sound "mspdxkSd3(<2>, 8 , <0 0 3 0>)"
     # shape 0.4
     -- # distort 0.4
     # pF "basefreq" 150
@@ -204,10 +223,49 @@ p "live-snares" $ silence
 
 unsolo "live-snares"
 
+do -- breakz -------------------------------------------------------------------
+  p "breakz-1"
+    -- $ every 1 (# silence)
+    $ every 3 (skip)
+    $ struct "0 1 0 1 0 0 1 1"
+    -- $ sound "[[amencutup, feel:5*8], feelfx*4?]"
+    $ sound "[feel:5*8]]"
+    -- # n (irand 0)
+    # n (irand 30)
+    # speed (range 2.35 2.5 (rand))
+    |- speed 0.2
+    # hpf 550
+    # lpf 6300
+    # pan (choose [0.2, 0.8])
+    # gain 0.9
+    # orbit 0
+  p "breakz-2"
+    -- $ every 1 (# silence)
+    $ every 5 (skip)
+    $ struct "0 0 0 1 0 1 1 0"
+    -- $ struct "1 1 0 1 0 1 1 1"
+    $ sound "[[amencutup*8]]"
+    # n (irand 30)
+    # speed (range 1.35 1.5 (rand))
+    -- # speed 0.9
+    -- # speed 0.9
+    # hpf 550
+    # lpf 5300
+    # shape 0.1
+    # pan (choose [0, 1])
+    # gain 0.85
+    # orbit 0
+
+do
+  p "breakz-1" silence
+  p "breakz-2" silence
+
+unsolo "breakz-1"
+
 -- HYPNO =======================================================================
 
 p "synth-fx" -------------------------------------------------------------------
-  $ every 7 (const
+  $ every 5 (const
     $ every 15 (rev)
     $ slow 4
     -- $ sound "<form-msp5:4(<3 5 3 4>, 8, <0 2 0 4>)>"
@@ -218,15 +276,18 @@ p "synth-fx" -------------------------------------------------------------------
     -- $ sound "<form-msp6:2(<3>, 8, <0 2 0 4>)>"
     -- $ sound "<form-msp8:8(<3>, 8, <0 2 0 4>)>"
     $ sound "<form-msp8:11(<3>, 8, <0 2 0 4>)>"
-    # sustain (range 0.7 3 $ slow 12 $ cosine)
-    -- # sustain 0.3
-    # djf (range 1 0 $ fast 4 $ rand)
+    -- # sustain (range 0.7 3 $ slow 12 $ cosine)
+    -- # sustain 3
+    -- # djf (range 1 0 $ fast 4 $ rand)
     -- # speed (range 1 0.99 $ fast 48 $ cosine)
-    # speed "-1 1"
-    # end 0.2
+    # speed "-1 0.7"
+    -- # speed (choose [-0.7, 0.7, 0.75, 0.73, -0.72])
+    -- # distort 0.3
+    -- # end 0.2
     -- # octave "<4 9 2 4>"
     # octave "<6 5 6>"
-    # legato 1
+    -- # octave 6
+    -- # legato 1
     -- # scram (range 1 0 $ slow 16 $ cosine)
     -- # binshift (range 0.8 0.01 $ slow 16 $ cosine)
     -- # lbrick (range 0.85 0.1 $ slow 16 $ cosine)
@@ -235,7 +296,7 @@ p "synth-fx" -------------------------------------------------------------------
     -- # real 0.9 # imag 0.3
     -- # xsdelay 0.9 # tsdelay 0.8
     # gain "0.7 0.6"
-    |+ gain 0.5
+    |+ gain 0.45
     # orbit out6
   )
   $ sound "~"
@@ -247,6 +308,49 @@ unsolo "synth-fx"
 
 
 -- SYNTHS / ANA4 ===============================================================
+
+p "spectral-play" --------------------------------------------------------------
+    $ every 2 (const
+      $ slow 4
+      -- $ slow 8
+      $ every 15 (rev)
+      -- 5 note maj pentatonics
+      -- $ n (scale "egyptian" "0..12")
+      -- $ n (scale "ritusen" "0..12") -- 5 note maj pentatonic
+      -- $ n (scale "majPent" "0..12") -- 5 note maj pentatonic
+      -- END 5 note maj pentatonics
+      -- $ n ((scale "egyptian" "e4") |+ "<'major7>")
+      $ n (scale "chromatic" ("<a4 f5 ff5>" |+ "<'major7'6>"))
+      # sound "mspsupertron"
+      # pF "att" (range 0.9 0.5 $ slow 8 $ cosine)
+      -- # sustain (range 8 11 $ slow 12 $ cosine)
+      # sustain (range 4 6 $ slow 12 $ cosine)
+      # release (range 3 1 $ slow 12 $ cosine)
+      -- # release 3
+      # voice (range 0.8 0.1 $ slow 7 $ cosine)
+      -- # djf (range 1 0 $ fast 4 $ rand)
+      # speed (range 1 0.95 $ fast 48 $ cosine)
+      # octave "<4 4 4 4 5>"
+      # scram (range 0.3 0 $ slow 16 $ cosine)
+      -- # binshift (range 0.3 0.1 $ slow 16 $ cosine)
+      -- # lbrick (range 0.85 0.1 $ slow 16 $ cosine)
+      -- # enhance 0.6
+      -- conformer
+      -- # real 0.9 # imag 0.3
+      -- # xsdelay 0.9 # tsdelay 0.8
+      # hpf 1500
+      # gain "0.7 0.6"
+      -- |- gain 0.15
+      |+ gain 0.15
+      # orbit out6
+    )
+  $ sound "~"
+    -- # orbit out6
+
+p "spectral-play" silence
+
+unsolo "spectral-play"
+
 
 --------------------------------------------------------------------------------
 -- RECYCLE BIN -----------------------------------------------------------------
@@ -306,51 +410,6 @@ p "sq-bass" --------------------------------------------------------------------
 p "sq-bass" $ silence
 
 unsolo "sq-bass"
-
-
-
-p "spectral-play" --------------------------------------------------------------
-  $ every 1 (const
-    $ slow 2
-    $ every 15 (rev)
-    -- $ n (scale "dorian" "0..12")
-    -- 5 note maj pentatonics
-    $ n (scale "egyptian" "0..12")
-    -- $ n (scale "ritusen" "0..12") -- 5 note maj pentatonic
-    -- $ n (scale "majPent" "0..12") -- 5 note maj pentatonic
-    -- END 5 note maj pentatonics
-    -- $ n (scale "chromatic" "0..12")
-    -- # sound "mspwob"
-    # sound "supergong"
-    -- # sustain (range 2 5 $ slow 12 $ cosine)
-    # sustain 7
-    -- # djf (range 1 0 $ fast 4 $ rand)
-    -- # speed (range 1 0.95 $ fast 48 $ cosine)
-    # octave 4
-    # gain "0.7 0.6"
-    |+ gain 0.1
-    -- # scram (range 1 0 $ slow 16 $ cosine)
-    -- # binshift (range 0.8 0.01 $ slow 16 $ cosine)
-    # lbrick (range 0.85 0.1 $ slow 16 $ cosine)
-    -- # enhance 0.6
-    -- conformer
-    -- # real 0.9 # imag 0.3
-    -- # xsdelay 0.9 # tsdelay 0.8
-    # orbit out6
-    # gain 0.6
-  )
-  $ sound "~"
-    -- # orbit out6
-
-p "spectral-play" silence
-
-unsolo "spectral-play"
-
-
-
-
-
-
 
 
 
