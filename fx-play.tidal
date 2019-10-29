@@ -1,0 +1,126 @@
+-- New SuperDirt effects in Tidal 1.0.11
+-- https://github.com/musikinformatik/SuperDirt/blob/develop/library/default-effects-extra.scd
+-- https://github.com/tidalcycles/Tidal/blob/master/src/Sound/Tidal/Params.hs
+
+let p = s "arpy*4"
+
+{-
+  Waveloss
+  Divides an audio stream into tiny segments, using the signal's
+  zero-crossings as segment boundaries, and discards a fraction of them.
+-}
+d1 $ p # waveloss 1 -- drop
+
+{-
+  Squiz
+  "reminiscent of some weird mixture of filter, ring-modulator
+  and pitch-shifter"
+-}
+d1 $ p # squiz 1 -- pitchratio
+
+{-
+  Frequency shifter
+  Total shift is sum of `fshift` (in Hz) and `fshiftnote` times the current note frequency.
+  `fshiftphase` allows control over the phase
+-}
+d1 $ p
+  # fshift 10000
+  # fshiftphase 1
+  # fshiftnote 1
+
+{-
+  Triode-like distortion, uses only the `triode` parameter
+-}
+d1 $ p # triode 0.5
+
+{-
+  Sonic Pi's krush
+  modified a bit so krush "0" is the same as dry signal
+  uses `krush` and `kcutoff` as paramters
+-}
+d1 $ p # krush 1 # kcutoff 100
+
+{-
+  Sonic Pi's octaver
+  uses `octer` for octave harmonics, `octersub` for half-frequency harmonics, and `octersubsub` for
+  quarter-frequency harmonics
+-}
+d1 $ p
+  # octer 1
+  # octersub 1
+  # octersubsub 1
+
+{-
+  Ring modulation with `ring` (modulation amount), `ringf` (modulation frequency), and `ringdf` (slide
+  in modulation frequency)
+-}
+d1 $ p
+  # ring 1
+  # ringf 100
+  # ringdf 2
+
+{-
+  A crunchy distortion with a lot of high harmonics, the only parameter is `distort`
+-}
+d1 $ p # distort 0.5
+
+------------------------------
+
+{-
+  spectral-delay
+-}
+d1 $ p # xsdelay 1 # tsdelay 1
+
+{-
+  spectral-freeze
+-}
+d1 $ p # freeze 1
+
+{-
+  spectral-comb
+-}
+d1 $ p # comb 1
+
+{-
+  spectral-smear
+-}
+d1 $ p # smear 1
+
+{-
+  spectral-scramble
+-}
+d1 $ p # scram 1
+
+{-
+  spectral-binshift
+-}
+d1 $ p # binshift 1
+
+{-
+  spectral-hbrick
+-}
+d1 $ p # hbrick 1
+
+{-
+  spectral-lbrick
+-}
+d1 $ p # lbrick 1
+
+{-
+  spectral-conformer
+-}
+d1 $ p
+  # real 0.5
+  # imag 0.5
+
+{-
+  spectral-enhance
+-}
+d1 $ p # enhance 0.5
+
+--------------- 
+
+{-
+  dj-filter
+-}
+d1 $ p # djf 0.5
