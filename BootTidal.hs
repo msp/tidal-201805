@@ -15,7 +15,7 @@ supercolliderTarget = superdirtTarget {oLatency = latency, oAddress = "127.0.0.1
 -- squattybox2
 -- processingTarget = OSCTarget {oName = "Processing Target", oAddress = "192.168.86.132", oPort = 1818, oPath = "/play2", oShape = Nothing, oLatency = latency, oPreamble = [], oTimestamp = NoStamp }
 -- horus
-processingTarget = OSCTarget {oName = "Processing Target", oAddress = "192.168.86.221", oPort = 1818, oPath = "/play2", oShape = Nothing, oLatency = latency, oPreamble = [], oTimestamp = NoStamp }
+-- processingTarget = OSCTarget {oName = "Processing Target", oAddress = "192.168.86.221", oPort = 1818, oPath = "/play2", oShape = Nothing, oLatency = latency, oPreamble = [], oTimestamp = NoStamp }
 
 
 
@@ -24,7 +24,8 @@ processingTarget = OSCTarget {oName = "Processing Target", oAddress = "192.168.8
 -- rpiTarget = OSCTarget {oName = "RPI3 Target", oAddress = "192.168.0.105", oPort = 5005, oPath = "/play2", oShape = Nothing, oLatency = latency, oPreamble = [], oTimestamp = NoStamp }
 -- rpiTarget = OSCTarget {oName = "RPI4 Target", oAddress = "192.168.0.106", oPort = 5005, oPath = "/play2", oShape = Nothing, oLatency = latency, oPreamble = [], oTimestamp = NoStamp }
 
-targets = [supercolliderTarget,processingTarget]
+targets = [supercolliderTarget]
+-- targets = [supercolliderTarget,processingTarget]
 -- targets = [supercolliderTarget,processingTarget, rpiTarget, rpi2Target, rpi3Target, rpi4Target]
 
 -- total latency = oLatency + cFrameTimespan
