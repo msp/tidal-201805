@@ -5,10 +5,6 @@ myRate = 16
 
 -- PULSE =======================================================================
 
-unsolo "pulse-sub"
-
-unmute "pulse-synth"
-
 do -- pulse --------------------------------------------------------------------
   let myRate = 32
   let attackMod = range 0.5 0.01 (slow (myRate) $ rand)
@@ -20,16 +16,17 @@ do -- pulse --------------------------------------------------------------------
   -- let sustainMod = (range 0.05 0.1 (slow myRate (rand)))
   -- let slowMod = 0.25
   let slowMod = 1
-  let subMulti = 0.1
+  let subMulti = 0.15
   --
   p "pulse-sub"
     -- $ slow (slowMod/1)
+    $ every 7 (skip)
     $ fast 1
     $ sound "[msp808]"
     -- SWEEP
     -- # pF "att" attackMod
     # pF "att" 0.5
-    # speed speedMod
+    -- # speed speedMod
     # sustain (sustainMod * subMulti)
     # voice (range 0.6 0.3 (slow myRate (sine)))
     # shape (range 0.05 0.5 (slow (myRate) (sine)))
@@ -68,27 +65,31 @@ do -- pulse --------------------------------------------------------------------
     # gain 0.9
     # orbit out5
 
-
 p "pulse-sub" $ silence
 p "pulse-synth" $ silence
 
+unsolo "pulse-sub"
 unsolo "pulse-synth"
 
 -- MAIN ========================================================================
 
 p "main" -----------------------------------------------------------------------
-  -- $ iter 4
-  -- $ every 15 (skip)
+  -- $ skip
+  -- $ skip
+  -- $ skip
+  $ every 15 (iter 4)
+  $ every 31 (skip)
+  $ every 63 (# speed "-1")
   $ degradeBy 0
   $ sometimesBy 0.2 (# n (irand 6))
-  $ sound "[bd(3, 8, <0>)]"
-  -- $ sound "[bd(<2 3 2>, 8, <0 0 0 2 0 0 0 3>)]" -- main (old)
-  -- $ sound "[bd(<5>, 8)]"  -- 175 (minus skip)
-  -- $ sound "[bd(<2 1 2>, 8)]"  -- 175 on the one (minus skip)
-  -- $ sound "[bd(<2 3 2>, 8, <2>)]" -- main (intro 175)
+  $ sound "[bd(3, 8, <0>)]" --locked
+  -- $ sound "[bd(<2 3 2>, 8, <0 0 0 2 0 0 0 3>)]" -- twisup
+  -- $ sound "[bd(<2 1 2>, 8)]"  -- fill
   # speed (range 0.8 1 $ slow 2 $ rand)
   # distort (range 0 0.05 $ slow 3 $ cosine)
-  # gain "1 0.9 0.9 0.7 0.5 0.5 0.5"
+  # gain "1 0.7 0.9"
+  -- |+ gain 0.2
+  -- # lpf "70 30 4500"
   # orbit out1
 
 p "main" $ silence
@@ -99,13 +100,14 @@ p "clicker" --------------------------------------------------------------------
   $ fix (|- gain 0.3) (sound "e")
   $ slow 1
   $ sometimesBy 0.6 (fast 2)
+  $ sometimesBy 0.2 (|+ speed 0.5)
   $ sound "[click, e]*4"
   # n (irand 8)
   # vowel "o"
   # speed 0.1
   -- # speed (range 2.2 0.8 (slow 16 (cosine)))
   # shape (range 0.98 0.6 (slow 128 (cosine)))
-  # hpf (range 3000 4500 (slow 4 (saw)))
+  # hpf (range 3000 8500 (slow 4 (saw)))
   # gain 0.75
   # pan (choose [0.3,0.7])
   # orbit out3
@@ -144,15 +146,14 @@ p "hat-half" $ silence
 unsolo "hat-half"
 
 p "hat-fast" -------------------------------------------------------------------
-  $ sound "[~ mspsuperhat]*4"
+  $ sound "[mspsuperhat]*8"
   -- # bpf (range 4500 2000 (slow 3 (sine))) # bpq 0.1
-  -- # hpf (range 4500 9000 (slow 3 (sine)))
-  -- # accelerate 0.2
+  # hpf (range 2500 9000 (slow 3 (sine)))
   # sustain (range 0.05 0.3 (slow 16 (sine)))
   -- # sustain 0.6
-  -- # n (range 4 1 (slow 16 (rand)))
+  # n (range 4 1 (slow 16 (rand)))
   # pan (choose [0.1,0.9])
-  # gain 0.55
+  # gain (range 0.25 0.55 (slow 64 (sine)))
   # orbit out4
 
 p "hat-fast" $ silence
@@ -165,22 +166,15 @@ p "snares-175" -----------------------------------------------------------------
   -- $ skip
   -- $ every 4 silent
   $ every 1 (const
-    $ degradeBy 0
-    -- $ sound "~ sn ~ <sn odx>"
-    $ sound "~ sn ~ <sn>"
-    -- # n "0 <2 3> 0 <1 0>"
+    $ sound "~ sn ~ <sn odx>"
     -- $ sound "~ sn ~ <sn>"
     # n "0 <2 3> 0 <<3 2> 3>"
-    -- $ sound "~ sd ~ <sd>"
-    -- # n "2 <0 2 0 4> 2 <0 0>"
     # shape "0 <0.5 0.8> 0 <0.5 0>"
-    -- # sustain 0.05
+    # end (range 0.4 0.9 $ rand)
     # gain "0.6 0.6 0.6 <0.6 0.6>"
-    -- |- gain 0.05
-    -- # orbit out4
-    |- gain 0.05
+    |+ gain 0.1
     # pan "0 0.15 0 0.8"
-    # orbit 2
+    # orbit out4
   )
   $ sound "~"
   # orbit out4
@@ -192,13 +186,13 @@ unsolo "snares-175"
 p "hard-snares" ----------------------------------------------------------------
   $ every 8 (const
     -- $ sound "sn:4(<1 1 1 1 1 1 2>, 7)"
-    -- $ sound "sn(<3 1 1 1 1 1 2>, 7)"
-    $ sound "sn"
+    $ sound "sn(<3 1 1 1 1 1 2>, 7)"
+    -- $ sound "sn"
     # n (irand 30)
     # speed "0.5"
     # shape 0.7
     # distort 0.2
-    # gain 0.5
+    # gain 0.55
     # pan (choose [0.2, 0.8])
     # orbit out7
   )
@@ -239,38 +233,48 @@ p "live-snares" $ silence
 unsolo "live-snares"
 
 do -- breakz -------------------------------------------------------------------
+  let output = out6
+  --
   p "breakz-1"
-    -- $ every 1 (# silence)
-    $ every 3 (skip)
-    $ struct "0 1 1 1 0 0 1 1 0 0 0 0 0 0 0 1"
-    -- $ struct "0 1 0 0 1 0 0 1"
-    $ sound "[[feel:5*8], feelfx*4?]"
-    -- $ sound "[feel:5*8]]"
-    -- # n (irand 0)
-    # n (irand 30)
-    # speed (range 2.35 2.5 (rand))
-    |+ speed 3.6
-    -- # hpf 550
-    # lpf 300
-    # pan (choose [0.2, 0.8])
-    # gain 0.9
-    # orbit out6
+    $ every 5 (const
+      $ every 3 (skip)
+      $ struct "0 1 1 1 0 0 1 1 0 0 0 0 0 0 0 1"
+      -- $ struct "0 1 0 0 1 0 0 1"
+      $ sound "[[feel:5*8], feelfx*4?]"
+      -- $ sound "[feel:5*8]]"
+      -- # n (irand 0)
+      # n (irand 30)
+      # speed (range 2.35 2.5 (rand))
+      |+ speed 3.6
+      # hpf 550
+      -- # lpf 300
+      # pan (choose [0.4, 0.5])
+      -- # gain (range 0.3 0.6 $ slow 32 $ cosine)
+      # gain 0.6
+      # orbit output
+    )
+    $ sound "~"
+    # orbit output
   p "breakz-2"
-    $ every 3 (# silence)
-    $ every 5 (skip)
-    $ struct "0 0 0 1 0 1 1 0"
-    -- $ struct "1 1 0 1 0 1 1 1"
-    $ sound "[[amencutup*8]]"
-    # n (irand 30)
-    # speed (range 1.35 1.5 (rand))
-    -- # speed 0.9
-    -- # speed 0.9
-    # hpf 550
-    # lpf 5300
-    # shape 0.1
-    # pan (choose [0, 1])
-    # gain 0.45
-    # orbit out6
+    $ every 5 (const
+      $ every 3 (# silence)
+      $ every 5 (skip)
+      $ struct "0 0 0 1 0 1 1 0"
+      -- $ struct "1 1 0 1 0 1 1 1"
+      $ sound "[[amencutup*8]]"
+      # n (irand 30)
+      # speed (range 1.35 1.5 (rand))
+      -- # speed 0.9
+      -- # speed 0.9
+      # hpf 550
+      # lpf 5300
+      # shape 0.1
+      # pan (choose [0.3, 0.7])
+      # gain 0.45
+      # orbit output
+    )
+    $ sound "~"
+    # orbit output
 
 do
   p "breakz-1" silence
@@ -287,7 +291,7 @@ p "synth-fx" -------------------------------------------------------------------
     -- $ sound "<form-msp5:5(<3 5 3 4>, 8, <0 2 0 4>)>"
     $ sound "~ form-msp5:5"
     -- $ sound "<form-msp5:4(<3 5 3 4>, 8, <0 2 0 4>)>"
-    -- $ sound "<form-msp5:8(<3 5 3 4>, 8, <0 2 0 4>)>"
+    -- $ sound "<form-msp5:8(<3 5 3 4>, 8, <0 2 0 4>)>" --acidy
     -- $ sound "<form-msp5:8(<3>, 8, <0 2 0 4>)>"
     -- $ sound "<form-msp5:9(<3>, 8, <0 2 0 4>)>"
     -- $ sound "<form-msp6:2(<3>, 8, <0 2 0 4>)>"
@@ -309,7 +313,7 @@ p "synth-fx" -------------------------------------------------------------------
     -- # enhance 0.6
     -- conformer
     -- # real 0.9 # imag 0.3
-    # xsdelay 0.2 # tsdelay 0.4
+    -- # xsdelay 0.2 # tsdelay 0.4
     # gain "0.7 0.6"
     |+ gain 0.6
     -- # accelerate 0.6
@@ -324,6 +328,31 @@ unsolo "synth-fx"
 
 
 -- SYNTHS / ANA4 ===============================================================
+
+do -- chord-strings ------------------------------------------------------------
+  let myRate = 256
+  -- let myRate = 16
+  let positionMod = range 0 0.1 (slow (myRate) $ cosine)
+  p "chord-strings"
+    $ skip
+    $ struct "0 1 0 0"
+    $ sometimesBy 0.02 (|+ speed 0.05)
+    $ sometimesBy 0.01 (|- speed 0.02)
+    $ sound "segments*4"
+    # n 10
+    # speed 0.5
+    # begin positionMod
+    -- # end (positionMod + 0.2)
+    # end 0.3
+    -- # scram (range 0.3 0 $ slow 16 $ cosine)
+    -- # enhance (range 0 0.4 $ slow (myRate/4) $ cosine)
+    # djf (range 0.3 0.75 $ rand)
+    # gain 1
+    # orbit out10
+
+p "chord-strings" silence
+
+unsolo "chord-strings"
 
 p "spectral-play" --------------------------------------------------------------
     $ every 2 (const
@@ -461,4 +490,5 @@ d3
   -- # cps (range 0.2 1.5 $ slow 10 cosine)
 
 deconstruct 24 "[<1 2 3>]"
+--
 --
