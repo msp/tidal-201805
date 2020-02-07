@@ -127,4 +127,29 @@ SynthDef(\mspsupertron, {|out, pan, freq, sustain, voice, detune, accelerate, at
 	}).add
 );
 
+SynthDef(\mspplucklead, {
+    |out, sustain = 1, freq = 440, speed = 1, begin=0, end=1, pan, offset|
+
+    var line = Line.ar(begin, end, sustain, doneAction:2);
+    var env = Env([0, 1, 0.333, 0],[5, 70, 1000]);
+
+    var envGen = IEnvGen.ar(env, line*env.times.sum*abs(speed));
+    // var envGen = EnvGen.ar(Env.adsr);
+    var speedFreq = freq*abs(speed);
+
+    var pulseLfo = SinOsc.ar(Rand(-1,1));
+
+    var sound = Pulse.ar([speedFreq*Rand(0.99,1.01)*2,speedFreq*Rand(0.99,1.01)*2]);
+    // sound = RLPF.ar(sound, (20000*(envGen**2.8))+DC.ar(10), 0.5);
+    // sound = RLPF.ar(sound, (2500*(envGen**4.8))+DC.ar(10), 0.2);
+
+
+    // var filterEnv = (2500*(envGen**4.8))+DC.ar(10);
+    var filterEnv = XLine.kr(2500, 10, 0.3, 1);
+    sound = RLPF.ar(sound, filterEnv, 0.5);
+    // sound = Resonz.ar(sound, filterEnv, 2, 3);
+
+    Out.ar(out, DirtPan.ar(sound, ~dirt.numChannels, pan, envGen));
+}).add;
+
 );

@@ -164,6 +164,7 @@ p "snares-175" -----------------------------------------------------------------
   -- $ skip
   -- $ skip
   -- $ skip
+  -- $ skip
   -- $ every 4 silent
   $ every 1 (const
     $ sound "~ sn ~ <sn odx>"
@@ -354,6 +355,36 @@ p "chord-strings" silence
 
 unsolo "chord-strings"
 
+p "sq-bass" --------------------------------------------------------------------
+  $ sometimesBy 0.08 (fast 2)
+  $ sometimesBy 0.05 (slow 3)
+  $ sometimesBy 0.05 (# speed (- 0.25))
+  $ sometimesBy 0.02 (# speed (- 0.5))
+  $ sometimesBy 0.1 (|+ n 2)
+  $ every 15 (|+ sustain "2 1 1.5")
+  -- $ sometimesBy 0.1 (rev)
+  $ struct "0 0 0 1"
+  $ sound "[mspplucklead*3]"
+  *| n (scale "chromatic" "g2 f3/2 [~ g2] [a'3/3, a2/2]")
+  # speed (range 0.98 1.01 $ slow 16 $ cosine)
+  # sustain 0.1
+  -- # octave 4
+  -- # begin (range 0 0.03 (slow 16 (rand)))
+  # end 0.1
+  # djf 0.65
+  # gain 0.75
+  # orbit out1
+
+p "sq-bass" $ silence
+
+unsolo "sq-bass"
+
+--------------------------------------------------------------------------------
+-- RECYCLE BIN -----------------------------------------------------------------
+--------------------------------------------------------------------------------
+--
+--
+
 p "spectral-play" --------------------------------------------------------------
     $ every 2 (const
       $ slow 4
@@ -396,13 +427,6 @@ p "spectral-play" silence
 
 unsolo "spectral-play"
 
-
---------------------------------------------------------------------------------
--- RECYCLE BIN -----------------------------------------------------------------
---------------------------------------------------------------------------------
---
---
-
 p "stabs" ----------------------------------------------------------------------
   -- $ skip
   -- $ skip
@@ -431,32 +455,6 @@ p "stabs" ----------------------------------------------------------------------
 p "stabs" $ silence
 
 unsolo "stabs"
-
-p "sq-bass" --------------------------------------------------------------------
-  $ sometimesBy 0.08 (fast 2)
-  $ sometimesBy 0.05 (slow 3)
-  $ sometimesBy 0.05 (# speed (- 0.25))
-  $ sometimesBy 0.02 (# speed (- 0.5))
-  $ sometimesBy 0.1 (|+ n 2)
-  $ every 15 (|+ sustain "2 1 1.5")
-  $ every 5 (# begin "0.02 0 0.01")
-  $ every 3 (0.25 <~)
-  $ sometimesBy 0.1 (rev)
-  $ struct "t(<3 <2 4> 3 <5 3> 3 5 2 3>, 8, <0 0 0 2 0 0 0 3>)"
-  -- $ struct "t(<3 2 4>, 8)"
-  $ sound "[mspplucklead]"
-  *| n (scale "chromatic" "<g2 f3 [~ g2] a3>")
-  # speed (0.5)
-  # sustain (range 1 0.5 (slow myRate (rand)))
-  # begin (range 0 0.03 (slow 16 (rand)))
-  # gain 0.95
-  # orbit out7
-
-p "sq-bass" $ silence
-
-unsolo "sq-bass"
-
-
 
 d1
 $ slow 1
