@@ -7,25 +7,34 @@ setcps (140/60/4)
 --
 -- When using with UCX thru Live
 --
-out1 = 9
-out2 = 10
-out3 = 11
-out4 = 12
-out5 = 13
-out6 = 14
-out7 = 15
-out8 = 16
+out1 = 0
+out2 = out1 + 1
+out3 = out2 + 1
+out4 = out3 + 1
+out5 = out4 + 1
+out6 = out5 + 1
+out7 = out6 + 1
+out8 = out7 + 1
+out9 = out8 + 1
+out10 = out9 + 1
+out11 = out10 + 1
+out12 = out11 + 1
+
 --
 -- When using with headphones direct out
 --
--- out1 = 0
--- out2 = 0
--- out3 = 0
--- out4 = 0
--- out5 = 0
--- out6 = 0
--- out7 = 0
--- out8 = 0
+out1 = 0
+out2 = 0
+out3 = 0
+out4 = 0
+out5 = 0
+out6 = 0
+out7 = 0
+out8 = 0
+out9 = 0
+out10 = 0
+out11 = 0
+out12 = 0
 
 -- not enough loopback channels for this!
 -- out8 = 16
