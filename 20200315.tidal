@@ -1,10 +1,6 @@
 setcps (180/60/4) -- this!
 
-setcps (200/60/4)
-
 setcps (220/60/4)
-
-setcps 1
 
 myRate = 16
 
@@ -27,19 +23,26 @@ do -- pulse --------------------------------------------------------------------
   --
   p "pulse-sub"
     -- $ slow (slowMod/1)
-    -- $ every 7 (skip)
-    $ fast 1
-    $ struct "0 0 0 1"
-    $ sound "[msp808]"
+    $ every 7 (fast 2)
+    -- $ fast 1
+    -- $ struct "1 0 1 0"
+    -- $ sound "[msp808]"
+    $ sound "[bass1(<3 3 3 3 3 3 3 5>, 8, <0 0 0 1>)]"
+    -- # n (irand 10)
+    # n (wchoose [(12,0.3), (13,0.4), (14,0.01), (15,0.1), (16,0.1)])
+    -- # n 14
+    -- # legato 1
     -- SWEEP
     # pF "att" attackMod
     -- # pF "att" 0.5
-    # speed speedMod
-    # sustain (sustainMod * subMulti)
-    # voice (range 0.6 0.3 (slow myRate (sine)))
-    # shape (range 0.05 0.5 (slow (myRate) (sine)))
-    # lpf (range 3000 50 (slow (myRate*4) (cosine)))
-    # gain 1
+    # speed "2"
+    -- # speed speedMod
+    -- # sustain (sustainMod * subMulti)
+    -- # voice (range 0.6 0.3 (slow myRate (sine)))
+    -- # shape (range 0.05 0.5 (slow (myRate) (sine)))
+    -- # lpf (range 3000 50 (slow (myRate*4) (cosine)))
+    # hpf 350
+    # gain 0.9
     # orbit out2
   p "pulse-synth"
     $ every 6 (fast 2)
@@ -84,7 +87,7 @@ p "main" -----------------------------------------------------------------------
   $ sometimesBy 0.2 (# n (irand 6))
   -- $ sound "[bd ~ ~ bd ~ ~ ]" --locked
   -- $ sound "bd(3, 6, <0>)"
-  $ sound "bd:4(3, 8, <0 0 0 0 0 0 0 1>)"
+  $ sound "bd:4(<3 3 3 3 3 3 3 1 3 3 3 3 3 3 5 3>, 8, <0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1>)"
   -- $ sound "bass1:12(<4 1 1 1>, 8, <0>)"
   -- $ legato 1
   -- $ sound "bd(<2>, 8, <0>)"
@@ -111,7 +114,7 @@ p "clicker" --------------------------------------------------------------------
   -- # speed (range 2.2 0.8 (slow 16 (cosine)))
   # shape (range 0.98 0.6 (slow 128 (cosine)))
   # hpf (range 3000 8500 (slow 4 (saw)))
-  # gain 0.75
+  # gain 0.8
   # pan (choose [0.3,0.7])
   # orbit out3
 
@@ -241,7 +244,7 @@ p "hard-snares" $ silence
 unsolo "hard-snares"
 
 p "live-snares" ----------------------------------------------------------------
-  -- $ sometimesBy 0.2 (fast 2)
+  $ sometimesBy 0.2 (fast 2)
   -- $ sometimesBy 0.05 (fast 3)
   -- $ every 2 (const
   $ every 4 (const
@@ -254,7 +257,7 @@ p "live-snares" ----------------------------------------------------------------
     $ sound "mspdxkSd3(4, 8, <0 1 0 1>)"
     -- # shape 0.4
     -- # distort 0.4
-    -- # pF "basefreq" (wchoose [(50,0.25),(250,0.5), (350,0.5), (450,0.5),(850,0.25)])
+    # pF "basefreq" (wchoose [(50,0.1),(250,0.5), (260,0.5), (450,0.2),(850,0.1)])
     -- # pF "len" 1.4
     # pF "tone" 0.9
     # pF "len" (range 1.4 0.1 $ slow 4 $ rand)
@@ -275,54 +278,29 @@ unsolo "live-snares"
 
 do -- breakz -------------------------------------------------------------------
   let output = out6
+  let numCycles = "<1 1 2>"
   p "breakz-1"
-    $ every 5 (const
+    $ every numCycles (const
       $ every 3 (skip)
-      $ struct "0 1 1 1 0 0 1 1 0 0 0 0 0 0 0 1"
-      -- $ struct "0 1 0 0 1 0 0 1"
-      $ sound "[[feel:5*8], feelfx*4?]"
-      -- $ sound "[feel:5*8]]"
-      -- # n (irand 0)
+      $ every 3 (fast 2)
+      $ sometimesBy 0.1 (# accelerate "<4 -8>")
+      -- $ sound "[[feel:5*8], feelfx*4?]"
+      $ sound "[[feel(6, 8, 0 0 0 3 0 0 0 2)]]"
       # n (irand 30)
-      # speed (range 2.35 2.5 (rand))
-      |+ speed 3.6
-      # hpf 550
-      -- # lpf 300
+      # speed (range 2.15 2.5 (rand))
+      |+ speed 1
+      # hpf 350
       # pan (choose [0.4, 0.5])
-      -- # gain (range 0.3 0.6 $ slow 32 $ cosine)
-      # gain 0.6
-      # orbit output
-    )
-    $ sound "~"
-    # orbit output
-  p "breakz-2"
-    $ every 5 (const
-      $ every 3 (# silence)
-      $ every 5 (skip)
-      $ struct "0 0 0 1 0 1 1 0"
-      -- $ struct "1 1 0 1 0 1 1 1"
-      $ sound "[[amencutup*8]]"
-      # n (irand 30)
-      # speed (range 1.35 1.5 (rand))
-      -- # speed 0.9
-      -- # speed 0.9
-      # hpf 550
-      # lpf 5300
-      # shape 0.1
-      # pan (choose [0.3, 0.7])
-      # gain 0.45
+      # crush 8
+      # gain 0.8
       # orbit output
     )
     $ sound "~"
     # orbit output
 
-do
-  p "breakz-1" silence
-  p "breakz-2" silence
+p "breakz-1" silence
 
-do
-  unsolo "breakz-1"
-  unsolo "breakz-2"
+unsolo "breakz-1"
 
 -- HYPNO / FX ==================================================================
 
