@@ -99,6 +99,7 @@ let p = streamReplace tidal
     r8 = p 32
 
     rate = 128
+    myRate = 16
 :}
 
 :{
