@@ -304,6 +304,32 @@ unsolo "breakz-1"
 
 -- HYPNO / FX ==================================================================
 
+do -- riser --------------------------------------------------------------------
+  let rateMult = 8
+  --
+  p "riser"
+    -- $ every 4 (0.25 <~)
+    -- $ every 9 (0.5 <~)
+    $ fast 2
+    -- $ fast (range 1.8 2 (slow (myRate*rateMult) $ cosine))
+    $ sound ("m-sweep arpy:3 ~ ~")
+    -- # accelerate "24 -8 24 -10"
+    # accelerate "4 -1 ~ ~"
+    |+ accelerate (range 1 8 (slow (myRate*rateMult) $ cosine))
+    # speed "0.5 0.3 ~ ~"
+    |+ speed (range 0.1 0.8 (slow (myRate*rateMult) $ cosine))
+    # hpf 50
+    # phaserrate 0.9
+    # phaserdepth 0.9
+    # gain 0.7
+    # legato 1
+    # orbit out10
+
+p "riser" silence
+
+solo "riser"
+unsolo "riser"
+
 p "synth-fx" -------------------------------------------------------------------
   $ every 3 (const
     $ every 15 (rev)
@@ -361,21 +387,26 @@ do -- stabs --------------------------------------------------------------------
   let lengthDiv = 2
   -- let lengthDiv = (wchoose [(1,0.35),(2,0.55),(3,0.25),(4,0.15)])
   p "stabs"
-    $ sometimesBy 0.1 (fast 2)
-    $ fast 1
-    $ struct "0 0 0 0 1 1? 0 0"
-    $ sometimesBy 0.3 (|+ speed 0.1)
-    $ sometimesBy 0.1 (|- speed 0.1)
-    $ sound "segments*4"
-    # n "[3, 4]"
-    # speed "2.3"
-    |+ speed (range 0.05 3 $ slow (myRate/4) $ cosine)
-    # accelerate "4"
-    # begin positionMod
-    # end (positionMod + (lengthMod / lengthDiv)) --variable length
-    -- # enhance 0.2
-    -- # djf (range 0.3 0.75 $ rand)
-    # gain 0.7
+    $ every 2 (const
+      $ sometimesBy 0.1 (fast 2)
+      $ fast 1
+      $ struct "0 0 0 0 1 1? 0 0"
+      $ sometimesBy 0.3 (|+ speed 0.1)
+      $ sometimesBy 0.1 (|- speed 0.1)
+      $ sound "segments*4"
+      # n "[3, 4]"
+      # speed "2.3"
+      |+ speed (range 0.05 3 $ slow (myRate/4) $ cosine)
+      # accelerate "0"
+      |+ accelerate (range 4 0 $ slow (myRate/8) $ cosine)
+      # begin positionMod
+      # end (positionMod + (lengthMod / lengthDiv)) --variable length
+      -- # enhance 0.2
+      -- # djf (range 0.3 0.75 $ rand)
+      # gain 0.7
+      # orbit out10
+    )
+    $ sound "~"
     # orbit out10
 
 p "stabs" silence
