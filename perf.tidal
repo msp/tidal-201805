@@ -19,6 +19,9 @@ out9 = out8 + 1
 out10 = out9 + 1
 out11 = out10 + 1
 out12 = out11 + 1
+out13 = out12 + 1
+out14 = out13 + 1
+out15 = out14 + 1
 
 --
 -- When using with headphones direct out
