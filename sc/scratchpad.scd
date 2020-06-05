@@ -116,8 +116,8 @@ Limiter.ar(GVerb.ar(filter*0.25) + Pan2.ar(filter))
 (
     play {
         l = LocalIn.ar(8);
-        //o = {|i| Pulse.ar(l[i]*16 + 95, 0.9.rand) } ! 8;
-	    o = {|i| Pulse.ar(l[i]*16 + rrand(94,96), 0.9.rand) } ! 8;
+	// o = {|i| Pulse.ar(l[i]*16 + 95, 0.9.rand) } ! 8;
+     	o = {|i| Pulse.ar(l[i]*16 + rrand(64,66), 0.9.rand) } ! 8;
         LocalOut.ar(o.reverse.tanh);
         w = BLowShelf.ar(_, 447, 1, _);
         p = BPeakEQ.ar(_, 285, 1, _);
@@ -128,7 +128,7 @@ Limiter.ar(GVerb.ar(filter*0.25) + Pan2.ar(filter))
 
 
 	    s = LeakDC.ar(Limiter.ar(h.(w.(p.(o, -48), 48), 48)));
-	    OffsetOut.ar(20, DirtPan.ar(s, ~dirt.numChannels, 0));
+	    OffsetOut.ar(~out15, DirtPan.ar(s, ~dirt.numChannels, 0, 0.18));
 
     }
 )
@@ -140,8 +140,8 @@ Limiter.ar(GVerb.ar(filter*0.25) + Pan2.ar(filter))
         o = Saw.ar(_);
         e = SelectX;
     x = [1,2,3,4.5].collect {|i|
-		r = i * 195;
-		// r = i * 115;
+		// r = i * 195;
+		r = i * 50;
             e.ar(c.(1/7), [
                 e.ar(c.(1/3), o.(r*[3,2])),
                 e.ar(c.(1/5), o.(r*[9/8,4/3])),
@@ -151,8 +151,7 @@ Limiter.ar(GVerb.ar(filter*0.25) + Pan2.ar(filter))
         x = x * 0.5 + RLPF.ar(GVerb.ar(x.sum*0.1,60,10),7e3);
 
 	    s = tanh(x);
-	    OffsetOut.ar(20, DirtPan.ar(s, ~dirt.numChannels, 0));
-
+	    OffsetOut.ar(~out15, DirtPan.ar(s, ~dirt.numChannels, 0, 0.1));
     }
 )
 
@@ -176,7 +175,7 @@ play {
         ].sum.sin
     );
 
-	OffsetOut.ar(20, DirtPan.ar(s, ~dirt.numChannels, 0));
+	OffsetOut.ar(~out15, DirtPan.ar(s, ~dirt.numChannels, 0, 0.2));
 }
 )
 
@@ -191,7 +190,7 @@ play {
 
 
     s = HPF.ar(o.softclip, 30);
-	OffsetOut.ar(20, DirtPan.ar(s, ~dirt.numChannels, 0));
+	OffsetOut.ar(~out15, DirtPan.ar(s, ~dirt.numChannels, 0, 0.2));
 
 }
 )
@@ -206,7 +205,7 @@ play {
     };
     x = x + Klank.ar(`[111*(1..n)*[1,1,9/8], 1/n!n, 0.3!n], x*0.2 + WhiteNoise.ar(0.02!n));
     s = Limiter.ar(2*Splay.ar(x.sin));
-	OffsetOut.ar(20, DirtPan.ar(s, ~dirt.numChannels, 0));
+	OffsetOut.ar(~out15, DirtPan.ar(s, ~dirt.numChannels, 0, 0.4));
 }
 )
 

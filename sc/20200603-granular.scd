@@ -33,7 +33,7 @@ SynthDef(\avgrain, {|out= 14, buf, rate= 1, offset= 0, time= 0.1, amp= 0.1, pan=
 	var env= EnvGen.ar(Env.sine(time), doneAction:2);
 	var src= PlayBuf.ar(1, buf, rate*BufRateScale.ir(buf), 1, offset*BufFrames.ir(buf), 1);
 	// OffsetOut.ar(out, Pan2.ar(src*env*amp, pan));
-	OffsetOut.ar(14, DirtPan.ar(src*env*amp, ~dirt.numChannels, pan));
+	OffsetOut.ar(~out8, DirtPan.ar(src*env*amp, ~dirt.numChannels, pan));
 }).add;
 )
 
