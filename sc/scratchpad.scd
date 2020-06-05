@@ -5,6 +5,59 @@ MIDIIn.connectAll
 
 (
 {
+var delay1, delay2, source;
+
+//k from -1 to 1
+
+//in samples
+delay1= 100;
+delay2= 40;
+
+source= WhiteNoise.ar(0.5)*EnvGen.ar(Env([1,1,0],[(delay1+delay2)/SampleRate.ir,0.0]), Impulse.kr(MouseY.kr(1,4)));
+
+TwoTube.ar(source,MouseX.kr(-1,1),0.99,delay1,delay2);
+}.play
+
+)
+
+
+
+
+(
+SynthDef(\twotube,{arg delay1=100, delay2=50, k=0.0, loss=0.999, dur=0.5, pan=0.0;
+var source;
+
+//k from -1 to 1
+
+source= WhiteNoise.ar(0.5)*EnvGen.ar(Env([1,1,0,0],[(delay1+delay2)/SampleRate.ir,0.0,1.0]));
+
+Out.ar(21,Pan2.ar(TwoTube.ar(source,k,loss,delay1,delay2)*EnvGen.ar(Env([0,1,1,0],[0.001]++((dur-0.001)*[0.4,0.6])),doneAction:2),pan));
+}).send(s);
+)
+
+
+
+(
+t.stop;
+t={
+
+inf.do{
+
+Synth(\twotube,[\delay1, rrand(1000,1200),\delay2, rrand(1,300),\loss, rrand(0.9,0.999),\dur, rrand(3.1,5.0), \pan, rrand(-1,1.0), \k, rrand(-1,1.0)]);
+
+0.5.wait;
+};
+
+}.fork;
+)
+
+
+////////////////////////////////// BUFFER
+
+
+
+(
+{
 	var scale, cycle;
 	//scale = Array.fill(12,{ arg i; 60 + i }).midicps; // we fill an array with a scale
 	scale = [60, 61, 63, 64, 65, 67, 68, 69, 70].midicps; // we fill an array with a scale
@@ -63,15 +116,20 @@ Limiter.ar(GVerb.ar(filter*0.25) + Pan2.ar(filter))
 (
     play {
         l = LocalIn.ar(8);
-        o = {|i| Pulse.ar(l[i]*16 + 95, 0.9.rand) } ! 8;
+        //o = {|i| Pulse.ar(l[i]*16 + 95, 0.9.rand) } ! 8;
+	    o = {|i| Pulse.ar(l[i]*16 + rrand(94,96), 0.9.rand) } ! 8;
         LocalOut.ar(o.reverse.tanh);
         w = BLowShelf.ar(_, 447, 1, _);
         p = BPeakEQ.ar(_, 285, 1, _);
         h = BHiShelf.ar(_, 1200, 1, _);
         o = Splay.ar(o);
         o = h.(w.(p.(o, 48), -48), -48);
-        o = GVerb.ar(tanh(o)).flop.mean;
-        LeakDC.ar(Limiter.ar(h.(w.(p.(o, -48), 48), 48)))
+	    o = GVerb.ar(tanh(o)).flop.mean;
+
+
+	    s = LeakDC.ar(Limiter.ar(h.(w.(p.(o, -48), 48), 48)));
+	    OffsetOut.ar(20, DirtPan.ar(s, ~dirt.numChannels, 0));
+
     }
 )
 
@@ -82,7 +140,8 @@ Limiter.ar(GVerb.ar(filter*0.25) + Pan2.ar(filter))
         o = Saw.ar(_);
         e = SelectX;
     x = [1,2,3,4.5].collect {|i|
-            r = i * 95;
+		r = i * 195;
+		// r = i * 115;
             e.ar(c.(1/7), [
                 e.ar(c.(1/3), o.(r*[3,2])),
                 e.ar(c.(1/5), o.(r*[9/8,4/3])),
@@ -90,7 +149,10 @@ Limiter.ar(GVerb.ar(filter*0.25) + Pan2.ar(filter))
         };
         x = Splay.ar(x.sum);
         x = x * 0.5 + RLPF.ar(GVerb.ar(x.sum*0.1,60,10),7e3);
-        tanh(x)
+
+	    s = tanh(x);
+	    OffsetOut.ar(20, DirtPan.ar(s, ~dirt.numChannels, 0));
+
     }
 )
 
@@ -105,14 +167,16 @@ play {
     k = d.ar(x[0], 2);
     m = d.ar(x[1]);
 
-    Limiter.ar(
+    s = Limiter.ar(
         9 * [
             o.ar(80*k).tanh * k,
             o.ar(2*80*m).sin * m,
             GVerb.ar(o.ar(999) * d.ar(Impulse.ar(1/8)),99,10),
             (BPF.ar(WhiteNoise.ar(2))).sin * d.ar(x[2],0.5)
         ].sum.sin
-    )
+    );
+
+	OffsetOut.ar(20, DirtPan.ar(s, ~dirt.numChannels, 0));
 }
 )
 
@@ -124,20 +188,25 @@ play {
     o = (o + p) * Env.asr(1e-5, 1, 0.5, -10).ar(0, t);
     y = Decay.ar(TDelay.ar(t, 1), 2);
     o = o + GVerb.ar(o*0.5,99,9).sum + (2*SinOsc.ar(80*y,y*0.5pi,2*y).tanh) * 4;
-    HPF.ar(o.softclip, 30)
+
+
+    s = HPF.ar(o.softclip, 30);
+	OffsetOut.ar(20, DirtPan.ar(s, ~dirt.numChannels, 0));
+
 }
 )
 
 (
 play {
-    n = 8;
+    n = 4;
     e = Env.perc(0.001, 0.1).ar(0, Impulse.ar(1));
     x = n.collect {|i|
         o = e * Pulse.ar(222*4*e, e*(i+1/n/2));
         DelayC.ar(o, 1, round(i/n ** SinOsc.ar(1/30, 0.5pi).range(0.25,1), 0.125));
     };
     x = x + Klank.ar(`[111*(1..n)*[1,1,9/8], 1/n!n, 0.3!n], x*0.2 + WhiteNoise.ar(0.02!n));
-    Limiter.ar(4*Splay.ar(x.sin))
+    s = Limiter.ar(2*Splay.ar(x.sin));
+	OffsetOut.ar(20, DirtPan.ar(s, ~dirt.numChannels, 0));
 }
 )
 
@@ -185,7 +254,7 @@ SynthDef.new("xxbd", {
 }).add;
 )
 
-Synth.new("xxbd", ["out", 18])
+Synth.new("xxbd", ["out", 1])
 
 (
 SynthDef.new("ding", {
@@ -231,7 +300,8 @@ Synth(\ding,  [
 )
 )
 
-Synth(\ding, [freq: [1000], out: 20])
+Synth(\ding, [freq: [1000], out
+	: 20])
 
 Synth(\ding2, [f1: 100, f2: 101, f3: 102, f4: 103, f5: 104, F6: 105, f7: 3006, out: 20])
 
