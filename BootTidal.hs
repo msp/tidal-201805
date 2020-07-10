@@ -100,6 +100,29 @@ let p = streamReplace tidal
 
     rate = 128
     myRate = 16
+
+    -- I/O: multitrack recording
+    -- Set Supercollider to output to Jack Router/Loopback
+    --
+    -- When using with UCX thru Live
+    --
+    out1 = 0
+    out2 = out1 + 1
+    out3 = out2 + 1
+    out4 = out3 + 1
+    out5 = out4 + 1
+    out6 = out5 + 1
+    out7 = out6 + 1
+    out8 = out7 + 1
+    out9 = out8 + 1
+    out10 = out9 + 1
+    out11 = out10 + 1
+    out12 = out11 + 1
+    out13 = out12 + 1
+    out14 = out13 + 1
+    out15 = out14 + 1
+    out16 = out15 + 1
+
 :}
 
 :{

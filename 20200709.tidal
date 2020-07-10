@@ -16,16 +16,17 @@ do -- pulse --------------------------------------------------------------------
   -- let slowMod = 0.25
   let slowMod = 1
   let subMulti = 1
+  let samples = "[msp808*8]"
   --
   p "pulse-sub"
-    -- $ skip
-      -- $ slow 1
-    -- $ every 63 (# gain "0")
-    -- $ struct "1 1 0 <1 0> 1 0 < 0 1 1> 1"
-    $ struct "1 1 1 1 1 1 1 1"
-    $ sound "[msp808*8]"
-    -- $ sound "msp808(<3 3 3 3 3 3 3 1 3 3 3 3 3 3 1 3>, 8, <0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1>)"
-    -- # legato 1
+    $ seqPLoop [
+    (00, 08, struct "0 1 0 1 1 1 0 1" $ sound samples),
+    (08, 16, struct "0 1 0 1 1 1 1 1" $ sound samples),
+    (16, 32, struct "0 1 0 1 1 0 1 1" $ sound samples),
+    (32, 48, struct "0 1 0 1 1 1 1 0" $ sound samples)
+    ]
+    -- $ struct "0 1 0 1 1 1/4 1/5 1/3"
+    -- $ sound "[msp808*8]"
     # pF "mAttackTime" attackMod
     -- # pF "mAttackTime" "[0.1 0.6]*4"
     # pF "mFilterDuration" "0.1"
@@ -44,13 +45,14 @@ do -- pulse --------------------------------------------------------------------
 
 p "pulse-sub" $ silence
 
+solo "pulse-sub"
 unsolo "pulse-sub"
 
 
 -- MAIN ========================================================================
 
 p "main" -----------------------------------------------------------------------
-  $ every 63 (# speed "-1")
+  $ every 127 (# speed "-1")
   $ sometimesBy 0.02 (# speed 0.05)
   --
   -- standard
@@ -80,24 +82,26 @@ solo "main"
 unsolo "main"
 
 p "clicker" --------------------------------------------------------------------
+  $ every 14 (fast 4)
   $ struct "1 1 1 1"
   -- $ fix (|- gain 0.3) (sound "e")
   $ slow 1
-  -- $ sometimesBy 0.6 (fast 2)
-  -- $ sometimesBy 0.2 (|+ speed 0.5)
+  -- $ sometimesBy 0.6 (fast 4)
+  $ sometimesBy 0.5 (|- speed 1.5)
   $ sound "[click, e]*4"
-  -- $ sound "[click]*4"
-  -- # n (irand 3)
-  # vowel "a"
-  # speed (range 2.2 0.8 (slow 16 (cosine)))
+  # n (irand 3)
+  # vowel "<a e i a i>"
+  # speed (range 5.2 0.8 (slow 16 (cosine)))
+  -- # speed 5
   # shape (range 0.1 0.6 (slow 128 (cosine)))
-  # hpf (range 3000 500 (slow 4 (saw)))
+  # hpf (range 2000 50 (slow 24 (saw)))
   # gain 0.75
   -- # pan (choose [0.3,0.7])
   # orbit out3
 
 p "clicker" silence
 
+solo "clicker"
 unsolo "clicker"
 
 p "east-perc" ------------------------------------------------------------------
@@ -145,24 +149,25 @@ p "hat-half" $ silence
 unsolo "hat-half"
 
 p "hat-fast" -------------------------------------------------------------------
-  -- $ struct "0 0 0 1 0 1 1 1"
+  $ struct "1/4 1/3 0 1 0 1 1/2 1"
+  -- $ struct "0 0 0 0 0 0 0 1"
   $ sometimesBy 0.05 (fast 2)
   $ sound "[mspsuperhat]*8"
-  -- # bpf 8000 # bpq 1
-  -- # bpf (range 4500 2000 (slow 3 (sine))) # bpq 0.1
+  # hpf 10000
   -- # hpf (range 20500 15000 (slow 3 (cosine)))
   # sustain (range 0.05 0.08 (slow 3 (cosine)))
   |+ sustain 0.05
   -- # sustain 0.4
   -- # pan (choose [0.1,0.9])
-  # shape 0.5
+  # shape 0.6
   # gain (range 0.35 0.55 (slow 3 (cosine)))
-  |+ gain 0.65
+  |+ gain 0.75
   # accelerate 3
   # orbit out4
 
 p "hat-fast" $ silence
 
+solo "hat-fast"
 unsolo "hat-fast"
 
 do -- snares-170 ---------------------------------------------------------------
@@ -185,7 +190,7 @@ do -- snares-170 ---------------------------------------------------------------
     # accelerate 0.8
     # gain "0.5 0.5 0.47 0.5 0.5 0.5 0.42 0.4"
     -- |+ gain 0.2
-    # orbit out13
+    # orbit out12
 
 p "snares-170" $ silence
 
@@ -304,34 +309,6 @@ p "soundboi" silence
 
 unsolo "soundboi"
 
-d4
-$ every 3 (fast 2)
-$ struct "0 0 0 0  0 0 0 0  1/3 0 0 0  1 0 1 0"
--- $ struct "1 0 0 0 <1 0> 1 <1 0 1> 1"
--- $ slow 4
-$ sometimesBy 0.5 (# crush 4)
--- $ sometimesBy 0.9 (fast 2)
-$ sometimesBy 0.1 (slow 1)
--- $ degradeBy 0.4
--- $ sound "[[amencutup, feel:5*8], feelfx*4?]"
-$ sound "[[amencutup*8, feel:5*4]]"
--- $ sound "[[bd*4 sd*4]]"
-# n (irand 8)
--- # n (irand 30)
--- # speed (range 0.7 1.2 (rand))
-# speed (range 2.35 2.5 (rand))
--- # speed 2.5
-# hpf 550
-# lpf 6300
-# distort 0.1
--- # shape 0.6
--- # cut 0
-# orbit out6
-
-d4 silence
-
-
-
 -- HYPNO / FX ==================================================================
 
 do -- riser --------------------------------------------------------------------
@@ -351,7 +328,7 @@ do -- riser --------------------------------------------------------------------
     # hpf 5000
     # phaserrate 0.9
     # phaserdepth 0.9
-    # gain 0.5
+    # gain 0.8
     # legato 1
     # orbit out10
 
@@ -361,27 +338,36 @@ solo "riser"
 unsolo "riser"
 
 do -- grains -------------------------------------------------------------------
-  -- let len = 3.6
+  -- let len = 5
   -- let len = 5.6
-  let len = (range 0.125 0.9 (slow 64 (cosine)))
+  let len = (range 2 5 (slow 16 (cosine)))
   p "grains" -------------------------------------------------------------------
-    $ every 2 (const
+    $ every 1 (const
       -- $ spin 4
-      $ fast 11
-      $ sound "avgrainDirt"
-      -- # pF "buf" 2312
-      # pF "buf" (slow 16 $ 2295 + run 23)
+      -- $ fast 11
+      $ sometimesBy 0.2 (|+ pF "rate" 0.2)
+      $ sometimesBy 0.05 (|+ pF "rate" 0.4)
+      $ sometimesBy 0.06 (|- pF "rate" 0.15)
+      $ sound "avgrain*1"
+      -- # pF "buf" 2297
+      -- # pF "buf" 2299
+      -- # pF "buf" "2309 2038 2309"
+      # pF "buf" "2309"
+      -- # pF "buf" "2038"
+      -- # pF "buf" (slow 16 $ 2295 + run 23)
       # pF "time" len
-      # pF "offset" 0
+      # pF "offset" (range 0 1 (slow 64 (cosine)))
       # pF "amp" 0.95
-      -- # pF "rate" (range 0.5 0.6 (slow 8 (rand)))
-      # pF "rate" 1
+      # pF "rate" (range 0.3 0.33 (slow 64 (cosine)))
+      |+ pF "rate" 0.2
+      -- # pF "rate" 0.7
       -- # shape 0.5
-      -- # distort 0.1
+      -- # distort 0.7
       -- # accelerate 0.6
+      -- # lpf 50
       # sustain len
       -- # pan (choose [0.2,0.8])
-      # pan (slow 32 (cosine))
+      -- # pan (slow 32 (cosine))
       # gain 0.85
       # orbit out14
     )
