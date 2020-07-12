@@ -3,6 +3,48 @@ MIDIClient.init
 
 MIDIIn.connectAll
 
+
+(
+// { Pulse.ar(200, SinOsc.kr(0.8).range(0.01, 0.99), 0.2) }.play;
+{ Pulse.ar(XLine.kr(40, 4000, 6), 0.1, 0.2) }.play;
+
+)
+
+
+
+(
+{
+    var ctls, mods, chans;
+	// ctls = [
+	// 	// freq, phase, amp
+	// 	[LFNoise1.kr(0.5).range(300, 310), 0, 1],
+	// 	[LFNoise1.kr(0.5).exprange(3, 310), 0, 1],
+	// 	[LFNoise1.kr(0.5).exprange(3, 100), 0, 1],
+	// 	[LFNoise1.kr(0.5).exprange(3, 100), 0, 1],
+	// 	[LFNoise1.kr(0.5).exprange(3, 100), 0, 1],
+	// 	[LFNoise1.kr(0.5).exprange(3, 100), 0, 1]
+	// ];
+	ctls = [
+		[ 30, 0,    1   ],
+		[ 400, pi/2, 1   ],
+		[ 1730, 0,    0.5 ],
+		[ 0,   0,    0   ],
+		[ 0,   0,    0   ],
+		[ 0,   0,    0   ]
+	];
+	mods = [
+        [Line.kr(0, 0.001, 2), Line.kr(0.1, 0, 4), 0, MouseY.kr(0, 6), 0, 0],
+        [MouseX.kr(0, 6), 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0]
+    ];
+    chans = [0, 1];
+    FM7.ar(ctls, mods).slice(chans) * -12.dbamp; // using "slice" to select specific channels
+}.play;
+)
+
 (
 {
 var delay1, delay2, source;
@@ -128,7 +170,7 @@ Limiter.ar(GVerb.ar(filter*0.25) + Pan2.ar(filter))
 
 
 	    s = LeakDC.ar(Limiter.ar(h.(w.(p.(o, -48), 48), 48)));
-	    OffsetOut.ar(~out15, DirtPan.ar(s, ~dirt.numChannels, 0, 0.18));
+	    OffsetOut.ar(~out8, DirtPan.ar(s, ~dirt.numChannels, 0, 0.18));
 
     }
 )
@@ -151,7 +193,7 @@ Limiter.ar(GVerb.ar(filter*0.25) + Pan2.ar(filter))
         x = x * 0.5 + RLPF.ar(GVerb.ar(x.sum*0.1,60,10),7e3);
 
 	    s = tanh(x);
-	    OffsetOut.ar(~out15, DirtPan.ar(s, ~dirt.numChannels, 0, 0.1));
+	    OffsetOut.ar(~out8, DirtPan.ar(s, ~dirt.numChannels, 0, 0.1));
     }
 )
 
@@ -175,7 +217,7 @@ play {
         ].sum.sin
     );
 
-	OffsetOut.ar(~out15, DirtPan.ar(s, ~dirt.numChannels, 0, 0.2));
+	OffsetOut.ar(~out8, DirtPan.ar(s, ~dirt.numChannels, 0, 0.2));
 }
 )
 
@@ -190,7 +232,7 @@ play {
 
 
     s = HPF.ar(o.softclip, 30);
-	OffsetOut.ar(~out15, DirtPan.ar(s, ~dirt.numChannels, 0, 0.2));
+	OffsetOut.ar(~out8, DirtPan.ar(s, ~dirt.numChannels, 0, 0.2));
 
 }
 )
@@ -205,7 +247,7 @@ play {
     };
     x = x + Klank.ar(`[111*(1..n)*[1,1,9/8], 1/n!n, 0.3!n], x*0.2 + WhiteNoise.ar(0.02!n));
     s = Limiter.ar(2*Splay.ar(x.sin));
-	OffsetOut.ar(~out15, DirtPan.ar(s, ~dirt.numChannels, 0, 0.4));
+	OffsetOut.ar(~out8, DirtPan.ar(s, ~dirt.numChannels, 0, 0.4));
 }
 )
 

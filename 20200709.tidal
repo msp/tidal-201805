@@ -52,22 +52,26 @@ unsolo "pulse-sub"
 -- MAIN ========================================================================
 
 p "main" -----------------------------------------------------------------------
+  $ every 32 (skip)
   $ every 127 (# speed "-1")
   $ sometimesBy 0.02 (# speed 0.05)
   --
+  -- $ skip
+  -- $ skip
+  -- $ skip
   -- standard
   -- $ slow 2
-  $ struct "1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0"
+  $ struct "1 0 0 0 0 0 1 0 0 0 0 0 1/5 0 0 0"
   --
   -- $ sound "bd:4(<3 3 3 3 3 3 3 3 3 3 3 3 3 3 5 3 3 3 3 3 3 3 3 1 3 3 3 3 3 3 <3 2 5> <4 8>>, 8, <0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1>)"
   $ sound "feel:6"
   -- $ sound "feel:6(3, 8)"
-  # speed "0.7 0 0 0 0 0.75 0 0 0 0 0 0 0 0 0"
+  # speed "0.7 0 0 0 0 0.75 0 0 0 0 0 0.9 0 0 0.7"
   |+ speed 0
   -- # speed (range 0.7 0.75 $ slow 2 $ rand)
   # begin 0
   -- # end "0.15 0 0 0 0 0.15 0 0 0 0 0 0 0 0 0"
-  # end "0.25 0 0 0 0 0.15 0 0 0 0 0 0 0 0 0"
+  # end "0.25 0 0 0 0 0.15 0 0 0 0 0 0.15 0 0.15 0.15"
   -- # accelerate (-1)
   -- # distort (range 0 0.05 $ slow 3 $ cosine)
   -- # gain "0.8 0.7 0.4"
@@ -105,20 +109,19 @@ solo "clicker"
 unsolo "clicker"
 
 p "east-perc" ------------------------------------------------------------------
-  $ slow 1
-  -- $ sometimesBy 0.1 (fast 2)
+  $ fast 2
+  $ sometimesBy 0.4 (slow 2)
   -- $ sound "[east([6 3 6]/3, 6, <0 1 2>)]"
   $ sound "[east([8 7 8]/3, 8, <0 1 2>)]"
-  -- # n 0
   # n (irand 3)
-  -- # lpf 150
   # djf (range 0.2 0.8 $ slow 3 rand)
   # sustain (range 0.01 0.14 (slow (myRate) (cosine)))
-  # speed (range 0.45 0.55 (slow (myRate*2) (cosine)))
-  |+ speed 0.8
-  # gain (range 0.6 0.5 (slow (myRate*2) (cosine)))
-  |+ gain 0.15
-  -- # shape 0.3
+  # speed (range 0.45 0.65 (slow (myRate*2) (cosine)))
+  |+ speed 1.3
+  -- # gain (range 0.6 0.5 (slow (myRate*2) (cosine)))
+  # gain "0.8 0.3"
+  |+ gain 0.05
+  # shape 0.3
   # distort (range 0 0.3 (slow (myRate*2) (cosine)))
   # pan (choose [0.45,0.55])
   # orbit out5
@@ -189,7 +192,7 @@ do -- snares-170 ---------------------------------------------------------------
     |+ speed (range 0 0.15 $ rand)
     # accelerate 0.8
     # gain "0.5 0.5 0.47 0.5 0.5 0.5 0.42 0.4"
-    -- |+ gain 0.2
+    |+ gain 0.4
     # orbit out12
 
 p "snares-170" $ silence
@@ -233,12 +236,12 @@ p "live-snares" ----------------------------------------------------------------
     -- # pF "tone" "~ 0.4 ~ 0.9"
     -- # pF "rq" (range 0.05 0.3 $ slow myRate $ cosine)
     # gain "0.5 0.7 0.5 0.75"
-    |- gain 0.48
+    |- gain 0.28
     # pan (slow 3 $ rand) -- why does this not pan?!
-    # orbit out12
+    # orbit out14
   )
   $ sound "~"
-  # orbit out12
+  # orbit out14
 
 p "live-snares" $ silence
 
@@ -248,20 +251,24 @@ unsolo "live-snares"
 do -- breakz -------------------------------------------------------------------
   let output = out6
   let numCycles = "<2 2 4>"
+  -- let numCycles = "1"
   p "breakz-1"
     $ every numCycles (const
       $ every 3 (skip)
-      $ every 3 (fast 2)
-      $ sometimesBy 0.1 (# accelerate "<4 -8>")
+      $ every 2 (fast 2)
+      -- $ sometimesBy 0.1 (# accelerate "<4 -8>")
       -- $ sound "[[feel:5*8], feelfx*4?]"
-      $ sound "[[feel(6, 8, 0 0 0 3 0 0 0 2)]]"
-      # n (irand 30)
+      -- $ sound "[[feel(6, 8, 0 0 0 3 0 0 0 2)]]"
+      -- $ sound "[[[<feel:8/3 feel:7/4> feel:1/3 <feel:3 feel:4/3> < ~ feel:0/3 feel:1>]*2 ]]"
+      $ sound "[[[<feel:7/4> ~ <feel:3 feel:4/3> < ~ feel:0/3 ~>]*2 ]]"
+      -- # n (irand 30)
+      |- n 2
       # speed (range 2.15 2.5 (rand))
-      |+ speed 1.4
-      # sustain (range 0.05 0.15 (rand))
-      -- # hpf 350
+      |+ speed 0.8
+      # sustain (range 0.15 0.45 (rand))
+      # hpf 250
       # pan (choose [0.4, 0.5])
-      # crush 8
+      -- # crush 8
       # gain 0.88
       # orbit output
     )
@@ -337,42 +344,82 @@ p "riser" silence
 solo "riser"
 unsolo "riser"
 
-do -- grains -------------------------------------------------------------------
+do -- choral -------------------------------------------------------------------
   -- let len = 5
   -- let len = 5.6
   let len = (range 2 5 (slow 16 (cosine)))
+  let samples = "avgrain foo/16"
+  let silence = "~"
+  p "choral" -------------------------------------------------------------------
+    -- $ spin 4
+    -- $ fast 11
+    $ sometimesBy 0.05 (# pF "buf" "2312")
+    $ every 16 (# pF "buf" "2311")
+    $ sometimesBy 0.2 (|+ pF "rate" 0.2)
+    $ sometimesBy 0.05 (|+ pF "rate" 0.4)
+    $ sometimesBy 0.06 (|- pF "rate" 0.15)
+    $ seqPLoop [
+      (00, 08, sound samples),
+      (08, 16, sound silence),
+      (16, 32, sound samples),
+      (32, 48, sound silence)
+    ]
+    -- # pF "buf" "2309 2038 2309"
+    -- Buffer(2309, 264960, 2, 44100, /data/Dropbox-spatial/Dropbox/spatial/music/AudioSources/oily-cart-awu-samples/vocals/00-chorus1.wav)
+    -- Buffer(2310, 277954, 2, 44100, /data/Dropbox-spatial/Dropbox/spatial/music/AudioSources/oily-cart-awu-samples/vocals/01-chorus1.wav)
+    -- Buffer(2311, 216688, 2, 44100, /data/Dropbox-spatial/Dropbox/spatial/music/AudioSources/oily-cart-awu-samples/vocals/02-chorus1.wav)
+    -- Buffer(2312, 562294, 1, 48000, /data/Dropbox-spatial/Dropbox/spatial/music/AudioSources/oily-cart-awu-samples/vocals/03-chorus-high.aiff)
+    -- Buffer(2313, 35584, 2, 44100, /data/Dropbox-spatial/Dropbox/spatial/music/AudioSources/oily-cart-awu-samples/vocals/04-StabVowel.wav)
+    # pF "buf" "2309"
+    -- # pF "buf" (slow 16 $ 2295 + run 23)
+    # pF "time" len
+    # pF "offset" (range 0 1 (slow 64 (cosine)))
+    # pF "amp" 0.95
+    # pF "rate" (range 0.3 0.33 (slow 64 (cosine)))
+    |+ pF "rate" 0.2
+    -- # pF "rate" 0.7
+    -- # shape 0.5
+    -- # distort 0.7
+    -- # accelerate 0.6
+    -- # lpf 50
+    # sustain len
+    -- # pan (choose [0.2,0.8])
+    -- # pan (slow 32 (cosine))
+    # gain 0.85
+    # orbit out8
+
+p "choral" silence
+
+solo "choral"
+unsolo "choral"
+
+do -- grains -------------------------------------------------------------------
+  -- let len = 3
+  let len = (range 3 6 (slow 16 (cosine)))
   p "grains" -------------------------------------------------------------------
     $ every 1 (const
-      -- $ spin 4
       -- $ fast 11
-      $ sometimesBy 0.2 (|+ pF "rate" 0.2)
-      $ sometimesBy 0.05 (|+ pF "rate" 0.4)
-      $ sometimesBy 0.06 (|- pF "rate" 0.15)
-      $ sound "avgrain*1"
-      -- # pF "buf" 2297
-      -- # pF "buf" 2299
-      -- # pF "buf" "2309 2038 2309"
-      # pF "buf" "2309"
-      -- # pF "buf" "2038"
-      -- # pF "buf" (slow 16 $ 2295 + run 23)
+      -- $ sometimesBy 0.2 (|+ pF "rate" 0.2)
+      -- $ sometimesBy 0.05 (|+ pF "rate" 0.4)
+      -- $ sometimesBy 0.06 (|- pF "rate" 0.15)
+      $ sound "avgrain"
+      -- Buffer(2315, 267608, 1, 44100.0, /System/Volumes/Data/Dropbox-spatial/Dropbox/spatial/music/AudioSources/oily-cart-awu-samples/atmos/01-noiseatmos.aif)
+      # pF "buf" "<2315>"
       # pF "time" len
       # pF "offset" (range 0 1 (slow 64 (cosine)))
       # pF "amp" 0.95
-      # pF "rate" (range 0.3 0.33 (slow 64 (cosine)))
-      |+ pF "rate" 0.2
-      -- # pF "rate" 0.7
-      -- # shape 0.5
-      -- # distort 0.7
-      -- # accelerate 0.6
-      -- # lpf 50
+      # pF "rate" (range 0.01 0.02 (slow 16 (cosine)))
+      |+ pF "rate" 1.4
+      -- # distort 0.03
+      -- # lpf 1000
       # sustain len
-      -- # pan (choose [0.2,0.8])
+      # pan (choose [0.2,0.8])
       -- # pan (slow 32 (cosine))
       # gain 0.85
-      # orbit out14
+      # orbit out15
     )
     $ sound "~"
-    # orbit out14
+    # orbit out15
 
 p "grains" silence
 
@@ -407,31 +454,34 @@ p "spectral-002" silence
 -- SYNTHS ======================================================================
 
 p "sq-bass" --------------------------------------------------------------------
-  $ slow 6
-  -- $ sometimesBy 0.08 (fast 2)
-  -- $ sometimesBy 0.05 (slow 3)
+  $ slow 9
   $ sometimesBy 0.05 (# speed (- 0.25))
-  $ sometimesBy 0.02 (# speed (- 0.5))
-  -- $ sometimesBy 0.1 (|+ n 2)
+  $ sometimesBy 0.12 (# speed (- 0.5))
+  $ sometimesBy 0.1 (|+ n 2)
   -- $ every 15 (|+ sustain "2 1 1.5")
-  -- $ sometimesBy 0.1 (rev)
+  $ sometimesBy 0.1 (rev)
   $ struct "1 0 0 0 0 0 0"
   $ sound "[mspplucklead]"
-  -- *| n (scale "chromatic" "b2 f2/2 [~ g2] [a'3/3, a2/2]")
-  *| n (scale "chromatic" "<[f2, g3] [f2, f3] [f4, g5]>")
-  # speed (range 0.98 1.01 $ slow 16 $ cosine)
+  *| n (scale "chromatic" "<[f2, g3] [f2, f3] [f3, g3]>")
+  # pF "mAttackTime" (range 10 1000 $ slow 32 $ cosine)
+  # pF "mDecayTime" (range 100 500 $ slow 32 $ cosine)
+  # pF "mReleaseTime" (range 1000 500 $ slow 32 $ cosine)
+  # speed (range (0.98) 1.01 $ slow 16 $ cosine)
   # sustain (range 0.5 3.8 $ slow 16 $ rand)
   # octave 4
   # begin (range 0 0.03 (slow 16 (rand)))
-  -- # djf (range 0.45 0.65 (slow 16 (rand)))
-  # distort (choose [0.5, 0.2, 0.1, 1])
+  -- # crush 6
+  # distort (choose [0.3, 0.2, 0.1, 0])
+  |- distort 0.05
   # gain 0.85
   # orbit out11
+
 
 p "sq-bass" $ silence
 
 solo "sq-bass"
 unsolo "sq-bass"
+
 
 do -- stabfx -------------------------------------------------------------------
   let myRate = 256
@@ -504,7 +554,7 @@ p "waves" ----------------------------------------------------------------------
   -- # shape 0.5
   -- # accelerate 0.9
   -- # pan (range 0 1 $ slow 6 $ rand)
-  # orbit out16
+  # orbit out15
   # gain 1.1
 
 

@@ -4,13 +4,14 @@
 
 
 (
-~folder= "/System/Volumes/Data/Dropbox-spatial/Dropbox/spatial/music/AudioSources/oily-cart-awu-samples/segments";
+~folder= "/System/Volumes/Data/Dropbox-spatial/Dropbox/spatial/music/AudioSources/oily-cart-awu-samples/atmos";
 
 // ~folder= "/System/Volumes/Data/Dropbox-spatial/Dropbox/spatial/music/AudioSources/oily-cart-awu-samples/beat";
 
 ~buffers.do{|x| x.free};
 
 ~buffers= (~folder+/+"*").pathMatch.collect{|x| Buffer.readChannel(s, x, channels:[0])};
+
 
 "loading samples >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>".postln;
 ~buffers.do{|aFile|
@@ -20,12 +21,23 @@
 ~buffers.size;
 )
 
-~buffers[0].play;
+~buffers[1].play;
 
-~buffers[0].query;
+~buffers[1].query;
 
-Env.sine(3).plot
+~dirt.soundLibrary.findBuffer(2309)
 
+~dirt.soundLibrary.buffers.do { |x| x.asArray.do { |buf| buf.postln } };
+
+~dirt.soundLibrary.buffers.size.postln;
+
+(
+
+"--------------------------".postln;
+
+~dirt.soundLibrary.buffers.do { |x| x.asArray.do { |buf| buf.postln } };
+
+)
 
 //--load a sampler (a synth definition for playing a short grain of a buffer)
 (
@@ -59,11 +71,13 @@ SynthDef(\avgrainDirt, {|out= 0, buf, rate= 1, offset= 0, time= 0.1, amp= 0.1, p
 	var src= PlayBuf.ar(1, buf, bufRate, trig, startPos, loop);
 
 	// OffsetOut.ar(out, Pan2.ar(src*env*amp, pan));
-	OffsetOut.ar(out, DirtPan.ar(src*env*amp, ~dirt.numChannels, pan));
+	OffsetOut.ar(~out8, DirtPan.ar(src*env*amp, ~dirt.numChannels, pan));
 }).add;
 )
 
-Synth(\avgrain, [\buf, ~buffers[0], \time, 0.3, \amp, 0.8])
+Synth(\avgrain, [\buf, ~buffers[0], \time, 0.8, \amp, 0.8])
+
+Synth(\avgrainDirt, [\buf, ~buffers[5], \time, 0.3, \amp, 0.8])
 
 ~buffers[0].play;
 
