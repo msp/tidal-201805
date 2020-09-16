@@ -1,0 +1,43 @@
+setcps (170/60/4)
+
+do -- RYTM --------------------------------------------------------------------
+  let myRate = 64
+  let attackMod = range 0.3 0.6 (slow (myRate) $ cosine)
+  let bd = 0
+  let sd = 1
+  let rs = 2
+  let cp = 3
+  let bt = 4
+  let lt = 5
+  let mt = 6
+  let ht = 7
+  let ch = 8
+  let oh = 9
+  let cy = 10
+  let cb = 11
+  let track = midichan
+  -- sample start
+  -- BD origin = 25
+  let startMod = (range 15 35 (slow 32 (cosine)))
+  p "rytm"
+    $ slow 1
+    $ every 16 (# track "[0, 4, 5]")
+    $ struct "1 0 0 1/12 0 0 1 0 0 0 0 0 1/10 0 0 0"
+    -- $ struct "1 1 0"
+    -- $ sound "rytm" # track "[0]"
+    $ seqPLoop [
+      (00, 16, sound "rytm" # track "[0, 4]" # ccn 28 # ccv startMod),
+      (16, 20, sound "rytm" # track "[4]"    # ccn 28 # ccv startMod),
+      (20, 36, sound "rytm" # track "[0]"    # ccn 28 # ccv 40)
+    ]
+    # note "c3"
+
+
+
+
+p "rytm" silence
+
+mute "rytm"
+unsolo "rytm"
+
+unmuteAll

@@ -1,7 +1,13 @@
-MIDIClient.init
+MIDIClient.init;
 
 
-MIDIIn.connectAll
+// ~midiOut = MIDIOut.newByName("IAC Driver", "Bus 1");
+~rytmOut = MIDIOut.newByName("Elektron Analog Rytm", "Elektron Analog Rytm");
+
+~dirt.soundLibrary.addMIDI(\rytm, ~rytmOut);
+
+
+Quarks.gui
 
 
 (
