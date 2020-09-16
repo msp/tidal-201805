@@ -1,51 +1,63 @@
--- Doctored from https://github.com/tidalcycles/Tidal/blob/master/BootTidal.hs
+-- Doctored from https://github.com/tidalcycles/Tidal/blob/main/BootTidal.hs
 -- doesn't seem to parse multi-line input!
 
 :set -XOverloadedStrings
 :set prompt ""
-:set prompt-cont ""
 
 import Sound.Tidal.Context
 
+import System.IO (hSetEncoding, stdout, utf8)
 
-latency = 0.1
+import qualified Control.Concurrent.MVar as MV
+import qualified Sound.Tidal.Tempo as Tempo
+-- import qualified Sound.OSC.FD as O
 
-supercolliderTarget = superdirtTarget {oLatency = latency, oAddress = "127.0.0.1"}
+hSetEncoding stdout utf8
 
 -- squattybox2
 -- processingTarget = OSCTarget {oName = "Processing Target", oAddress = "192.168.86.132", oPort = 1818, oPath = "/play2", oShape = Nothing, oLatency = latency, oPreamble = [], oTimestamp = NoStamp }
 -- horus
 -- processingTarget = OSCTarget {oName = "Processing Target", oAddress = "192.168.86.221", oPort = 1818, oPath = "/play2", oShape = Nothing, oLatency = latency, oPreamble = [], oTimestamp = NoStamp }
 
-
-
 -- rpiTarget = OSCTarget {oName = "RPI Target", oAddress = "192.168.0.103", oPort = 5005, oPath = "/play2", oShape = Nothing, oLatency = latency, oPreamble = [], oTimestamp = NoStamp }
 -- rpiTarget = OSCTarget {oName = "RPI2 Target", oAddress = "192.168.0.104", oPort = 5005, oPath = "/play2", oShape = Nothing, oLatency = latency, oPreamble = [], oTimestamp = NoStamp }
 -- rpiTarget = OSCTarget {oName = "RPI3 Target", oAddress = "192.168.0.105", oPort = 5005, oPath = "/play2", oShape = Nothing, oLatency = latency, oPreamble = [], oTimestamp = NoStamp }
 -- rpiTarget = OSCTarget {oName = "RPI4 Target", oAddress = "192.168.0.106", oPort = 5005, oPath = "/play2", oShape = Nothing, oLatency = latency, oPreamble = [], oTimestamp = NoStamp }
 
-targets = [supercolliderTarget]
+-- targets = [supercolliderTarget]
 -- targets = [supercolliderTarget,processingTarget]
 -- targets = [supercolliderTarget,processingTarget, rpiTarget, rpi2Target, rpi3Target, rpi4Target]
 
 -- total latency = oLatency + cFrameTimespan
--- tidal <- startTidal (superdirtTarget {oLatency = 0.1, oAddress = "127.0.0.1", oPort = 57120}) (defaultConfig {cFrameTimespan = 1/20})
-tidal <- startMulti targets (defaultConfig {cFrameTimespan = 1/20})
+tidal <- startTidal (superdirtTarget {oLatency = 0.1, oAddress = "127.0.0.1", oPort = 57120}) (defaultConfig {cFrameTimespan = 1/20})
+
+-- TODO: update from: https://tidalcycles.org/index.php/Custom_OSC
+-- tidal <- startMulti targets (defaultConfig {cFrameTimespan = 1/20})
 
 :{
-let p = streamReplace tidal
+let only = (hush >>)
+    p = streamReplace tidal
     hush = streamHush tidal
+    panic = do hush
+               once $ sound "superpanic"
     list = streamList tidal
     mute = streamMute tidal
     unmute = streamUnmute tidal
+    unmuteAll = streamUnmuteAll tidal
     solo = streamSolo tidal
     unsolo = streamUnsolo tidal
     once = streamOnce tidal
+    first = streamFirst tidal
     asap = once
     nudgeAll = streamNudgeAll tidal
     all = streamAll tidal
     resetCycles = streamResetCycles tidal
     setcps = asap . cps
+    getcps = do tempo <- MV.readMVar $ sTempoMV tidal
+                return $ Tempo.cps tempo
+--    getnow = do tempo <- MV.readMVar $ sTempoMV tidal
+--                now <- O.time
+--                return $ fromRational $ Tempo.timeToCycles tempo now
     xfade i = transition tidal True (Sound.Tidal.Transition.xfadeIn 4) i
     xfadeIn i t = transition tidal True (Sound.Tidal.Transition.xfadeIn t) i
     histpan i t = transition tidal True (Sound.Tidal.Transition.histpan t) i
@@ -134,3 +146,4 @@ let setI = streamSetI tidal
 :}
 
 :set prompt "msptidal> "
+:set prompt-cont ""
