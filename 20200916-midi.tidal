@@ -115,6 +115,8 @@ do -- ANA4 3 FM BASS -----------------------------------------------------------
     # octave 4
     # track 2
 
+p "ana4-3" silence
+
 unsolo "ana4-3"
 
 unmuteAll
