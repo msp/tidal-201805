@@ -20,7 +20,7 @@ do -- pulse --------------------------------------------------------------------
   --
   p "pulse-sub"
     $ seqPLoop [
-    (00, 08, struct "0 0 0 0 1/2 1 0 1/3" $ sound samples)
+    (00, 08, struct "0 0 1/2 1 0 1/3 0 0" $ sound samples)
     -- (08, 16, struct "0 1 0 1 1 1 1 1" $ sound samples),
     -- (16, 32, struct "0 1 0 1 1 0 1 1" $ sound samples),
     -- (32, 48, struct "0 1 0 1 1 1 1 0" $ sound samples)
@@ -29,18 +29,13 @@ do -- pulse --------------------------------------------------------------------
     -- $ sound "[msp808*8]"
     # pF "mAttackTime" attackMod
     -- # pF "mAttackTime" "[0.1 0.6]*4"
-    # pF "mFilterDuration" "3"
-    # pF "mSnap" "10"
+    # pF "mFilterDuration" "1"
+    # pF "mSnap" "1"
     # speed "1"
     -- # speed speedMod
     -- # sustain (sustainMod * subMulti)
-    # sustain "0.9"
-    -- # voice (range 0.3 0.01 (slow myRate (sine)))
-    -- # shape (range 0.05 0.5 (slow (myRate) (sine)))
-    -- # lpf (range 60 150 (slow (myRate) (cosine)))
-    -- # lpf 320
-    -- # hpf 350
-    -- # gain "0 0.9 0"
+    # sustain "2"
+    # distort 0.17
     # orbit out2
 
 p "pulse-sub" $ silence
@@ -111,13 +106,15 @@ unsolo "clicker"
 
 do -- east-perc ----------------------------------------------------------------
   let samples = "[east([8 7 8]/3, 8, <0 1 2>)]"
+  let silence = "~"
   --
   p "east-perc" ----------------------------------------------------------------
     $ sometimesBy 0.4 (slow 2)
     $ seqPLoop [
-    (00, 08, struct "0 0 0 0 0 0 0 0 0 0 1 0 1 1/3 1 0" $ sound samples),
-    (08, 16, struct "1 0 0 0 1 0 0 0 0 0 1 0 1 1/2 1 0" $ sound samples),
-    (16, 24, struct "0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0" $ sound samples)
+    (00, 02, struct "0 0 0 0 0 0 0 0 0 0 1 0 1 1/3 1 0" $ sound samples),
+    (02, 4, struct "1 0 0 0 1 0 0 0 0 0 1 0 1 1/2 1 0" $ sound silence)
+    -- (16, 24, struct "0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0" $ sound samples),
+    -- (24, 48, struct "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" $ sound samples)
     ]
     # n (choose [4,5,6])
     # djf (range 0.2 0.8 $ slow 3 rand)
@@ -157,18 +154,14 @@ p "hat-half" $ silence
 unsolo "hat-half"
 
 p "hat-fast" -------------------------------------------------------------------
-  -- $ struct "1/4 1/3 0 1 0 1 1/2 1"
-  -- $ struct "0 0 1 0 1 0 1 0"
-  $ struct "1 0 0 1 1/2 0 0 1"
+  -- $ struct "0 1 1/2 0 0 1 1 0"
+  $ struct "0 1 1/2 0 0 0 1/3 0"
   $ sometimesBy 0.05 (fast 2)
   $ sound "[mspsuperhat]*8"
   -- # hpf 10000
   # hpf (range 16500 4000 (slow 8 (cosine)))
   # sustain (range 0.05 0.08 (slow 3 (cosine)))
   |+ sustain 0.10
-  -- # sustain 0.4
-  -- # pan (choose [0.1,0.9])
-  -- # shape 0.6
   # gain (range 0.35 0.55 (slow 3 (cosine)))
   |+ gain 0.75
   # accelerate 3
@@ -207,7 +200,7 @@ solo "snares-170"
 unsolo "snares-170"
 
 p "hard-snares" ----------------------------------------------------------------
-  $ every 8 (const
+  $ every 7 (const
     -- $ sound "sn:4(<1 1 1 1 1 1 2>, 7)"
     $ sound "sn(<1 1 1 1 1 1 2>, 7)"
     # n (irand 30)
@@ -286,11 +279,13 @@ p "breakz-1" silence
 unsolo "breakz-1"
 
 do -- soundboi -----------------------------------------------------------------
+  -- let samples = "[[[<feel:8/3 feel:7/4> feel:1/3 <feel:2 feel:4/3> < ~ feel:0/3 feel:1>]*2 ]]"
+  let samples = "<feel:0 feel:7> ~ feel:2 ~ ~ ~ ~ < ~ feel:4 feel:1>"
+  let silence = "~"
   p "soundboi"
-    $ skip
-    $ skip
-    $ skip
-    -- $ swingBy (0.38) 4
+    -- $ skip
+    -- $ skip
+    -- $ skip
     $ sometimesBy 0.15 (fast 2)
     $ sometimesBy 0.1 (slow 2)
     $ every 15 (rev)
@@ -298,27 +293,29 @@ do -- soundboi -----------------------------------------------------------------
     $ sometimesBy 0.1 (# crush 4)
     $ fix ((# gain 0.5)) ("feel:8")
     $ fix ((# gain 0.4)) ("feel:1")
-    -- $ fix ((# speed 5.4)) (s "amencutup")
-    -- $ fix ((# end 0.2)) (s "amencutup")
-    -- $ slow 2
     $ degradeBy 0.05
-    -- $ sound "[[[<feel:8/3 feel:7/4> feel:1/3 <feel:3 feel:4/3> < ~ feel:0/3 feel:1>]*2 ]]"
-    $ sound "[[[<feel:8/3 feel:7/4> feel:1/3 <feel:2 feel:4/3> < ~ feel:0/3 feel:1>]*2 ]]"
+    $ seqPLoop [
+      (00, 08, sound samples)
+      -- (08, 16, sound silence),
+      -- (16, 32, sound samples),
+      -- (32, 40, sound silence)
+    ]
     -- $ sound "feel:8 feel:0"
     -- # n (choose [0,1,2,3,4,5,7,8])
     # sustain "1 0.09 1 1"
-    # speed "0.5 0.1 1.5 1.5"
+    # speed "0.5 0.6 1.5 1.5"
     |+ speed (range 0.95 1.05 (fast 3 sine))
     |+ speed 0.2
     -- |- speed 0.45
     -- # accelerate 3.8
     # shape 0.2
-    # gain "1 0.8 1 0.9"
+    # gain "0.6 1 0.8 0.8 1 1 0.9 0.9"
     |- gain 0.1
     # orbit out13
 
 p "soundboi" silence
 
+solo "soundboi"
 unsolo "soundboi"
 
 -- HYPNO / FX ==================================================================
@@ -432,16 +429,24 @@ p "grains" silence
 solo "grains"
 unsolo "grains"
 
-do -- spectral-001 -------------------------------------------------------------
-  p "spectral-001" -------------------------------------------------------------
-    $ slow 8
-    $ sound "spectral-001"
-    # n (irand 5)
-    # speed (range 0.2 3 (slow myRate (rand)))
-    # djf (range 0.9 0.1 $ fast 4 $ rand)
+do -- jazz-chords --------------------------------------------------------------
+  p "jazz-chords" --------------------------------------------------------------
+    -- $ slow 8
+    $ sound "segments:13"
+    -- $ sound "segments:04"
+    -- # n (irand 5)
+    # speed (range 0.02 0 (slow myRate (rand)))
+    -- # speed (range 0.2 1.5 (slow myRate (sine)))
+    |+ speed 1.1
+    -- |+ speed 1.4
+    # djf (range 0.9 0.3 $ fast 4 $ rand)
+    -- # legato 1
     # orbit out9
 
-p "spectral-001" silence
+p "jazz-chords" silence
+
+solo "jazz-chords"
+unsolo "jazz-chords"
 
 do -- spectral-002 -------------------------------------------------------------
   p "spectral-002" -------------------------------------------------------------
@@ -450,8 +455,9 @@ do -- spectral-002 -------------------------------------------------------------
     # n 5
     # speed (range 0.2 0.5 (slow myRate (rand)))
     # shape (range 0 0.2 (slow myRate (rand)))
-    # distort (range 0 0.1 (slow myRate (rand)))
-    # djf (range 0.9 0.1 $ fast 4 $ rand)
+    # distort (range 0 0.05 (slow myRate (rand)))
+    # djf (range 0.9 0.5 $ fast 4 $ rand)
+    # gain 0.8
     # orbit out9
 
 p "spectral-002" silence
@@ -469,7 +475,7 @@ p "sq-bass" --------------------------------------------------------------------
   $ struct "1 0 0 0 0 0 0"
   $ sound "[mspplucklead]"
   *| n (scale "chromatic" "<[f2, g3] [f2, f3] [f3, g3]>")
-  # pF "mAttackTime" (range 10 1000 $ slow 32 $ cosine)
+  -- # pF "mAttackTime" (range 10 1000 $ slow 32 $ cosine)
   # pF "mDecayTime" (range 100 500 $ slow 32 $ cosine)
   # pF "mReleaseTime" (range 1000 500 $ slow 32 $ cosine)
   # speed (range (0.98) 1.01 $ slow 16 $ cosine)
