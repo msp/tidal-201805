@@ -43,7 +43,7 @@ solo "rytm"
 
 unsolo "rytm"
 
-do -- ANA4 1 -------------------------------------------------------------------
+do -- ANA4 1 ARPY --------------------------------------------------------------
   let track = midichan
   let filterMod = (range 0 80 (slow 128 (sine)))
   let noiseMod = filterMod
@@ -67,11 +67,11 @@ do -- ANA4 1 -------------------------------------------------------------------
 
 p "ana4-1" silence
 
-mute "ana4-1"
+unmute "ana4-1"
 solo "ana4-1"
 unsolo "ana4-1"
 
-do -- ANA4 2 -------------------------------------------------------------------
+do -- ANA4 2 WIGGLE ------------------------------------------------------------
   let track = midichan
   -- let startMod = (range 15 35 (slow 32 (cosine)))
   p "ana4-2"
@@ -90,33 +90,31 @@ do -- ANA4 2 -------------------------------------------------------------------
 p "ana4-2" silence
 
 mute "ana4-2"
+
 solo "ana4-2"
 unsolo "ana4-2"
 
-do -- ANA4 3 -------------------------------------------------------------------
+do -- ANA4 3 FM BASS -----------------------------------------------------------
   let track = midichan
   -- let startMod = (range 15 35 (slow 32 (cosine)))
   p "ana4-3"
-    $ slow 1
-    -- $ skip
-    -- $ skip
-    -- $ skip
-    -- $ skip
-    -- $ every 16 (# track "[0, 4, 5]")
-    -- $ struct  "1 0 0 1/12 0 0 1 0 0 0 0 0 1/10 0 0 0"
-    -- $ struct "1 1 1 1"
-    $ note "d3 ~ ~ <~ g3 ~ g3> ~ ~ [as3]/10 ~"
-    # sound "ana4" # track "2"
-    -- $ seqPLoop [
-    --   (00, 16, sound "ana4" # track "[0, 4]" # ccn 28 # ccv startMod),
-    --   (16, 20, sound "ana4" # track "[4]"    # ccn 28 # ccv startMod),
-    --   (20, 36, sound "ana4" # track "[0]"    # ccn 28 # ccv 40)
-    -- ]
+    $ slow 2
+    -- $ note "ds5 ~ ~ f5 ~ ~ ds5 [e5]/3 ~ ~ [ds5]/5 ~ [as5]/5 ~ ~ ~"
+    -- |- note 12
+    $ seqPLoop [
+       (00, 02, n "ds5   ~     ~     f5     ~      ~      ~      ~     ~     ~     ~     ~     ~     ~     ~     ~    " # sound "ana4")
+      ,(02, 03, n "ds5   ~     ~     f5     ~      ~      ds5    ~     ~     ~     ~     ~     ~     ~     ~     ~    " # sound "ana4")
+      ,(03, 04, n "ds5   ~     ~     f5     ~      ~      ~      ~     ~     ~     ~     ~     ~     ~     ~     ~    " # sound "ana4")
+      ,(04, 05, n "ds5   ~     ~     f5     ~      ~      ds5    ~     ~     ~     ds5   ~     ~     ~     ~     ~    " # sound "ana4")
+      ,(05, 06, n "ds5   ~     ~     f5     ~      ~      ds5    e5    ~     ~     ds5   ~     ~     ~     ~     ~    " # sound "ana4")
+      ,(06, 08, n "ds5   ~     ~     f5     ~      ~      ds5    ~     ~     ~     ~     ~     ~     ~     ~     ~    " # sound "ana4")
+      ,(08, 09, n "ds5   ~     ~     f5     ~      ~      ds5    ~     ~     ~     ds5   ~     as5   ~     ~     ~    " # sound "ana4")
+      ,(09, 11, n "ds5   ~     ~     f5     ~      ~      ds5    ~     ~     ~     ~     ~     ~     ~     ~     ~    " # sound "ana4")
+      ,(11, 12, n "ds5   ~     ~     f5     ~      ~      ds5    e5    ~     ~     ds5   ~     as5   ~     ~     ~    " # sound "ana4")
+    ]
+    # octave 4
+    # track 2
 
-p "ana4-3" silence
-
-mute "ana4-3"
-solo "ana4-3"
 unsolo "ana4-3"
 
 unmuteAll
