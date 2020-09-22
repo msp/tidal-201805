@@ -89,28 +89,42 @@ do -- ANA4 2 WIGGLE ------------------------------------------------------------
 
 p "ana4-2" silence
 
-mute "ana4-2"
+unmute "ana4-2"
 
 solo "ana4-2"
 unsolo "ana4-2"
 
 do -- ANA4 3 FM BASS -----------------------------------------------------------
   let track = midichan
-  -- let startMod = (range 15 35 (slow 32 (cosine)))
+  let modSpeed = 32
+  let filterEnvDepthMod = (range 70 95 ((slow modSpeed cosine)))
+  let delaySendMod = (range 40 10 ((slow modSpeed cosine)))
+  let reverbSendMod = (range 40 10 ((slow modSpeed cosine)))
+  let silence = "~"
   p "ana4-3"
     $ slow 2
-    -- $ note "ds5 ~ ~ f5 ~ ~ ds5 [e5]/3 ~ ~ [ds5]/5 ~ [as5]/5 ~ ~ ~"
-    -- |- note 12
+    $ sometimesBy 0.01 (|- n 2)
+    $ sometimesBy 0.02 (fast 2)
     $ seqPLoop [
-       (00, 02, n "ds5   ~     ~     f5     ~      ~      ~      ~     ~     ~     ~     ~     ~     ~     ~     ~    " # sound "ana4")
+       (00, 01, n "ds5   ~     ~     f5     ~      ~      ~      ~     ~     ~     ~     ~     g5    ~     ~     ~    " # sound "ana4")
+      ,(01, 02, n "ds5   ~     ~     f5     ~      ~      ~      ~     ~     ~     ~     ~     ~     ~     ~     ~    " # sound "ana4")
       ,(02, 03, n "ds5   ~     ~     f5     ~      ~      ds5    ~     ~     ~     ~     ~     ~     ~     ~     ~    " # sound "ana4")
-      ,(03, 04, n "ds5   ~     ~     f5     ~      ~      ~      ~     ~     ~     ~     ~     ~     ~     ~     ~    " # sound "ana4")
-      ,(04, 05, n "ds5   ~     ~     f5     ~      ~      ds5    ~     ~     ~     ds5   ~     ~     ~     ~     ~    " # sound "ana4")
-      ,(05, 06, n "ds5   ~     ~     f5     ~      ~      ds5    e5    ~     ~     ds5   ~     ~     ~     ~     ~    " # sound "ana4")
-      ,(06, 08, n "ds5   ~     ~     f5     ~      ~      ds5    ~     ~     ~     ~     ~     ~     ~     ~     ~    " # sound "ana4")
-      ,(08, 09, n "ds5   ~     ~     f5     ~      ~      ds5    ~     ~     ~     ds5   ~     as5   ~     ~     ~    " # sound "ana4")
-      ,(09, 11, n "ds5   ~     ~     f5     ~      ~      ds5    ~     ~     ~     ~     ~     ~     ~     ~     ~    " # sound "ana4")
-      ,(11, 12, n "ds5   ~     ~     f5     ~      ~      ds5    e5    ~     ~     ds5   ~     as5   ~     ~     ~    " # sound "ana4")
+      ,(03, 04, n "ds5   ~     ~     f5     ~      ~      ~      ~     ~     ~     ~     ~     ~     ~     fs3   ~    " # sound "ana4")
+      ,(04, 05, n "cs5   ~     ~     e5     ~      ~      ~      ~     ~     ~     ds5   ~     ~     ~     ~     ~    " # sound "ana4")
+      ,(05, 06, n "ds5   ~     f5    ~      ~      ds5    ~      e5    ~     ~     ds5   ~     ~     ~     ~     ~    " # sound "ana4")
+      ,(06, 07, n "ds5   ~     ~     f5     ~      ~      ds5    ~     ~     ~     ~     ~     ~     ~     fs5   ~    " # sound "ana4")
+      ,(07, 08, n "ds5   ~     ~     f5     ~      ~      ds5    ~     ~     ~     ~     ~     g5    ~     fs5   ~    " # sound "ana4")
+      ,(08, 09, n "ds5   ~     ~     f5     ~      ~      ds5    ~     ~     ~     ~     ~     as5   ~     ~     ~    " # sound "ana4")
+      ,(09, 10, n "cs5   ~     ~     e5     ~      ~      ds5    ~     ~     ~     ~     ~     ~     ~     ~     ~    " # sound "ana4")
+      ,(10, 11, n "ds5   ds5   ~     e5     ~      ~      ds5    ~     ~     ~     ~     ~     ~     ~     ~     ~    " # sound "ana4")
+      ,(11, 12, n "ds5   ~     f5    ~      ~      ds5    ~      e5    ~     ~     ds5   ~     ~     ~     as5   ~    " # sound "ana4")
+      ,(12, 16, sound silence)
+    ]
+    # stack [
+       ccn 102 # ccv filterEnvDepthMod
+       -- ccn 102 # ccv 95
+      ,ccn  92 # ccv delaySendMod
+      ,ccn  93 # ccv (reverbSendMod * 1.3)
     ]
     # octave 4
     # track 2

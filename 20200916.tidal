@@ -34,7 +34,7 @@ do -- pulse --------------------------------------------------------------------
     -- # speed speedMod
     -- # sustain (sustainMod * subMulti)
     # sustain "2"
-    # distort 0.17
+    -- # distort 0.17
     # orbit out2
 
 p "pulse-sub" $ silence
@@ -295,10 +295,10 @@ do -- soundboi -----------------------------------------------------------------
     $ fix ((# gain 0.65)) ("feel:7")
     -- $ degradeBy 0.05
     $ seqPLoop [
-      (00, 16, sound samples),
-      (16, 32, sound silence),
-      (32, 48, sound samples),
-      (48, 60, sound silence)
+       (00, 16, sound samples)
+      ,(16, 32, sound silence)
+      ,(32, 48, sound samples)
+      ,(48, 60, sound silence)
     ]
     -- $ sound "feel:8 feel:0"
     -- # n (choose [0,1,2,3,4,5,7,8])
@@ -446,7 +446,10 @@ do -- jazz-chords --------------------------------------------------------------
 
 p "jazz-chords" silence
 
+unmute "jazz-chords"
+
 solo "jazz-chords"
+
 unsolo "jazz-chords"
 
 do -- spectral-002 -------------------------------------------------------------
@@ -467,16 +470,17 @@ p "spectral-002" silence
 -- SYNTHS ======================================================================
 
 p "sq-bass" --------------------------------------------------------------------
-  $ slow 3
-  $ sometimesBy 0.05 (# speed (- 0.25))
-  $ sometimesBy 0.12 (# speed (- 0.5))
+  -- $ slow 6
+  -- $ slow 3
+  $ sometimesBy 0.05 (# speed (- 0.6))
+  $ sometimesBy 0.12 (# speed (- 0.2))
   $ sometimesBy 0.1 (|+ n 2)
   -- $ every 15 (|+ sustain "2 1 1.5")
   $ sometimesBy 0.1 (rev)
   $ struct "1 0 0 0 0 0 0"
   $ sound "[mspplucklead]"
   *| n (scale "harmonicMinor" "<[e3, ds3] [f3, as3] [e3, as3]>")
-  # octave 5
+  # octave 4
   -- # pF "mAttackTime" (range 10 1000 $ slow 32 $ cosine)
   # pF "mDecayTime" (range 100 500 $ slow 32 $ cosine)
   # pF "mReleaseTime" (range 1000 500 $ slow 32 $ cosine)
