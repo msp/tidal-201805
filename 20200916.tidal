@@ -79,24 +79,30 @@ p "main" $ silence
 solo "main"
 unsolo "main"
 
-p "clicker" --------------------------------------------------------------------
-    $ skip
-  $ every 14 (fast 4)
-  $ struct "1 1 1 1"
-  -- $ fix (|- gain 0.3) (sound "e")
-  $ slow 1
-  -- $ sometimesBy 0.6 (fast 4)
-  $ sometimesBy 0.5 (|- speed 1.5)
-  $ sound "[click, e]*4"
-  # n (irand 3)
-  # vowel "<a e i a i>"
-  # speed (range 5.2 0.8 (slow 16 (cosine)))
-  -- # speed 5
-  # shape (range 0.1 0.6 (slow 128 (cosine)))
-  # hpf (range 2000 50 (slow 24 (saw)))
-  # gain 0.75
-  -- # pan (choose [0.3,0.7])
-  # orbit out3
+do -- clicker ------------------------------------------------------------------
+  let samples = "[click, e]"
+  let silence = "~"
+  p "clicker" --------------------------------------------------------------------
+    $ fix ((# gain 0.5)) ("click")
+    $ fast 4
+    $ every 12 (slow 2)
+    $ struct "1 0 1 0 1 0 1 0"
+    $ sometimesBy 0.1 (|- speed 1.5)
+    $ seqPLoop [
+     (0, 3, sound samples)
+    ,(3, 5, sound silence)
+    ,(5, 8, sound samples)
+    ,(8, 11, sound silence)
+    ,(11, 16, sound silence)
+    ]
+    # n "2 0"
+    -- # n (irand 6)
+    # vowel "<a e i a i>"
+    # speed (range 2.2 0.6 (slow 16 (rand)))
+    -- # shape (range 0.1 0.3 (slow 128 (cosine)))
+    -- # hpf (range 4000 150 (slow 16 (rand)))
+    # gain 0.95
+    # orbit out3
 
 p "clicker" silence
 
@@ -442,7 +448,7 @@ do -- jazz-chords --------------------------------------------------------------
     |+ speed 1.1
     # djf (range 0.9 0.3 $ fast 4 $ rand)
     -- # legato 1
-    # orbit out9
+    # orbit out8
 
 p "jazz-chords" silence
 
@@ -452,9 +458,29 @@ solo "jazz-chords"
 
 unsolo "jazz-chords"
 
+do -- spectral-001 -------------------------------------------------------------
+  p "spectral-001" -------------------------------------------------------------
+    $ slow 2
+    $ sound "spectral-001"
+    -- # n (irand 5)
+    # n 0
+    # speed 0.9
+    -- # speed (range 0.2 3 (slow myRate (cosine)))
+    # begin (range 0.1 0.9 $ slow myRate $ cosine)
+    # end 0.13
+    -- # djf (range 0.9 0.2 $ fast 4 $ rand)
+    # legato 1
+    # gain 0.7
+    # orbit out9
+
+p "spectral-001" silence
+
+unsolo "spectral-001"
+
+
 do -- spectral-002 -------------------------------------------------------------
   p "spectral-002" -------------------------------------------------------------
-    $ slow 16
+    $ slow 8
     $ sound "spectral-001"
     # n 5
     # speed (range 0.2 0.5 (slow myRate (rand)))
@@ -465,6 +491,8 @@ do -- spectral-002 -------------------------------------------------------------
     # orbit out9
 
 p "spectral-002" silence
+
+unsolo "spectral-002"
 
 
 -- SYNTHS ======================================================================
@@ -510,23 +538,24 @@ do -- stabfx -------------------------------------------------------------------
   let lengthDiv = 0.1
   -- let lengthDiv = (wchoose [(1,0.35),(2,0.55),(3,0.25),(4,0.15)])
   p "stabfx"
-    $ every 4 (const
+    $ every 1 (const
       $ sometimesBy 0.1 (fast 2)
       $ fast 1
-      $ struct "0 0 0 0 1 1? 0 0"
+      $ struct "1 0 0 0 1 0"
       $ sometimesBy 0.3 (|+ speed 0.1)
       $ sometimesBy 0.1 (|- speed 0.1)
       $ sound "segments*4"
-      # n "[3, 4]"
-      # speed "2.3"
-      |+ speed (range 0.05 3 $ slow (myRate/4) $ cosine)
+      -- # n "[3, 4]"
+      # speed "5.3"
+      -- |+ speed (range 0.05 3 $ slow (myRate/4) $ cosine)
       # accelerate "0"
-      |+ accelerate (range 4 0 $ slow (myRate/8) $ cosine)
+      -- |+ accelerate (range 4 0 $ slow (myRate/8) $ cosine)
       # begin positionMod
-      # end (positionMod + (lengthMod / lengthDiv)) --variable length
+      -- # end (positionMod + (lengthMod / lengthDiv)) --variable length
+      # end 0.1
       -- # enhance 0.2
       -- # djf (range 0.3 0.75 $ rand)
-      # gain 0.6
+      # gain 0.8
       # orbit out9
     )
     $ sound "~"

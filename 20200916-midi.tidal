@@ -13,7 +13,39 @@ let oh = 9
 let cy = 10
 let cb = 11
 
-do -- RYTM --------------------------------------------------------------------
+do
+  unmute "rytm"
+  unmute "soundboi"
+
+do
+  unmute "jazz-chords"
+  unmute "rytm"
+  unmute "soundboi"
+
+mute "pulse-sub"
+
+unmute "hat-half"
+
+mute "hat-fast"
+
+mute "hard-snares"
+
+mute "riser"
+
+mute "clicker"
+
+mute "snares-170"
+
+mute "east-perc"
+
+mute "jazz-chords"
+
+mute "spectral-001"
+
+unmute "spectral-002"
+
+
+do -- RYTM ---------------------------------------------------------------------
   let myRate = 64
   let attackMod = range 0.3 0.6 (slow (myRate) $ cosine)
   let track = midichan
@@ -37,7 +69,7 @@ do -- RYTM --------------------------------------------------------------------
 
 p "rytm" silence
 
-mute "rytm"
+unmute "rytm"
 
 solo "rytm"
 
@@ -67,7 +99,7 @@ do -- ANA4 1 ARPY --------------------------------------------------------------
 
 p "ana4-1" silence
 
-unmute "ana4-1"
+mute "ana4-1"
 solo "ana4-1"
 unsolo "ana4-1"
 
