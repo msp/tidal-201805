@@ -4,7 +4,12 @@
 
 
 (
-~folder= "/System/Volumes/Data/Dropbox-spatial/Dropbox/spatial/music/AudioSources/oily-cart-awu-samples/atmos";
+~folder= "/System/Volumes/Data/Dropbox-spatial/Dropbox/spatial/music/AudioSources/Samples/ChurchSamples/Church_Anvils.wve";
+
+
+// ~folder= "/System/Volumes/Data/Dropbox-spatial/Dropbox/spatial/music/AudioSources/Samples/leve-tidal-samples/p";
+
+// ~folder= "/System/Volumes/Data/Dropbox-spatial/Dropbox/spatial/music/AudioSources/oily-cart-awu-samples/atmos";
 
 // ~folder= "/System/Volumes/Data/Dropbox-spatial/Dropbox/spatial/music/AudioSources/oily-cart-awu-samples/beat";
 
@@ -21,9 +26,9 @@
 ~buffers.size;
 )
 
-~buffers[1].play;
+~buffers[0].play;
 
-~buffers[1].query;
+~buffers[0].query;
 
 ~dirt.soundLibrary.findBuffer(2309)
 
@@ -45,7 +50,7 @@ SynthDef(\avgrain, {|out, buf, rate= 1, offset= 0, time= 0.1, amp= 0.1, pan= 0|
 	var env= EnvGen.ar(Env.sine(time), doneAction:2);
 	var src= PlayBuf.ar(1, buf, rate*BufRateScale.ir(buf), 1, offset*BufFrames.ir(buf), 1);
 	// OffsetOut.ar(out, Pan2.ar(src*env*amp, pan));
-	OffsetOut.ar(out, DirtPan.ar(src*env*amp, ~dirt.numChannels, pan));
+	OffsetOut.ar(~out8, DirtPan.ar(src*env*amp, ~dirt.numChannels, pan));
 }).add;
 )
 
@@ -75,9 +80,9 @@ SynthDef(\avgrainDirt, {|out= 0, buf, rate= 1, offset= 0, time= 0.1, amp= 0.1, p
 }).add;
 )
 
-Synth(\avgrain, [\buf, ~buffers[0], \time, 0.8, \amp, 0.8])
+Synth(\avgrain, [\buf, ~buffers[10], \time, 0.8, \amp, 0.8])
 
-Synth(\avgrainDirt, [\buf, ~buffers[5], \time, 0.3, \amp, 0.8])
+Synth(\avgrainDirt, [\buf, ~buffers[3], \time, 0.3, \amp, 0.8])
 
 ~buffers[0].play;
 
