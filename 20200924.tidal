@@ -438,7 +438,7 @@ unsolo "grains"
 do -- jazz-chords --------------------------------------------------------------
   p "jazz-chords" --------------------------------------------------------------
     $ sometimesBy 0.1 (|- speed 0.1)
-    $ sometimesBy 0.05 (|- speed 0.2)
+    $ sometimesBy 0.1 (|- speed 0.2)
     $ sometimesBy 0.05 (|+ speed 0.1)
     $ sometimesBy 0.05 (# sound "segments:04")
     -- $ fix (# gain 0.1) (sound "segments:04")

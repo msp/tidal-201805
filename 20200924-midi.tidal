@@ -14,8 +14,9 @@ let cy = 10
 let cb = 11
 
 do
-  unmute "rytm"
-  unmute "soundboi"
+  mute "jazz-chords"
+  mute "rytm"
+  mute "soundboi"
 
 do
   unmute "jazz-chords"
@@ -24,7 +25,9 @@ do
 
 mute "pulse-sub"
 
-unmute "hat-half"
+mute "sq-bass"
+
+mute "hat-half"
 
 mute "hat-fast"
 
@@ -38,11 +41,11 @@ mute "snares-170"
 
 mute "east-perc"
 
-mute "jazz-chords"
-
 mute "spectral-001"
 
 unmute "spectral-002"
+
+mute "ana4-3"
 
 
 do -- RYTM ---------------------------------------------------------------------
