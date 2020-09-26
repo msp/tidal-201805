@@ -1,6 +1,6 @@
 MIDIClient.init;
 
-
+(
 // ~midiOut = MIDIOut.newByName("IAC Driver", "Bus 1");
 ~rytmOut = MIDIOut.newByName("Elektron Analog Rytm", "Elektron Analog Rytm");
 ~ana4Out = MIDIOut.newByName("Elektron Analog Four", "Elektron Analog Four");
@@ -10,7 +10,7 @@ MIDIClient.init;
 
 ~dirt.soundLibrary.addMIDI(\rytm, ~rytmOut);
 ~dirt.soundLibrary.addMIDI(\ana4, ~ana4Out);
-
+)
 
 Quarks.gui
 

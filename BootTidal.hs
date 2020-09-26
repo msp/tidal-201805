@@ -112,6 +112,7 @@ let only = (hush >>)
 
     rate = 128
     myRate = 16
+    silence = "~"
 
     -- I/O: multitrack recording
     -- Set Supercollider to output to Jack Router/Loopback
