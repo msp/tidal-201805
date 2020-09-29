@@ -162,10 +162,10 @@ p "hat-fast" -------------------------------------------------------------------
   $ struct "0 1 1 0 0 0 1 1"
   -- $ struct "0 1 1/2 0 0 0 1/3 0"
   $ sound "[mspsuperhat]*8"
-  # hpf (range 12500 9000 (slow 8 (cosine)))
-  # sustain (range 0.04 0.06 (slow 8 (cosine)))
+  # hpf (range 12500 9000 (slow 64 (cosine)))
+  # sustain (range 0.04 0.06 (slow 64 (cosine)))
   |+ sustain 0.05
-  # gain (range 0.50 0.55 (slow 8 (cosine)))
+  # gain (range 0.50 0.55 (slow 64 (cosine)))
   |+ gain 0.75
   # accelerate 3
   # orbit out4
@@ -176,18 +176,15 @@ solo "hat-fast"
 unsolo "hat-fast"
 
 do -- snares-170 ---------------------------------------------------------------
-  let probability = "<0.0 0.01 0.08 0.1>"
+  let probability = "<0.0 0.01 0.1>"
   let silence = "~"
   p "snares-170" ---------------------------------------------------------------
+    $ slow 4
     $ sometimesBy probability (fast 2)
     $ seqPLoop [
-     (0, 5,   sound "iris-hits:5 ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ iris-hits:11 ~ ~")
-    ,(5, 10,   sound silence)
+     (00, 05, sound "iris-hits:5 ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ iris-hits:11 ~ ~")
+    ,(05, 10, sound silence)
     ,(10, 17, sound "iris-hits:5 ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ iris-hits:08 ~ ~")
-    -- (34, 50, sound "~ ~ sn:2/3 ~ ~ ~ iris-hits:9 ~"),
-    -- (51, 67, sound "iris-hits:13/6 ~ iris-hits:9 iris-hits:11/2 ~ ~ iris-hits:10 iris-hits:10/4"),
-    -- (68, 70, sound "~ ~ sn:2 ~ ~ ~ iris-hits:8 ~"),
-    -- (71, 89, sound "iris-hits:13/4 ~ iris-hits:9 iris-hits:11/2 ~ ~ iris-hits:10 iris-hits:10/4")
     ]
     # end (range 0.02 1 $ slow myRate (cosine))
     # speed "<0.1 0.8 0.8 0.8 0.8> 0 0.8 0 0 0 0.85 -1"
@@ -248,31 +245,21 @@ solo "live-snares"
 unsolo "live-snares"
 
 do -- breakz -------------------------------------------------------------------
-  let output = out6
-  let numCycles = "<2 2 4>"
-  -- let numCycles = "1"
   p "breakz-1"
-    $ every numCycles (const
-      $ every 3 (skip)
-      $ every 2 (fast 2)
-      -- $ sometimesBy 0.1 (# accelerate "<4 -8>")
-      -- $ sound "[[feel:5*8], feelfx*4?]"
-      -- $ sound "[[feel(6, 8, 0 0 0 3 0 0 0 2)]]"
-      -- $ sound "[[[<feel:8/3 feel:7/4> feel:1/3 <feel:3 feel:4/3> < ~ feel:0/3 feel:1>]*2 ]]"
-      $ sound "[[[<feel:7/4> ~ <feel:3 feel:4/3> < ~ feel:0/3 ~>]*2 ]]"
-      -- # n (irand 30)
-      |- n 2
-      # speed (range 2.15 2.5 (rand))
-      |+ speed 0.8
-      # sustain (range 0.15 0.45 (rand))
-      # hpf 250
-      # pan (choose [0.4, 0.5])
-      -- # crush 8
-      # gain 0.88
-      # orbit output
-    )
-    $ sound "~"
-    # orbit output
+    $ fast 2
+    $ every 2 (0.5 <~)
+    $ every 5 (0.25 <~)
+    $ every 3 (0.125 <~)
+    $ striateBy 8 (range (1/256) (1/512) (slow 16 $ cosine))
+    $ seqPLoop [
+        (00, 03, sound "foo")
+       -- ,(03, 05, sound "~")
+    ]
+    # n 24
+    # speed 1.5
+    # gain 0.5
+    |+ gain (range "-0.2" 0.3 (slow 64 $ cosine))
+    # orbit out6
 
 p "breakz-1" silence
 
@@ -325,15 +312,16 @@ do -- riser --------------------------------------------------------------------
   let rateMult = 16
   --
   p "riser"
-    $ fast 2
+    $ slow 2
     $ sound ("~ ~ m-sweep")
-    # accelerate "0 -1 1 ~"
-    |+ accelerate (range 1 8 (slow (myRate*rateMult) $ cosine))
-    # speed 1.5
-    # phaserrate 0.9
-    # phaserdepth 0.9
+    # accelerate "0 -1 4 ~"
+    |+ accelerate (range 0 2 (slow (64) $ cosine))
+    -- # speed 1.5
+    # speed (range 1 3 (slow (64) $ cosine))
+    -- # phaserrate 0.9
+    -- # phaserdepth 0.9
     # gain 0.9
-    # legato 1
+    -- # legato 1
     # orbit out10
 
 p "riser" silence
@@ -347,8 +335,8 @@ do -- pulser ------------------------------------------------------------------
   p "pulser"
     $ every 127 (0.25 <~)
     $ seqPLoop [
-       (00, 05, fast 2 $ sound "arpy:3 ~ ~")
-      ,(05, 08, fast 1 $ sound "arpy:3 ~ ~" )
+       (00, 02, fast 2 $ sound "arpy:3 ~ ~")
+      ,(02, 08, fast 1 $ sound "arpy:3 ~ ~" )
       ,(08, 09, silence )
     ]
     # speed "1"
@@ -405,6 +393,7 @@ do -- choral -------------------------------------------------------------------
     # sustain len
     -- # pan (choose [0.2,0.8])
     -- # pan (slow 32 (cosine))
+    # speed 1.45
     # gain 0.85
     # orbit out8
 
@@ -494,7 +483,7 @@ do -- spectral-002 -------------------------------------------------------------
     $ slow 8
     $ sound "spectral-001"
     # n 5
-    # speed (range 0.2 0.5 (slow myRate (rand)))
+    # speed (range 0.8 0.5 (slow myRate (rand)))
     # shape (range 0 0.2 (slow myRate (rand)))
     # distort (range 0 0.05 (slow myRate (rand)))
     # djf (range 0.9 0.5 $ fast 4 $ rand)

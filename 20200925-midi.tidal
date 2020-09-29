@@ -4,21 +4,44 @@ do
   mute "rytm"
   mute "riser"
   mute "pulser"
+  mute "hat-half"
   mute "hat-fast"
   mute "clicker"
   mute "snares-170"
   mute "east-perc"
+  mute "breakz-1"
   mute "hard-snares"
+  mute "ana4-1"
+  mute "ana4-3"
+  mute "ana4-4"
 
 do
   unmute "rytm"
   unmute "riser"
   unmute "pulser"
+  unmute "hat-half"
   unmute "hat-fast"
   unmute "clicker"
   unmute "snares-170"
   unmute "east-perc"
+  unmute "breakz-1"
   unmute "hard-snares"
+  unmute "ana4-1"
+  unmute "ana4-3"
+  unmute "ana4-4"
+
+unsolo "rytm"
+solo "riser"
+solo "pulser"
+solo "hat-half"
+unsolo "hat-fast"
+unsolo "clicker"
+unsolo "snares-170"
+unsolo "east-perc"
+unsolo "break"
+solo "hard-snares"
+unsolo "ana4-1"
+unsolo "ana4-4"
 
 mute "pulse-sub"
 
@@ -42,22 +65,20 @@ mute "spectral-001"
 
 unmute "spectral-002"
 
-mute "ana4-3"
+mute "ana4-1"
+unmute "ana4-4"
 
 
 do -- RYTM ---------------------------------------------------------------------
   let myRate = 64
   let attackMod = range 0.3 0.6 (slow (myRate) $ cosine)
   let track = midichan
-  -- sample start
-  -- BD origin = 25
   let startMod = (range 15 35 (slow 32 (cosine)))
   let bd1 = sound "rytm" # track "[0, 4]"
   p "rytm"
     -- $ slow 1
-    -- $ every 16 (# track "[0, 4, 5]")
+    $ every 16 (skip)
     $ struct "1 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0"
-    -- $ sound "rytm"
     $ seqPLoop [
        (00, 16, sound "rytm" # track "[0, 4]")
       ,(16, 20, sound "rytm" # track "[4]")
@@ -79,7 +100,7 @@ unsolo "rytm"
 
 do -- ANA4 1 STAB --------------------------------------------------------------
   let track = midichan
-  let filterMod = (range 0 80 (slow 128 (sine)))
+  let filterMod = (range 0 80 (slow 64 (sine)))
   let noiseMod = filterMod
   -- let filterMod = 20
   let silence = "~"
@@ -106,21 +127,19 @@ mute "ana4-1"
 solo "ana4-1"
 unsolo "ana4-1"
 
-do -- ANA4 2 WIGGLE ------------------------------------------------------------
+do -- ANA4 2 ????? ------------------------------------------------------------
   let track = midichan
   -- let startMod = (range 15 35 (slow 32 (cosine)))
   p "ana4-2"
-    $ slow 1
-    -- $ every 16 (# track "[0, 4, 5]")
-    -- $ struct "1 0 0 1/12 0 0 1 0 0 0 0 0 1/10 0 0 0"
-    $ struct "0 0 1/2 0"
-    $ sound "ana4" # track "1"
-    -- $ seqPLoop [
-    --   (00, 16, sound "ana4" # track "[0, 4]" # ccn 28 # ccv startMod),
-    --   (16, 20, sound "ana4" # track "[4]"    # ccn 28 # ccv startMod),
-    --   (20, 36, sound "ana4" # track "[0]"    # ccn 28 # ccv 40)
-    -- ]
-    # note "gs6"
+    -- $ fast 8
+    $ sometimesBy 0.1 (|- note 1)
+    $ sometimesBy 0.2 (|+ note 3)
+    $ sometimesBy 0.1 (|+ note 5)
+    $ sometimesBy 0.1 (|+ note 6)
+    $ seqPLoop [
+      (16, 32, struct "1" $ sound "ana4" # track "1")
+    ]
+    # note "gs4"
 
 p "ana4-2" silence
 
@@ -129,39 +148,23 @@ unmute "ana4-2"
 solo "ana4-2"
 unsolo "ana4-2"
 
-do -- ANA4 3 FM BASS -----------------------------------------------------------
+do -- ANA4 3 ???????? ----------------------------------------------------------
   let track = midichan
   let modSpeed = 32
-  let filterEnvDepthMod = (range 70 95 ((slow modSpeed cosine)))
-  let delaySendMod = (range 40 10 ((slow modSpeed cosine)))
-  let reverbSendMod = (range 40 10 ((slow modSpeed cosine)))
+  let filterEnvAttackMod = (range 10 95 ((slow modSpeed cosine)))
+  -- let delaySendMod = (range 40 10 ((slow modSpeed cosine)))
+  -- let reverbSendMod = (range 40 10 ((slow modSpeed cosine)))
   let silence = "~"
   p "ana4-3"
-    $ slow 2
-    $ sometimesBy 0.01 (|- n 2)
-    $ sometimesBy 0.02 (fast 2)
-    $ seqPLoop [
-       (00, 01, n "ds5   ~     ~     f5     ~      ~      ~      ~     ~     ~     ~     ~     g5    ~     ~     ~    " # sound "ana4")
-      ,(01, 02, n "ds5   ~     ~     f5     ~      ~      ~      ~     ~     ~     ~     ~     ~     ~     ~     ~    " # sound "ana4")
-      ,(02, 03, n "ds5   ~     ~     f5     ~      ~      ds5    ~     ~     ~     ~     ~     ~     ~     ~     ~    " # sound "ana4")
-      ,(03, 04, n "ds5   ~     ~     f5     ~      ~      ~      ~     ~     ~     ~     ~     ~     ~     fs3   ~    " # sound "ana4")
-      ,(04, 05, n "cs5   ~     ~     e5     ~      ~      ~      ~     ~     ~     ds5   ~     ~     ~     ~     ~    " # sound "ana4")
-      ,(05, 06, n "ds5   ~     f5    ~      ~      ds5    ~      e5    ~     ~     ds5   ~     ~     ~     ~     ~    " # sound "ana4")
-      ,(06, 07, n "ds5   ~     ~     f5     ~      ~      ds5    ~     ~     ~     ~     ~     ~     ~     fs5   ~    " # sound "ana4")
-      ,(07, 08, n "ds5   ~     ~     f5     ~      ~      ds5    ~     ~     ~     ~     ~     g5    ~     fs5   ~    " # sound "ana4")
-      ,(08, 09, n "ds5   ~     ~     f5     ~      ~      ds5    ~     ~     ~     ~     ~     as5   ~     ~     ~    " # sound "ana4")
-      ,(09, 10, n "cs5   ~     ~     e5     ~      ~      ds5    ~     ~     ~     ~     ~     ~     ~     ~     ~    " # sound "ana4")
-      ,(10, 11, n "ds5   ds5   ~     e5     ~      ~      ds5    ~     ~     ~     ~     ~     ~     ~     ~     ~    " # sound "ana4")
-      ,(11, 12, n "ds5   ~     f5    ~      ~      ds5    ~      e5    ~     ~     ds5   ~     ~     ~     as5   ~    " # sound "ana4")
-      ,(12, 16, sound silence)
-    ]
+    $ slow 3
+    $ sound "ana4 ~ ~ ~ ~"
+    # n "ds5"
     # stack [
-       ccn 102 # ccv filterEnvDepthMod
-       -- ccn 102 # ccv 95
-      ,ccn  92 # ccv delaySendMod
-      ,ccn  93 # ccv (reverbSendMod * 1.3)
+       ccn 108 # ccv filterEnvAttackMod
+    --    -- ccn 102 # ccv 95
+    --   ,ccn  92 # ccv delaySendMod
+    --   ,ccn  93 # ccv (reverbSendMod * 1.3)
     ]
-    # octave 4
     # track 2
 
 p "ana4-3" silence
@@ -172,20 +175,24 @@ do -- ANA4 4 STABBER -----------------------------------------------------------
   let track = midichan
   let modSpeed = 64
   let filterEnvDecayMod = (range 30 127 ((slow modSpeed cosine)))
-  let delaySendMod = (range 40 10 ((slow modSpeed cosine)))
-  let reverbSendMod = (range 40 20 ((slow modSpeed cosine)))
+  let filterEnvDepthMod = (range 78 100 ((slow modSpeed sine)))
+  let delaySendMod = (range 60 30 ((slow modSpeed cosine)))
+  let reverbSendMod = (range 20 45 ((slow modSpeed cosine)))
   let silence = "~"
   p "ana4-4"
     -- $ slow 2
+    -- $ skip
+    -- $ skip
+    $ every 9 (skip)
     $ sometimesBy 0.01 (|- n 2)
     $ sometimesBy 0.02 (fast 2)
     $ seqPLoop [
-       (00, 05, n "~ ds4 ~ ~" # sound "ana4")
-      ,(05, 07, silence )
+       (00, 05, n "~ ~ ds7 ~" # sound "ana4")
+      -- ,(05, 07, silence )
     ]
     # stack [
        ccn 109 # ccv filterEnvDecayMod
-       -- ccn 102 # ccv 95
+      ,ccn 102 # ccv filterEnvDepthMod
       ,ccn  92 # ccv delaySendMod
       ,ccn  93 # ccv (reverbSendMod * 1.5)
     ]
@@ -193,6 +200,8 @@ do -- ANA4 4 STABBER -----------------------------------------------------------
 
 p "ana4-4" silence
 
-unsolo "ana4-3"
+unmute "ana4-4"
+
+unsolo "ana4-4"
 
 unmuteAll
