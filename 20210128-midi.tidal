@@ -1,0 +1,270 @@
+setcps (170/60/4)
+
+myRate = 128
+-- myRate = 64
+
+do
+  mute "rytm"
+  mute "riser"
+  mute "pulse-sub"
+  mute "hat-half"
+  mute "hat-fast"
+  mute "clicker"
+  mute "snares-170"
+  mute "soundboi"
+  mute "east-perc"
+  mute "breakz-1"
+  mute "hard-snares"
+  mute "ana4-1"
+  mute "ana4-2"
+  mute "ana4-3"
+  mute "ana4-4"
+
+do
+  -- resetCycles
+  unmute "rytm"
+  unmute "riser"
+  unmute "pulse-sub"
+  unmute "hat-half"
+  unmute "hat-fast"
+  unmute "clicker"
+  unmute "snares-170"
+  unmute "soundboi"
+  unmute "east-perc"
+  unmute "breakz-1"
+  unmute "hard-snares"
+  unmute "ana4-1"
+  unmute "ana4-2"
+  unmute "ana4-3"
+  unmute "ana4-4"
+
+unsolo "rytm"
+solo "riser"
+solo "pulser"
+solo "hat-half"
+unsolo "hat-fast"
+unsolo "clicker"
+unsolo "snares-170"
+unsolo "east-perc"
+unsolo "break"
+solo "hard-snares"
+unsolo "ana4-1"
+unsolo "ana4-4"
+
+mute "pulse-sub"
+
+mute "sq-bass"
+
+mute "hat-half"
+
+unmute "hat-fast"
+
+mute "hard-snares"
+
+mute "riser"
+
+mute "clicker"
+
+mute "snares-170"
+
+mute "east-perc"
+
+mute "spectral-001"
+
+unmute "spectral-002"
+
+mute "ana4-1"
+unmute "ana4-4"
+
+p "rytm" silence
+
+unmute "rytm"
+
+solo "rytm"
+
+unsolo "rytm"
+
+p "ana4-1" silence
+
+unmute "ana4-3"
+solo "ana4-3"
+unsolo "ana4-3"
+
+
+do
+  let structure = "1 <1 1 [0 1]> 1 1 0 0 1 0 0 1 0 0 1/3 0 0 0"
+  -- let structure = "1 <1 0 [1 0 1 0]> 1 1 0 0 1 1 0 1 0 0 1/3 0 1 0"
+  -- let structure = "t(4,8)"
+  let pattern = (every 5 inv structure)
+  do -- RYTM -------------------------------------------------------------------
+    let track = midichan
+    let bd1 = sound "rytm" # track "[0, 4]"
+    p "rytm"
+      $ fix ((# gain 0.65)) ("bd:8")
+      $ slow 2
+      -- $ skip
+      -- $ skip
+      -- $ skip
+      $ every 64 (skip)
+      -- $ struct "1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0"
+      -- $ struct "1 0 0 0 0 0 1 0 0 0 0 0 1/3 0 0 0"
+      $ struct pattern
+      $ seqPLoop [
+         (00, 16, sound "[rytm, bd:8]" # track "[0]")
+        ,(20, 36, sound "rytm" # track "[0, 4]")
+        ,(16, 20, sound "rytm" # track "[4]")
+      ]
+      -- # stack [
+          -- ccn 31 # ccv 120
+          -- ccn 31 # ccv (range 70 120 (slow (myRate/2) (sine)))
+          -- ccn 16 # ccv "110 0 0 0 0 0 105 0 0 0 95 0 0 0 0 0"
+      -- ]
+      # note "c3 g2"
+  do -- ANA4 3 STABBER ---------------------------------------------------------
+    let track = midichan
+    let modSpeed = 32
+    -- Filter Attack
+    let filterEnvAttackMod = (range 05 35 ((slow (modSpeed) cosine)))
+    -- let filterEnvAttackMod = 35
+    -- Amp Attack
+    -- let ampEnvAttackMod    = (range 12 00 ((slow (modSpeed) cosine)))
+    let ampEnvAttackMod    = 0
+    -- Amp Sustain
+    let ampEnvSustainMod   = (range 00 20 ((slow (modSpeed/2) cosine)))
+    -- let ampEnvSustainMod   = 0
+    -- Amp Release
+    -- let ampEnvReleaseMod   = (range 71 120 ((slow (modSpeed*2) cosine)))
+    let ampEnvReleaseMod   = 71
+    -- FX
+    -- let delaySendMod = (range 40 10 ((slow modSpeed cosine)))
+    -- let reverbSendMod = (range 40 10 ((slow modSpeed cosine)))
+    let silence = "~"
+    p "ana4-3"
+      $ slow 2
+      $ every 3 (fast 2)
+      $ struct pattern
+      $ note
+        (
+          -- mask ("1 0 0 0 0 0 1 0 0 0 0 0 1/3 0 0 0")
+          (
+            -- scale "diminished"
+            scale "chromatic"
+            -- $ snowball 4 (+) (fast "<2>")
+            -- $ "d5" --test
+            $ "d5 d5/3 d5 d5 <d5 d5/2 d5 a5*3> d5 <d5 ds5 d5> f5/3"
+          )
+        )
+      # sound "ana4"
+      -- # note "d5"
+      # stack [
+         ccn 104 # ccv ampEnvAttackMod
+        ,ccn 106 # ccv ampEnvSustainMod
+        ,ccn 107 # ccv ampEnvReleaseMod
+        ,ccn 108 # ccv filterEnvAttackMod
+      --   ,ccn  92 # ccv delaySendMod
+      --   ,ccn  93 # ccv (reverbSendMod * 1.3)
+      ]
+      # up "<0 0 3 -2>"
+      # track 2
+
+
+
+
+
+
+do -- ANA4 1 DIST BASS ---------------------------------------------------------
+  let track = midichan
+  let filter1FreqMod = (range 03 30 (slow (myRate) (cosine)))
+  let noiseMod = filter1FreqMod
+  let silence = "~"
+  p "ana4-1"
+    $ slow 1
+    -- $ sometimesBy 0.1 (|- note 1)
+    -- $ sometimesBy 0.2 (|+ note 3)
+    -- $ sometimesBy 0.1 (|+ note 5)
+    -- $ sometimesBy 0.1 (|+ note 6)
+    -- $ seqPLoop [
+    --    (00, 03, struct "1 0 0 0 0 0 0 0" $ sound "ana4" # track "0")
+    --   ,(03, 05, silence )
+    -- ]
+    -- # stack [
+    --    ccn 18 # ccv filter1FreqMod
+    --   ,ccn 77 # ccv noiseMod
+    -- ]
+    -- $ struct "1 <1 1 [0 1]> 1 1 0 0 1 0 0 1 0 0 1/3 0 0 0"
+    $ sound "ana4" # track "0"
+    # note "<f4>"
+do -- ANA4 2 SCREAM ------------------------------------------------------------
+  let track = midichan
+  let ampVolumeMod = (range 15 95 (slow myRate (cosine)))
+  p "ana4-2"
+    $ fast 8
+    -- $ sometimesBy 0.1 (|- note 1)
+    -- $ sometimesBy 0.2 (|+ note 3)
+    -- $ sometimesBy 0.1 (|+ note 5)
+    -- $ sometimesBy 0.1 (|+ note 6)
+    $ seqPLoop [
+       (00, 01, struct "1" $ sound "ana4")
+      ,(01, 03, sound "~")
+    ]
+    # ccn 7 # ccv ampVolumeMod
+    # track "1"
+    # note "a6"
+do -- ANA4 4 WHITE PERC --------------------------------------------------------
+      let track = midichan
+      let modSpeed = myRate
+      let filterEnvDecayMod = (range 30 127 ((slow modSpeed cosine)))
+      let filterEnvDepthMod = (range 0 110 ((slow (modSpeed/2) sine)))
+      -- let filterEnvDepthMod = 100
+      let delaySendMod = (range 20 10 ((slow modSpeed cosine)))
+      let reverbSendMod = (range 05 15 ((slow modSpeed cosine)))
+      -- let delaySendMod = 10
+      -- let reverbSendMod = 10
+      let silence = "~"
+      p "ana4-4"
+        -- $ fix ((# gain 0.4)) ("sd:0")
+        -- $ skip
+        -- $ every 36 (skip)
+        -- $ sometimesBy 0.01 (|- n 2)
+        -- $ sometimesBy 0.02 (fast 2)
+        -- $ struct "1 1 0 0 0 0 0 1"
+        -- $ struct "1 1"
+        $ slow 2
+        $ struct "1 <1 1 [0 1]> 1 1 0 0 1 0 0 1 0 0 1/3 0 0 0"
+        $ seqPLoop [
+           -- (00, 05, n "ds7" # sound "[ana4, sd:0]")
+           (00, 05, n "ds7" # sound "[ana4]")
+          -- ,(05, 07, silence )
+        ]
+        -- # stack [
+        -- --    ccn 109 # ccv filterEnvDecayMod
+        --   ccn 103 # ccv filterEnvDepthMod
+        --   ,ccn  92 # ccv delaySendMod
+        --   ,ccn  93 # ccv (reverbSendMod * 1.5)
+        -- ]
+        # track 3
+
+
+
+p "ana4-2" silence
+
+
+unmute "ana4-2"
+
+solo "ana4-2"
+unsolo "ana4-2"
+
+p "ana4-3" silence
+
+solo "ana4-3"
+unsolo "ana4-3"
+
+
+
+p "ana4-4" silence
+
+unmute "ana4-4"
+
+unsolo "ana4-4"
+
+unmuteAll

@@ -1,16 +1,93 @@
-MIDIClient.init;
+~dirt.audioRoutingBusses // here are the busses
+ ~dirt.audioRoutingBusses.size // 16, so you can use numbers from 0-15
+ ~dirt.audioRoutingBusses.at(0).scope;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// MUTABLE
+////////////////////////////////////////////////////////////////////////////////
+(
+(1..SuperDirt.maxSampleNumChannels).do { |numChannels|
+  SynthDef("global_mi_verb" ++ numChannels, { |dryBus, effectBus, verbwet=0, verbtime=0, verbdamp=0, verbhp=0, verbfreeze=0, verbdiff=0|
+    var signal = In.ar(dryBus, ~dirt.numChannels);
+    signal = MiVerb.ar(signal, verbwet, verbtime, verbdamp, verbhp, verbfreeze, verbdiff);
+    Out.ar(effectBus, signal)
+  }, [\ir, \ir]).add;
+};
+)
 
 (
-// ~midiOut = MIDIOut.newByName("IAC Driver", "Bus 1");
-~rytmOut = MIDIOut.newByName("Elektron Analog Rytm", "Elektron Analog Rytm");
-~ana4Out = MIDIOut.newByName("Elektron Analog Four", "Elektron Analog Four");
+~dirt.orbits.do { |x|
+    x.globalEffects = ~dirt.orbits[0].globalEffects.addFirst(
+      GlobalDirtEffect(\global_mi_verb, [\verbwet, \verbtime, \verbdamp, \verbhp, \verbfreeze, \verbdiff])
+  	)
+  };
 
-~rytmOut.latency = 0;
-~ana4Out.latency = 0;
-
-~dirt.soundLibrary.addMIDI(\rytm, ~rytmOut);
-~dirt.soundLibrary.addMIDI(\ana4, ~ana4Out);
+  ~dirt.orbits[0].initNodeTree;
 )
+
+(
+SynthDef("global_mi_clouds" ++ ~dirt.numChannels, { |dryBus, effectBus, cloudspitch=0, cloudspos=0, cloudssize=0, cloudsdens=0, cloudstex=0, cloudswet=0, cloudsgain=0, cloudsspread=0, cloudsrvb=0, cloudsfb=0, cloudsfreeze=0, cloudsmode=0, cloudslofi=0|
+    var signal = In.ar(dryBus, ~dirt.numChannels);
+    Out.ar(effectBus, MiClouds.ar(
+      inputArray: signal,
+      pit: cloudspitch,
+      pos: cloudspos,
+      size: cloudssize,
+      dens: cloudsdens,
+      tex: cloudstex,
+      drywet: cloudswet,
+      in_gain: cloudsgain,
+      spread: cloudsspread,
+      rvb: cloudsrvb,
+      fb: cloudsfb,
+      freeze: cloudsfreeze,
+      mode: cloudsmode,
+      lofi: cloudslofi
+    ));
+  }, [\ir, \ir]).add;
+)
+
+(
+SynthDef(\plaits, {|out, sustain=1, pan, accelerate, freq, harm=0.5, timbre=0.5, morph=0.5, engine=0|
+	// var env = EnvGen.ar(Env.linen(0.01, 0.98, 0.01, 1,-3), timeScale:sustain, doneAction:2);
+	var sound = MiPlaits.ar(pitch: freq.cpsmidi, engine: engine, harm: harm, timbre: timbre, morph: morph);
+	// Out.ar(out, DirtPan.ar(sound, ~dirt.numChannels, pan, env));
+	Out.ar(out, DirtPan.ar(sound, ~dirt.numChannels, pan));
+}).add
+);
+
+
+(
+~dirt.addModule('rings', { |dirtEvent|
+	dirtEvent.sendSynth('rings' ++ ~dirt.numChannels,
+		[
+			rtrig: ~rtrig,
+			rfreq: ~rfreq,
+			rstruct: ~rstruct,
+			rbright: ~rbright,
+			rdamp: ~rdamp,
+			rpos: ~rpos,
+			rmodel: ~rmodel,
+			rpoly: ~rpoly,
+			rintern_exciter: ~rintern_exciter,
+			reasteregg: ~reasteregg,
+			rbypass: ~rbypass,
+			out: ~out
+		]
+	)
+}, {~rbright.notNil});
+)
+
+(
+SynthDef("rings" ++ ~dirt.numChannels, { |out, rtrig=0, rfreq=60.0, rstruct=0.75, rbright=0.75, rdamp=0.4, rpos=0.9, rmodel=0, rpoly=1,rintern_exciter=0, reasteregg=0, rbypass=0|
+	var signal = In.ar(out, ~dirt.numChannels);
+	signal = MiRings.ar(signal, rtrig, rfreq, rstruct, rbright, rdamp, rpos, rmodel, rpoly,rintern_exciter, reasteregg, rbypass);
+  ReplaceOut.ar(out, signal)
+}).add;
+
+);
+
 
 Quarks.gui
 
@@ -181,7 +258,7 @@ Limiter.ar(GVerb.ar(filter*0.25) + Pan2.ar(filter))
 
 
 	    s = LeakDC.ar(Limiter.ar(h.(w.(p.(o, -48), 48), 48)));
-	    OffsetOut.ar(~out8, DirtPan.ar(s, ~dirt.numChannels, 0, 0.18));
+	    OffsetOut.ar(~out1, DirtPan.ar(s, ~dirt.numChannels, 0, 0.18));
 
     }
 )
