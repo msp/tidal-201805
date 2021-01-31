@@ -79,12 +79,15 @@ p "main" $ silence
 solo "main"
 unsolo "main"
 
-d3
+p "test"
 $ sound "bd*4"
-# gain 0.7
+# gain 0.85
 # sustain 0.01
+# orbit out1
 
-d3 silence
+p "test" silence
+
+unsolo "test"
 
 do -- clicker ------------------------------------------------------------------
   let samples = "[click, e]"
@@ -126,8 +129,9 @@ do -- east-perc ----------------------------------------------------------------
     $ sometimesBy 0.2 (# crush 4)
     $ seqPLoop [
      (00, 03, struct "0 0 0 0 0 0 0 0 0 0 1 0 1 1/3 1 0" $ sound samples)
-    ,(03, 06, sound silence)
-    ,(06, 09, struct "0 0 0 0 0 0 1 0 0 0 1 0 0 0   1 0" $ sound samples)
+    ,(03, 09, sound silence)
+    ,(09, 12, struct "0 0 0 0 0 0 1 0 0 0 1 0 0 0   1 0" $ sound samples)
+    ,(12, 18, sound silence)
     ]
     # n (choose [1,2,3])
     # djf (range 0.2 0.8 $ slow 3 rand)
@@ -167,12 +171,18 @@ p "hat-half" $ silence
 
 unsolo "hat-half"
 
-p "hat-fast" -------------------------------------------------------------------
+p "hat-fast"
+  $ slow 2
   $ every 5 skip
   $ every 5 (fast 2)
   -- $ press
-  $ struct "1 0 1 0 1 0 1 1"
-  $ sound "[mspsuperhat]"
+  $ struct "1 0 1 0 1 0 1 1 1 0 1 0 1 0 1 1"
+  -- $ sound "[mspsuperhat]"
+  $ seqPLoop [
+     (00, 16, sound "mspsuperhat")
+    ,(16, 20, sound "~")
+    ,(20, 36, sound "mspsuperhat")
+  ]
   # hpf (range 12500 9000 (slow myRate (cosine)))
   # sustain (range 0.01 0.06 (slow myRate (cosine)))
   |+ sustain 0.2

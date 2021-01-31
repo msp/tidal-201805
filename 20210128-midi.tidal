@@ -93,26 +93,30 @@ unsolo "ana4-3"
 
 do
   let structure = "1 <1 1 [0 1]> 1 1 0 0 1 0 0 1 0 0 1/3 0 0 0"
-  -- let structure = "1 <1 0 [1 0 1 0]> 1 1 0 0 1 1 0 1 0 0 1/3 0 1 0"
-  -- let structure = "t(4,8)"
+  let structure1 = structure
+  let structure2 = "t(4,8)"
+  let structure3 = "1 <1 0 [1 0 1 0]> 1 1 0 0 1 1 0 1 0 0 1/3 0 1 0"
+  let structure4 = "t(8,8)"
+  --
   let pattern = (every 5 inv structure)
+  let pattern1 = (every 5 inv structure1)
+  let pattern2 = (every 5 inv structure2)
+  let pattern3 = (every 5 inv structure3)
+  let pattern4 = (every 5 inv structure4)
+  --
+  let track = midichan
+  --
   do -- RYTM -------------------------------------------------------------------
-    let track = midichan
     let bd1 = sound "rytm" # track "[0, 4]"
     p "rytm"
       $ fix ((# gain 0.65)) ("bd:8")
       $ slow 2
-      -- $ skip
-      -- $ skip
-      -- $ skip
       $ every 64 (skip)
-      -- $ struct "1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0"
-      -- $ struct "1 0 0 0 0 0 1 0 0 0 0 0 1/3 0 0 0"
-      $ struct pattern
       $ seqPLoop [
-         (00, 16, sound "[rytm, bd:8]" # track "[0]")
-        ,(20, 36, sound "rytm" # track "[0, 4]")
-        ,(16, 20, sound "rytm" # track "[4]")
+         (00, 16, struct pattern1 $ sound "[rytm, bd:8]" # track "[0]")
+        ,(16, 20, struct pattern2 $ sound "rytm" # track "[4]")
+        ,(20, 36, struct pattern3 $ sound "rytm" # track "[0, 4]")
+        ,(36, 40, struct pattern4 $ sound "rytm" # track "[4]")
       ]
       -- # stack [
           -- ccn 31 # ccv 120
@@ -120,30 +124,85 @@ do
           -- ccn 16 # ccv "110 0 0 0 0 0 105 0 0 0 95 0 0 0 0 0"
       -- ]
       # note "c3 g2"
+      |+ note "<0 0 3 -2>"
+  do -- ANA4 1 ARPS ------------------------------------------------------------
+    let silence = "~"
+    p "ana4-1"
+      $ slow 2
+      $ seqPLoop [
+         (00, 16, struct pattern1 $ sound "ana4" # track 0)
+        ,(16, 20, struct pattern2 $ sound "ana4" # track 0)
+        ,(20, 36, struct pattern3 $ sound "ana4" # track 0)
+        ,(36, 40, struct pattern4 $ sound "ana4" # track 0)
+      ]
+      # note
+        (
+          -- mask ("1 0 0 0 0 0 1 0 0 0 0 0 1/3 0 0 0")
+          (
+            -- scale "diminished"
+            scale "chromatic"
+            -- $ snowball 4 (+) (fast "<2>")
+            -- $ "d5" --test
+            -- $ "d5 d5/3 d5 d5 <d5 d5/2 d5 a5*3> d5 <d5 ds5 d5> f5/3"
+            $ "d5'maj"
+          )
+        )
+      -- # note "f5"
+      |+ note "<0 0 3 -2>"
+      # octave 6
+  do -- ANA4 2 NOIZ ------------------------------------------------------------
+    let silence = "~"
+    p "ana4-2"
+      $ press
+      $ seqPLoop [
+         (00, 01, sound "ana4" # track 1)
+        ,(01, 16, sound "~" # track 1)
+      ]
+      # sustain 0.9
+      |+ note "<0>"
   do -- ANA4 3 STABBER ---------------------------------------------------------
-    let track = midichan
-    let modSpeed = 32
-    -- Filter Attack
-    let filterEnvAttackMod = (range 05 35 ((slow (modSpeed) cosine)))
-    -- let filterEnvAttackMod = 35
+    let modSpeed = 16
     -- Amp Attack
-    -- let ampEnvAttackMod    = (range 12 00 ((slow (modSpeed) cosine)))
+    -- let ampEnvAttackMod    = (range 12 00 ((slow (modSpeed) $ cosine)))
     let ampEnvAttackMod    = 0
     -- Amp Sustain
-    let ampEnvSustainMod   = (range 00 20 ((slow (modSpeed/2) cosine)))
-    -- let ampEnvSustainMod   = 0
+    -- let ampEnvSustainMod   = (range 00 30 ((slow (modSpeed/2) $ cosine)))
+    let ampEnvSustainMod   = 0
     -- Amp Release
-    -- let ampEnvReleaseMod   = (range 71 120 ((slow (modSpeed*2) cosine)))
+    -- let ampEnvReleaseMod   = (range 71 120 ((slow (modSpeed*2) $ cosine)))
     let ampEnvReleaseMod   = 71
+    -- Filter Attack
+    let filterEnvAttackMod = (range 05 100 ((slow modSpeed $ cosine)))
+    -- let filterEnvAttackMod = 35
     -- FX
-    -- let delaySendMod = (range 40 10 ((slow modSpeed cosine)))
-    -- let reverbSendMod = (range 40 10 ((slow modSpeed cosine)))
+    -- let delaySendMod = (range 40 10 ((slow modSpeed $ cosine)))
+    -- let reverbSendMod = (range 40 10 ((slow modSpeed $ cosine)))
+    -- MIDI
+    let midiControl = stack [
+                       ccn 104 # ccv ampEnvAttackMod
+                      ,ccn 106 # ccv ampEnvSustainMod
+                      ,ccn 107 # ccv ampEnvReleaseMod
+                      ,ccn 108 # ccv filterEnvAttackMod
+                     ]
+    let midiControl2 = stack [
+                       ccn 104 # ccv (ampEnvAttackMod)
+                      ,ccn 106 # ccv (range 40 70 ((slow (modSpeed) $ cosine)))
+                      ,ccn 107 # ccv (range 71 30 ((slow (modSpeed) $ cosine)))
+                      ,ccn 108 # ccv filterEnvAttackMod
+                     ]
     let silence = "~"
     p "ana4-3"
       $ slow 2
-      $ every 3 (fast 2)
-      $ struct pattern
-      $ note
+      $ every 3 (slow 1)
+      -- $ chunk 4 (|- note 5)
+      -- $ arp "<pinkyup down thumbup up>"
+      $ seqPLoop [
+         (00, 16, struct pattern1 $ sound "ana4" # midiControl  # track 2)
+        ,(16, 20, struct pattern2 $ sound "ana4" # midiControl2 # track 2)
+        ,(20, 36, struct pattern3 $ sound "ana4" # midiControl  # track 2)
+        ,(36, 40, struct pattern4 $ sound "ana4" # midiControl  # track 2)
+      ]
+      # note
         (
           -- mask ("1 0 0 0 0 0 1 0 0 0 0 0 1/3 0 0 0")
           (
@@ -154,23 +213,43 @@ do
             $ "d5 d5/3 d5 d5 <d5 d5/2 d5 a5*3> d5 <d5 ds5 d5> f5/3"
           )
         )
-      # sound "ana4"
-      -- # note "d5"
-      # stack [
-         ccn 104 # ccv ampEnvAttackMod
-        ,ccn 106 # ccv ampEnvSustainMod
-        ,ccn 107 # ccv ampEnvReleaseMod
-        ,ccn 108 # ccv filterEnvAttackMod
-      --   ,ccn  92 # ccv delaySendMod
-      --   ,ccn  93 # ccv (reverbSendMod * 1.3)
+      -- # note "f5"
+      |+ note "<0 0 3 -2>"
+  do -- ANA4 4 PAD -------------------------------------------------------------
+    let silence = "~"
+    p "ana4-4"
+      $ slow 2
+      $ every 3 (slow 1)
+      -- $ chunk 4 (|- note 5)
+      -- $ arp "<pinkyup down thumbup up>"
+      $ seqPLoop [
+         (00, 16, struct pattern1 $ sound "ana4" # track 3)
+        ,(16, 20, struct pattern2 $ sound "ana4" # track 3)
+        ,(20, 36, struct pattern3 $ sound "ana4" # track 3)
+        ,(36, 40, struct pattern4 $ sound "ana4" # track 3)
       ]
-      # up "<0 0 3 -2>"
-      # track 2
+      # note
+        (
+          -- mask ("1 0 0 0 0 0 1 0 0 0 0 0 1/3 0 0 0")
+          (
+            -- scale "diminished"
+            scale "chromatic"
+            -- $ snowball 4 (+) (fast "<2>")
+            -- $ "d5" --test
+            $ "d5 d5/3 d5 d5 <d5 d5/2 d5 a5*3> d5 <d5 ds5 d5> f5/3"
+          )
+        )
+      -- # note "f5"
+      |+ note "<0 0 3 -2>"
 
 
 
+d1
+$ sound "bd*4"
+# speed "<1 2>"
+# gain 0.9
 
-
+d1 silence
 
 do -- ANA4 1 DIST BASS ---------------------------------------------------------
   let track = midichan
@@ -194,6 +273,7 @@ do -- ANA4 1 DIST BASS ---------------------------------------------------------
     -- $ struct "1 <1 1 [0 1]> 1 1 0 0 1 0 0 1 0 0 1/3 0 0 0"
     $ sound "ana4" # track "0"
     # note "<f4>"
+
 do -- ANA4 2 SCREAM ------------------------------------------------------------
   let track = midichan
   let ampVolumeMod = (range 15 95 (slow myRate (cosine)))
@@ -243,8 +323,6 @@ do -- ANA4 4 WHITE PERC --------------------------------------------------------
         --   ,ccn  93 # ccv (reverbSendMod * 1.5)
         -- ]
         # track 3
-
-
 
 p "ana4-2" silence
 
