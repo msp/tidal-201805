@@ -1,28 +1,26 @@
 setcps (170/60/4)
 
 myRate = 128
--- myRate = 64
+
+-- Backbone --------------------------------------------------------------------
+do
+  unmute "rytm"
+  unmute "ana4-1"
+  unmute "ana4-2"
+  unmute "ana4-3"
+  unmute "ana4-4"
+
 
 do
   mute "rytm"
-  mute "riser"
-  mute "pulse-sub"
-  mute "hat-half"
-  mute "hat-fast"
-  mute "clicker"
-  mute "snares-170"
-  mute "soundboi"
-  mute "east-perc"
-  mute "breakz-1"
-  mute "hard-snares"
   mute "ana4-1"
   mute "ana4-2"
   mute "ana4-3"
   mute "ana4-4"
 
+-- Percussion ------------------------------------------------------------------
 do
   -- resetCycles
-  unmute "rytm"
   unmute "riser"
   unmute "pulse-sub"
   unmute "hat-half"
@@ -33,10 +31,19 @@ do
   unmute "east-perc"
   unmute "breakz-1"
   unmute "hard-snares"
-  unmute "ana4-1"
-  unmute "ana4-2"
-  unmute "ana4-3"
-  unmute "ana4-4"
+
+do
+  mute "riser"
+  mute "pulse-sub"
+  mute "hat-half"
+  mute "hat-fast"
+  mute "clicker"
+  mute "snares-170"
+  mute "soundboi"
+  mute "east-perc"
+  mute "breakz-1"
+  mute "hard-snares"
+
 
 unsolo "rytm"
 solo "riser"
@@ -97,12 +104,16 @@ do
   let structure2 = "t(4,8)"
   let structure3 = "1 <1 0 [1 0 1 0]> 1 1 0 0 1 1 0 1 0 0 1/3 0 1 0"
   let structure4 = "t(8,8)"
+  let structure5 = "t(16,8)"
+  let structure6 = "t(32,8)"
   --
   let pattern = (every 5 inv structure)
   let pattern1 = (every 5 inv structure1)
   let pattern2 = (every 5 inv structure2)
-  let pattern3 = (every 5 inv structure3)
+  let pattern3 = (every 8 inv structure3)
   let pattern4 = (every 5 inv structure4)
+  let pattern5 = (every 5 inv structure5)
+  let pattern6 = structure6
   --
   let track = midichan
   --
@@ -113,10 +124,13 @@ do
       $ slow 2
       $ every 64 (skip)
       $ seqPLoop [
+         -- (00, 16, struct "t(3,8)" $ sound "[rytm]" # track "[0, 4]")
          (00, 16, struct pattern1 $ sound "[rytm, bd:8]" # track "[0]")
         ,(16, 20, struct pattern2 $ sound "rytm" # track "[4]")
         ,(20, 36, struct pattern3 $ sound "rytm" # track "[0, 4]")
         ,(36, 40, struct pattern4 $ sound "rytm" # track "[4]")
+        ,(40, 43, struct pattern5 $ sound "rytm" # track "[4]")
+        ,(43, 44, struct pattern6 $ sound "rytm" # track "[0, 4]")
       ]
       -- # stack [
           -- ccn 31 # ccv 120
@@ -194,155 +208,43 @@ do
     p "ana4-3"
       $ slow 2
       $ every 3 (slow 1)
-      -- $ chunk 4 (|- note 5)
-      -- $ arp "<pinkyup down thumbup up>"
       $ seqPLoop [
+         -- (00, 16, struct "t(3,8)" $ sound "ana4" # midiControl  # track 2)
          (00, 16, struct pattern1 $ sound "ana4" # midiControl  # track 2)
         ,(16, 20, struct pattern2 $ sound "ana4" # midiControl2 # track 2)
         ,(20, 36, struct pattern3 $ sound "ana4" # midiControl  # track 2)
         ,(36, 40, struct pattern4 $ sound "ana4" # midiControl  # track 2)
+        ,(40, 43, struct pattern5 $ sound "ana4" # midiControl  # track 2)
+        ,(43, 44, struct pattern6 $ sound "ana4" # midiControl2  # track 2)
       ]
       # note
         (
-          -- mask ("1 0 0 0 0 0 1 0 0 0 0 0 1/3 0 0 0")
           (
-            -- scale "diminished"
             scale "chromatic"
-            -- $ snowball 4 (+) (fast "<2>")
-            -- $ "d5" --test
             $ "d5 d5/3 d5 d5 <d5 d5/2 d5 a5*3> d5 <d5 ds5 d5> f5/3"
           )
         )
-      -- # note "f5"
       |+ note "<0 0 3 -2>"
-  do -- ANA4 4 PAD -------------------------------------------------------------
+  do -- ANA4 4 FM BASS ---------------------------------------------------------
     let silence = "~"
     p "ana4-4"
       $ slow 2
       $ every 3 (slow 1)
-      -- $ chunk 4 (|- note 5)
-      -- $ arp "<pinkyup down thumbup up>"
+      $ every 7 skip
       $ seqPLoop [
+         -- (00, 16, struct "t(3,8)" $ sound "ana4" # track 3)
          (00, 16, struct pattern1 $ sound "ana4" # track 3)
         ,(16, 20, struct pattern2 $ sound "ana4" # track 3)
         ,(20, 36, struct pattern3 $ sound "ana4" # track 3)
         ,(36, 40, struct pattern4 $ sound "ana4" # track 3)
+        ,(40, 43, struct pattern5 $ sound "ana4" # track 3)
+        ,(43, 44, struct pattern6 $ sound "ana4" # track 3)
       ]
       # note
         (
-          -- mask ("1 0 0 0 0 0 1 0 0 0 0 0 1/3 0 0 0")
           (
-            -- scale "diminished"
             scale "chromatic"
-            -- $ snowball 4 (+) (fast "<2>")
-            -- $ "d5" --test
             $ "d5 d5/3 d5 d5 <d5 d5/2 d5 a5*3> d5 <d5 ds5 d5> f5/3"
           )
         )
-      -- # note "f5"
       |+ note "<0 0 3 -2>"
-
-
-
-d1
-$ sound "bd*4"
-# speed "<1 2>"
-# gain 0.9
-
-d1 silence
-
-do -- ANA4 1 DIST BASS ---------------------------------------------------------
-  let track = midichan
-  let filter1FreqMod = (range 03 30 (slow (myRate) (cosine)))
-  let noiseMod = filter1FreqMod
-  let silence = "~"
-  p "ana4-1"
-    $ slow 1
-    -- $ sometimesBy 0.1 (|- note 1)
-    -- $ sometimesBy 0.2 (|+ note 3)
-    -- $ sometimesBy 0.1 (|+ note 5)
-    -- $ sometimesBy 0.1 (|+ note 6)
-    -- $ seqPLoop [
-    --    (00, 03, struct "1 0 0 0 0 0 0 0" $ sound "ana4" # track "0")
-    --   ,(03, 05, silence )
-    -- ]
-    -- # stack [
-    --    ccn 18 # ccv filter1FreqMod
-    --   ,ccn 77 # ccv noiseMod
-    -- ]
-    -- $ struct "1 <1 1 [0 1]> 1 1 0 0 1 0 0 1 0 0 1/3 0 0 0"
-    $ sound "ana4" # track "0"
-    # note "<f4>"
-
-do -- ANA4 2 SCREAM ------------------------------------------------------------
-  let track = midichan
-  let ampVolumeMod = (range 15 95 (slow myRate (cosine)))
-  p "ana4-2"
-    $ fast 8
-    -- $ sometimesBy 0.1 (|- note 1)
-    -- $ sometimesBy 0.2 (|+ note 3)
-    -- $ sometimesBy 0.1 (|+ note 5)
-    -- $ sometimesBy 0.1 (|+ note 6)
-    $ seqPLoop [
-       (00, 01, struct "1" $ sound "ana4")
-      ,(01, 03, sound "~")
-    ]
-    # ccn 7 # ccv ampVolumeMod
-    # track "1"
-    # note "a6"
-do -- ANA4 4 WHITE PERC --------------------------------------------------------
-      let track = midichan
-      let modSpeed = myRate
-      let filterEnvDecayMod = (range 30 127 ((slow modSpeed cosine)))
-      let filterEnvDepthMod = (range 0 110 ((slow (modSpeed/2) sine)))
-      -- let filterEnvDepthMod = 100
-      let delaySendMod = (range 20 10 ((slow modSpeed cosine)))
-      let reverbSendMod = (range 05 15 ((slow modSpeed cosine)))
-      -- let delaySendMod = 10
-      -- let reverbSendMod = 10
-      let silence = "~"
-      p "ana4-4"
-        -- $ fix ((# gain 0.4)) ("sd:0")
-        -- $ skip
-        -- $ every 36 (skip)
-        -- $ sometimesBy 0.01 (|- n 2)
-        -- $ sometimesBy 0.02 (fast 2)
-        -- $ struct "1 1 0 0 0 0 0 1"
-        -- $ struct "1 1"
-        $ slow 2
-        $ struct "1 <1 1 [0 1]> 1 1 0 0 1 0 0 1 0 0 1/3 0 0 0"
-        $ seqPLoop [
-           -- (00, 05, n "ds7" # sound "[ana4, sd:0]")
-           (00, 05, n "ds7" # sound "[ana4]")
-          -- ,(05, 07, silence )
-        ]
-        -- # stack [
-        -- --    ccn 109 # ccv filterEnvDecayMod
-        --   ccn 103 # ccv filterEnvDepthMod
-        --   ,ccn  92 # ccv delaySendMod
-        --   ,ccn  93 # ccv (reverbSendMod * 1.5)
-        -- ]
-        # track 3
-
-p "ana4-2" silence
-
-
-unmute "ana4-2"
-
-solo "ana4-2"
-unsolo "ana4-2"
-
-p "ana4-3" silence
-
-solo "ana4-3"
-unsolo "ana4-3"
-
-
-
-p "ana4-4" silence
-
-unmute "ana4-4"
-
-unsolo "ana4-4"
-
-unmuteAll

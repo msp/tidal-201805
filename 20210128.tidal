@@ -80,9 +80,10 @@ solo "main"
 unsolo "main"
 
 p "test"
-$ sound "bd*4"
+-- $ sound "bd(3,8)"
+$ sound "bd(4,8)"
 # gain 0.85
-# sustain 0.01
+# sustain 0.05
 # orbit out1
 
 p "test" silence
@@ -163,7 +164,7 @@ p "hat-half" -------------------------------------------------------------------
   -- # pan (choose [0.1,0.9])
   # shape 0.4
   # gain 0.85
-  # orbit out1
+  # orbit out4
 
 solo "hat-half"
 
