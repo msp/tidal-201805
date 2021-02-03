@@ -1,13 +1,4 @@
 (
-var n = 200, att = 0.01;
-
-(n).midicps;
-
-// (10*10).midicps;
-Env.linen(att, 0, 0.1, 1, -15).plot;
-)
-
-(
 
 SynthDef(\msp808, {|out, freq=50, speed=1, sustain=1, pan, voice=0, mAttackTime=0.01, mFilterDuration=0.08, mSnap=900 n |
     var env, sound, kick, synth, freqCurve;
@@ -170,4 +161,4 @@ SynthDef(\mspplucklead, {
 
 
 
-);
+)
