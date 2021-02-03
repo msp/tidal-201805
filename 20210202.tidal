@@ -15,25 +15,26 @@ do -- pulse --------------------------------------------------------------------
   let sustainMod = (range 0.3 1 (slow myRate (cosine)))
   -- let slowMod = 0.25
   let slowMod = 1
-  let subMulti = 1
+  let subMulti = 8
   let samples = "[msp808*8]"
   let silence = "~"
   --
   p "pulse-sub"
     $ seqPLoop [
-     (00, 02, struct "0 0 1/2 1 0 1/3 0 0" $ sound samples)
-    ,(02, 04, sound silence)
+     -- (00, 02, struct "0 0 1/2 1 0 1/3 0 0" $ sound samples)
+     (00, 02, struct "t(2,8)" $ sound samples)
+    -- ,(02, 04, sound silence)
     -- (16, 32, struct "0 1 0 1 1 0 1 1" $ sound samples),
     -- (32, 48, struct "0 1 0 1 1 1 1 0" $ sound samples)
     ]
-    # pF "mAttackTime" attackMod
+    -- # pF "mAttackTime" attackMod
     -- # pF "mAttackTime" "[0.1 0.6]*4"
     # pF "mFilterDuration" "1"
     # pF "mSnap" "1"
-    # speed "1"
-    -- # speed speedMod
-    -- # sustain (sustainMod * subMulti)
-    # sustain "2"
+    -- # speed "1"
+    # speed speedMod
+    # sustain (sustainMod * subMulti)
+    -- # sustain "2"
     -- # distort 0.17
     # orbit out2
 
@@ -55,17 +56,17 @@ p "main" -----------------------------------------------------------------------
   -- $ skip
   -- standard
   -- $ slow 2
-  $ struct "1 0 0 0 0 0 1 0 0 0 0 0 1/5 0 0 0"
+  $ struct "1 0 0 0 0 0 1/3 0 0 0 0 0 1/5 0 0 0"
   --
   -- $ sound "bd:4(<3 3 3 3 3 3 3 3 3 3 3 3 3 3 5 3 3 3 3 3 3 3 3 1 3 3 3 3 3 3 <3 2 5> <4 8>>, 8, <0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1>)"
   $ sound "feel:6"
   -- $ sound "feel:6(3, 8)"
   # speed "0.7 0 0 0 0 0.75 0 0 0 0 0 0.9 0 0 0.7"
-  |+ speed 0
+  |+ speed 0.3
   -- # speed (range 0.7 0.75 $ slow 2 $ rand)
-  # begin 0
+  # begin 0.05
   -- # end "0.15 0 0 0 0 0.15 0 0 0 0 0 0 0 0 0"
-  # end "0.25 0 0 0 0 0.15 0 0 0 0 0 0.15 0 0.15 0.15"
+  -- # end "0.25 0 0 0 0 0.15 0 0 0 0 0 0.15 0 0.15 0.15"
   -- # accelerate (-1)
   -- # distort (range 0 0.05 $ slow 3 $ cosine)
   -- # gain "0.8 0.7 0.4"
@@ -517,7 +518,10 @@ unsolo "spectral-001"
 do -- spectral-002 -------------------------------------------------------------
   p "spectral-002" -------------------------------------------------------------
     $ slow 8
-    $ sound "spectral-001"
+    $ seqPLoop [
+       (00, 15, sound "spectral-001")
+      ,(15, 30, sound "~")
+    ]
     # n 5
     # speed (range 0.8 0.5 (slow myRate (rand)))
     # shape (range 0 0.2 (slow myRate (rand)))

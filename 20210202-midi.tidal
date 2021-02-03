@@ -119,8 +119,14 @@ do
   --
   do -- RYTM -------------------------------------------------------------------
     p "rytm"
-      $ slow 12
-      $ every 3 (skip)
+      $ slow 23
+      -- $ every 3 (skip)
+      $ sound "rytm"
+      # track "[0, 5]"
+      # note "c3"
+      |+ note "<0 0 0 0 2>"
+  do -- RYTM MIDI --------------------------------------------------------------
+    p "rytm-midi"
       $ sound "rytm"
       # track "[0, 5]"
       # stack [
@@ -129,11 +135,9 @@ do
           ,ccn 74 # ccv (range 0 127 (slow 64 (cosine))) -- filter freq
           ,ccn 16 # ccv "120 0 0 0 0 0 105 0 0 0 95 0 0 0 0 0"
       ]
-      # note "c3"
-      |+ note "<0 0 0 0 2>"
   do -- HECTOR -----------------------------------------------------------------
     p "rytm-2"
-      $ slow 12
+      $ slow 22
       -- $ slow 3
       $ sound "rytm"
       # track "1"
@@ -149,14 +153,14 @@ do
       ]
   do -- BASS -------------------------------------------------------------------
     p "rytm-5"
-      $ slow 15
+      $ slow 25
       $ sound "rytm" # track "[4]"
       # note "c3"
       |+ note "<0 0 0 0 2>"
   do -- ANA4 1 SIREN -----------------------------------------------------------
     let silence = "~"
     p "ana4-1"
-      $ slow 24
+      $ slow 36
       $ sound "ana4"
       # track 0
       |+ note "<0 0 0 0 2>"
