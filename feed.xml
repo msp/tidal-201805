@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.3">Jekyll</generator><link href="https://synthdef.art/feed.xml" rel="self" type="application/atom+xml" /><link href="https://synthdef.art/" rel="alternate" type="text/html" /><updated>2018-12-12T14:26:02+01:00</updated><id>https://synthdef.art/</id><title type="html">synthdef.art</title><subtitle>sound and code</subtitle><author><name>David Granström</name></author><entry><title type="html">Fragment</title><link href="https://synthdef.art/function-play/2018/12/12/fragment/" rel="alternate" type="text/html" title="Fragment" /><published>2018-12-12T00:00:00+01:00</published><updated>2018-12-12T00:00:00+01:00</updated><id>https://synthdef.art/function-play/2018/12/12/fragment</id><content type="html" xml:base="https://synthdef.art/function-play/2018/12/12/fragment/">&lt;pre&gt;&lt;code&gt;// #centerresonance
+play{l=LocalIn.ar(8);o={|i|Pulse.ar(l[i]*16+95,0.9.rand)}!8;LocalOut.ar(o.reverse.tanh);w=BLowShelf.ar(_,47,1,_);p=BPeakEQ.ar(_,285,1,_);h=BHiShelf.ar(_,190,1,_);o=Splay.ar(o);o=h.(w.(p.(o,48),-48),-48);o=GVerb.ar(tanh(o)).flop.mean;LeakDC.ar(Limiter.ar(h.(w.(p.(o,-48),48),48)))}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;(
+    play {
+        l = LocalIn.ar(8);
+        o = {|i| Pulse.ar(l[i]*16 + 95, 0.9.rand) } ! 8;
+        LocalOut.ar(o.reverse.tanh);
+        w = BLowShelf.ar(_, 47, 1, _);
+        p = BPeakEQ.ar(_, 285, 1, _);
+        h = BHiShelf.ar(_, 190, 1, _);
+        o = Splay.ar(o);
+        o = h.(w.(p.(o, 48), -48), -48);
+        o = GVerb.ar(tanh(o)).flop.mean;
+        LeakDC.ar(Limiter.ar(h.(w.(p.(o, -48), 48), 48)))
+    }
+)
+&lt;/code&gt;&lt;/pre&gt;</content><author><name>David Granström</name></author><summary type="html">// #centerresonance play{l=LocalIn.ar(8);o={|i|Pulse.ar(l[i]*16+95,0.9.rand)}!8;LocalOut.ar(o.reverse.tanh);w=BLowShelf.ar(_,47,1,_);p=BPeakEQ.ar(_,285,1,_);h=BHiShelf.ar(_,190,1,_);o=Splay.ar(o);o=h.(w.(p.(o,48),-48),-48);o=GVerb.ar(tanh(o)).flop.mean;LeakDC.ar(Limiter.ar(h.(w.(p.(o,-48),48),48)))}</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://synthdef.art/assets/images/function-play-v2.png" /></entry><entry><title type="html">Fragment</title><link href="https://synthdef.art/function-play/2018/11/08/fragment/" rel="alternate" type="text/html" title="Fragment" /><published>2018-11-08T00:00:00+01:00</published><updated>2018-11-08T00:00:00+01:00</updated><id>https://synthdef.art/function-play/2018/11/08/fragment</id><content type="html" xml:base="https://synthdef.art/function-play/2018/11/08/fragment/">&lt;pre&gt;&lt;code&gt;// #nightchords
+play{c=LFDNoise1.ar(_,0.5,0.5);o=Saw.ar(_);e=SelectX;x=[1,2,3,4.5].collect{|i|r=i*95;e.ar(c.(1/7),[e.ar(c.(1/3),o.(r*[3,2])),e.ar(c.(1/5),o.(r*[9/8,4/3])),])*LFPulse.ar([7,7.01]).range(0,1).lag(0.05);};x=Splay.ar(x.sum);x=x*0.5+RLPF.ar(GVerb.ar(x.sum*0.1,60,10),7e3);tanh(x)}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;(
+    play {
+        c = LFDNoise1.ar(_,0.5,0.5);
+        o = Saw.ar(_);
+        e = SelectX;
+        x = [1,2,3,4.5].collect {|i|
+            r = i * 95;
+            e.ar(c.(1/7), [
+                e.ar(c.(1/3), o.(r*[3,2])),
+                e.ar(c.(1/5), o.(r*[9/8,4/3])),
+            ]) * LFPulse.ar([7,7.01]).range(0, 1).lag(0.05);
+        };
+        x = Splay.ar(x.sum);
+        x = x * 0.5 + RLPF.ar(GVerb.ar(x.sum*0.1,60,10),7e3);
+        tanh(x)
+    }
+)
+&lt;/code&gt;&lt;/pre&gt;</content><author><name>David Granström</name></author><summary type="html">// #nightchords play{c=LFDNoise1.ar(_,0.5,0.5);o=Saw.ar(_);e=SelectX;x=[1,2,3,4.5].collect{|i|r=i*95;e.ar(c.(1/7),[e.ar(c.(1/3),o.(r*[3,2])),e.ar(c.(1/5),o.(r*[9/8,4/3])),])*LFPulse.ar([7,7.01]).range(0,1).lag(0.05);};x=Splay.ar(x.sum);x=x*0.5+RLPF.ar(GVerb.ar(x.sum*0.1,60,10),7e3);tanh(x)}</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://synthdef.art/assets/images/function-play-v2.png" /></entry><entry><title type="html">Fragment</title><link href="https://synthdef.art/function-play/2018/10/15/fragment/" rel="alternate" type="text/html" title="Fragment" /><published>2018-10-15T00:00:00+02:00</published><updated>2018-10-15T00:00:00+02:00</updated><id>https://synthdef.art/function-play/2018/10/15/fragment</id><content type="html" xml:base="https://synthdef.art/function-play/2018/10/15/fragment/">&lt;pre&gt;&lt;code&gt;// #pulsecount
+play{n=Impulse.ar(6);o=Demand.ar(n,CoinGate.ar(0.4,n),Dseq([Dseq(12),Dseq(6,inf)]));x=Impulse.ar(o);d=Decay;d=d.ar(x,TRand.ar(0,0.5,x))*Pulse.ar(50*d.ar(x,0.1,20,1));d=Pan2.ar(d,TRand.ar(-1,1,x));Limiter.ar(LeakDC.ar(tanh((14*d)+GVerb.ar(FreqShift.ar(d.sum,1200),99,9))))}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;(
+play {
+    n = Impulse.ar(6);
+    o = Demand.ar(n, CoinGate.ar(0.4, n), Dseq([ Dseq(12), Dseq(6,inf) ]));
+    x = Impulse.ar(o);
+    d = Decay;
+    d = d.ar(x, TRand.ar(0, 0.5, x)) * Pulse.ar(50 * d.ar(x, 0.1, 20, 1));
+    d = Pan2.ar(d, TRand.ar(-1, 1, x));
+    Limiter.ar(
+        LeakDC.ar(
+            tanh((14*d) + GVerb.ar(FreqShift.ar(d.sum, 1200), 99, 9))
+        )
+    )
+}
+)
+
+
+// alternate versions
+// d = Pan2.ar(d, PulseCount.ar(PulseDivider.ar(x, 7)) % 2 * 2 - 1 / 2);
+// tanh((9*d) + HPF.ar(GVerb.ar(FreqShift.ar(d.sum, 1200), 99, 10).round(0.3)))
+&lt;/code&gt;&lt;/pre&gt;</content><author><name>David Granström</name></author><summary type="html">// #pulsecount play{n=Impulse.ar(6);o=Demand.ar(n,CoinGate.ar(0.4,n),Dseq([Dseq(12),Dseq(6,inf)]));x=Impulse.ar(o);d=Decay;d=d.ar(x,TRand.ar(0,0.5,x))*Pulse.ar(50*d.ar(x,0.1,20,1));d=Pan2.ar(d,TRand.ar(-1,1,x));Limiter.ar(LeakDC.ar(tanh((14*d)+GVerb.ar(FreqShift.ar(d.sum,1200),99,9))))}</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://synthdef.art/assets/images/function-play-v2.png" /></entry><entry><title type="html">Fragment</title><link href="https://synthdef.art/function-play/2018/10/02/fragment/" rel="alternate" type="text/html" title="Fragment" /><published>2018-10-02T00:00:00+02:00</published><updated>2018-10-02T00:00:00+02:00</updated><id>https://synthdef.art/function-play/2018/10/02/fragment</id><content type="html" xml:base="https://synthdef.art/function-play/2018/10/02/fragment/">&lt;pre&gt;&lt;code&gt;// #subdivisions
+play{n=8;e=Env.perc(0.001,0.1).ar(0,Impulse.ar(1));x=n.collect{|i|o=e*Pulse.ar(222*4*e,e*(i+1/n/2));DelayC.ar(o,1,round(i/n**SinOsc.ar(1/30,0.5pi).range(0.25,1),0.125));};x=x+Klank.ar(`[111*(1..n)*[1,1,9/8],1/n!n,0.3!n],x*0.2+WhiteNoise.ar(0.02!n));Limiter.ar(4*Splay.ar(x.sin))}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;(
+play {
+    n = 8;
+    e = Env.perc(0.001, 0.1).ar(0, Impulse.ar(1));
+    x = n.collect {|i|
+        o = e * Pulse.ar(222*4*e, e*(i+1/n/2));
+        DelayC.ar(o, 1, round(i/n ** SinOsc.ar(1/30, 0.5pi).range(0.25,1), 0.125));
+    };
+    x = x + Klank.ar(`[111*(1..n)*[1,1,9/8], 1/n!n, 0.3!n], x*0.2 + WhiteNoise.ar(0.02!n));
+    Limiter.ar(4*Splay.ar(x.sin))
+}
+)
+&lt;/code&gt;&lt;/pre&gt;</content><author><name>David Granström</name></author><summary type="html">// #subdivisions play{n=8;e=Env.perc(0.001,0.1).ar(0,Impulse.ar(1));x=n.collect{|i|o=e*Pulse.ar(222*4*e,e*(i+1/n/2));DelayC.ar(o,1,round(i/n**SinOsc.ar(1/30,0.5pi).range(0.25,1),0.125));};x=x+Klank.ar(`[111*(1..n)*[1,1,9/8],1/n!n,0.3!n],x*0.2+WhiteNoise.ar(0.02!n));Limiter.ar(4*Splay.ar(x.sin))}</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://synthdef.art/assets/images/function-play-v2.png" /></entry><entry><title type="html">Fragment</title><link href="https://synthdef.art/function-play/2018/09/17/fragment/" rel="alternate" type="text/html" title="Fragment" /><published>2018-09-17T00:00:00+02:00</published><updated>2018-09-17T00:00:00+02:00</updated><id>https://synthdef.art/function-play/2018/09/17/fragment</id><content type="html" xml:base="https://synthdef.art/function-play/2018/09/17/fragment/">&lt;pre&gt;&lt;code&gt;// #clapclapclap
+play{t=Impulse.ar(8/[5,4]);o=BPF.ar(LFNoise1.ar(1e4),1e3,1.2);p=WhiteNoise.ar(0.4)*Env([1,0,1,0,1,0.5],[1]/100).ar(0,t);o=(o+p)*Env.asr(1e-5,1,0.5,-10).ar(0,t);y=Decay.ar(TDelay.ar(t,1),2);o=o+GVerb.ar(o*0.5,99,9).sum+(2*SinOsc.ar(80*y,y*0.5pi,2*y).tanh)*4;HPF.ar(o.softclip,30)}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;(
+play {
+    t = Impulse.ar(8/[5,4]);
+    o = BPF.ar(LFNoise1.ar(1e4), 1e3, 1.2);
+    p = WhiteNoise.ar(0.4) * Env([1,0,1,0,1,0.5], [1]/100).ar(0, t);
+    o = (o + p) * Env.asr(1e-5, 1, 0.5, -10).ar(0, t);
+    y = Decay.ar(TDelay.ar(t, 1), 2);
+    o = o + GVerb.ar(o*0.5,99,9).sum + (2*SinOsc.ar(80*y,y*0.5pi,2*y).tanh) * 4;
+    HPF.ar(o.softclip, 30)
+}
+)
+&lt;/code&gt;&lt;/pre&gt;</content><author><name>David Granström</name></author><summary type="html">// #clapclapclap play{t=Impulse.ar(8/[5,4]);o=BPF.ar(LFNoise1.ar(1e4),1e3,1.2);p=WhiteNoise.ar(0.4)*Env([1,0,1,0,1,0.5],[1]/100).ar(0,t);o=(o+p)*Env.asr(1e-5,1,0.5,-10).ar(0,t);y=Decay.ar(TDelay.ar(t,1),2);o=o+GVerb.ar(o*0.5,99,9).sum+(2*SinOsc.ar(80*y,y*0.5pi,2*y).tanh)*4;HPF.ar(o.softclip,30)}</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://synthdef.art/assets/images/function-play-v2.png" /></entry><entry><title type="html">Fragment</title><link href="https://synthdef.art/function-play/2018/09/16/fragment/" rel="alternate" type="text/html" title="Fragment" /><published>2018-09-16T00:00:00+02:00</published><updated>2018-09-16T00:00:00+02:00</updated><id>https://synthdef.art/function-play/2018/09/16/fragment</id><content type="html" xml:base="https://synthdef.art/function-play/2018/09/16/fragment/">&lt;pre&gt;&lt;code&gt;// #seq3
+play{o=SinOsc;d=Decay;x=(0..2).collect{|i|TDuty.ar(1/8,0,Dseq(scramble([1,1]++(0!(9+i))),inf))};k=d.ar(x[0],2);m=d.ar(x[1]);Limiter.ar(9*[o.ar(80*k).tanh*k,o.ar(2*80*m).sin*m,GVerb.ar(o.ar(999)*d.ar(Impulse.ar(1/8)),99,10),(BPF.ar(WhiteNoise.ar(2))).sin*d.ar(x[2],0.5)].sum.sin)}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;(
+play {
+    o = SinOsc;
+    d = Decay;
+    x = (0..2).collect {|i|
+        TDuty.ar(1/8, 0, Dseq(scramble([1, 1] ++ (0!(9+i))), inf))
+    };
+
+    k = d.ar(x[0], 2);
+    m = d.ar(x[1]);
+
+    Limiter.ar(
+        9 * [
+            o.ar(80*k).tanh * k,
+            o.ar(2*80*m).sin * m,
+            GVerb.ar(o.ar(999) * d.ar(Impulse.ar(1/8)),99,10),
+            (BPF.ar(WhiteNoise.ar(2))).sin * d.ar(x[2],0.5)
+        ].sum.sin
+    )
+}
+)
+&lt;/code&gt;&lt;/pre&gt;</content><author><name>David Granström</name></author><summary type="html">// #seq3 play{o=SinOsc;d=Decay;x=(0..2).collect{|i|TDuty.ar(1/8,0,Dseq(scramble([1,1]++(0!(9+i))),inf))};k=d.ar(x[0],2);m=d.ar(x[1]);Limiter.ar(9*[o.ar(80*k).tanh*k,o.ar(2*80*m).sin*m,GVerb.ar(o.ar(999)*d.ar(Impulse.ar(1/8)),99,10),(BPF.ar(WhiteNoise.ar(2))).sin*d.ar(x[2],0.5)].sum.sin)}</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://synthdef.art/assets/images/function-play-v2.png" /></entry><entry><title type="html">Fragment</title><link href="https://synthdef.art/function-play/2018/09/10/fragment/" rel="alternate" type="text/html" title="Fragment" /><published>2018-09-10T00:00:00+02:00</published><updated>2018-09-10T00:00:00+02:00</updated><id>https://synthdef.art/function-play/2018/09/10/fragment</id><content type="html" xml:base="https://synthdef.art/function-play/2018/09/10/fragment/">&lt;pre&gt;&lt;code&gt;// #wavemechanics
+play{x={|i|r=[3,5,8,9]/8;d=rrand(0.25*i,3*i).round(0.25);f=i%3+1*444*r.wrapAt(i);Env.sine(12).ar(0,TDelay.ar(Impulse.ar(1/12),d))*Resonz.ar(WhiteNoise.ar(0.5),f,0.01);}!8;HPF.ar(Limiter.ar(55*GVerb.ar(Splay.ar(x),99,10).flop.sum),30).sanitize;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;(
+play {
+    x = {|i|
+        r = [ 3, 5, 8, 9 ] / 8;
+        d = rrand(0.25*i, 3*i).round(0.25);
+        f = i % 3 + 1 * 444 * r.wrapAt(i);
+
+        Env.sine(12).ar(0, TDelay.ar(Impulse.ar(1/12), d))
+        * Resonz.ar(WhiteNoise.ar(0.5), f, 0.01);
+    } ! 8;
+
+    HPF.ar(Limiter.ar(55 * GVerb.ar(Splay.ar(x), 99, 10).flop.sum), 30).sanitize;
+}
+)
+&lt;/code&gt;&lt;/pre&gt;</content><author><name>David Granström</name></author><summary type="html">// #wavemechanics play{x={|i|r=[3,5,8,9]/8;d=rrand(0.25*i,3*i).round(0.25);f=i%3+1*444*r.wrapAt(i);Env.sine(12).ar(0,TDelay.ar(Impulse.ar(1/12),d))*Resonz.ar(WhiteNoise.ar(0.5),f,0.01);}!8;HPF.ar(Limiter.ar(55*GVerb.ar(Splay.ar(x),99,10).flop.sum),30).sanitize;}</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://synthdef.art/assets/images/function-play-v2.png" /></entry><entry><title type="html">Fragment</title><link href="https://synthdef.art/function-play/2018/09/07/fragment/" rel="alternate" type="text/html" title="Fragment" /><published>2018-09-07T00:00:00+02:00</published><updated>2018-09-07T00:00:00+02:00</updated><id>https://synthdef.art/function-play/2018/09/07/fragment</id><content type="html" xml:base="https://synthdef.art/function-play/2018/09/07/fragment/">&lt;pre&gt;&lt;code&gt;// #lunarphase
+b=Buffer.read(s,Platform.resourceDir+/+&quot;sounds/a11wlk01-44_1.aiff&quot;);play{t=Impulse.ar([10,10.1]);o=PlayBuf.ar(1,b,BufRateScale.kr(b),t,Sweep.ar(0,Rand(1,999)),1)*Decay.ar(t,SinOsc.ar(1/[7,7.1]).range(0.1,1));o=o+GVerb.ar(o.mean*0.5,99,10);Limiter.ar(HPF.ar(o.tanh,30));}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;(
+b = Buffer.read(s, Platform.resourceDir +/+ &quot;sounds/a11wlk01-44_1.aiff&quot;);
+play {
+    t = Impulse.ar([10, 10.1]);
+    o = PlayBuf.ar(
+        1,
+        b,
+        BufRateScale.kr(b),
+        t,
+        Sweep.ar(0, Rand(1,999)),
+        1
+    ) * Decay.ar(t, SinOsc.ar(1/[7, 7.1]).range(0.1, 1));
+    o = o + GVerb.ar(o.mean * 0.5, 99, 10);
+    Limiter.ar(HPF.ar(o.tanh, 30));
+}
+)
+&lt;/code&gt;&lt;/pre&gt;</content><author><name>David Granström</name></author><summary type="html">// #lunarphase b=Buffer.read(s,Platform.resourceDir+/+&quot;sounds/a11wlk01-44_1.aiff&quot;);play{t=Impulse.ar([10,10.1]);o=PlayBuf.ar(1,b,BufRateScale.kr(b),t,Sweep.ar(0,Rand(1,999)),1)*Decay.ar(t,SinOsc.ar(1/[7,7.1]).range(0.1,1));o=o+GVerb.ar(o.mean*0.5,99,10);Limiter.ar(HPF.ar(o.tanh,30));}</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://synthdef.art/assets/images/function-play-v2.png" /></entry><entry><title type="html">Fragment</title><link href="https://synthdef.art/function-play/2018/09/06/fragment/" rel="alternate" type="text/html" title="Fragment" /><published>2018-09-06T00:00:00+02:00</published><updated>2018-09-06T00:00:00+02:00</updated><id>https://synthdef.art/function-play/2018/09/06/fragment</id><content type="html" xml:base="https://synthdef.art/function-play/2018/09/06/fragment/">&lt;pre&gt;&lt;code&gt;// #interstellarcommunications
+b=Buffer.read(s,Platform.resourceDir+/+&quot;sounds/a11wlk01-44_1.aiff&quot;);play{g=Warp1.ar(1,b,LFSaw.ar(1/5).range(0,1),LFDNoise0.ar(1/3).range(0.25,1).round(0.25)).softclip;RecordBuf.ar(tanh(HPF.ar(DelayN.ar(g,0.25,0.25),30)),b);Limiter.ar(HPF.ar(GVerb.ar(g,99,10),30)).sanitize}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;(
+b = Buffer.read(s, Platform.resourceDir +/+ &quot;sounds/a11wlk01-44_1.aiff&quot;);
+play {
+    g = Warp1.ar(1, b, LFSaw.ar(1/5).range(0, 1), LFDNoise0.ar(1/3).range(0.25, 1).round(0.25)).softclip;
+    RecordBuf.ar(tanh(HPF.ar(DelayN.ar(g, 0.25, 0.25), 30)), b);
+    Limiter.ar(HPF.ar(GVerb.ar(g, 99, 10), 30)).sanitize
+}
+)
+&lt;/code&gt;&lt;/pre&gt;</content><author><name>David Granström</name></author><summary type="html">// #interstellarcommunications b=Buffer.read(s,Platform.resourceDir+/+&quot;sounds/a11wlk01-44_1.aiff&quot;);play{g=Warp1.ar(1,b,LFSaw.ar(1/5).range(0,1),LFDNoise0.ar(1/3).range(0.25,1).round(0.25)).softclip;RecordBuf.ar(tanh(HPF.ar(DelayN.ar(g,0.25,0.25),30)),b);Limiter.ar(HPF.ar(GVerb.ar(g,99,10),30)).sanitize}</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://synthdef.art/assets/images/function-play-v2.png" /></entry><entry><title type="html">Fragment</title><link href="https://synthdef.art/function-play/2018/08/24/fragment/" rel="alternate" type="text/html" title="Fragment" /><published>2018-08-24T00:00:00+02:00</published><updated>2018-08-24T00:00:00+02:00</updated><id>https://synthdef.art/function-play/2018/08/24/fragment</id><content type="html" xml:base="https://synthdef.art/function-play/2018/08/24/fragment/">&lt;pre&gt;&lt;code&gt;// #hypnogabber
+play{n=4;t=Decay.ar(Impulse.ar(1/6),SinOsc.kr(1/11,0,0.2,0.5));o=SinOsc.ar(200*(t+0.1),t*0.5pi,t*6).tanh;o=o+LocalIn.ar(n);o=n.collect{|i|d=1/(i+1);x=o[n-1-i];DelayN.ar(OnePole.ar(x,0.25),d,d);};LocalOut.ar(tanh(LeakDC.ar(o)));Limiter.ar(Splay.ar(o));}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;(
+play {
+    n = 4;
+    t = Decay.ar(Impulse.ar(1/6),SinOsc.kr(1/11,0,0.2,0.5));
+    o = SinOsc.ar(200*(t+0.1),t*0.5pi,t*6).tanh;
+    o = o + LocalIn.ar(n);
+    o = n.collect {|i|
+        d = 1/(i+1);
+        x = o[n-1-i];
+        DelayN.ar(OnePole.ar(x,0.25), d, d);
+    };
+    LocalOut.ar(tanh(LeakDC.ar(o)));
+    Limiter.ar(Splay.ar(o));
+}
+)
+&lt;/code&gt;&lt;/pre&gt;</content><author><name>David Granström</name></author><summary type="html">// #hypnogabber play{n=4;t=Decay.ar(Impulse.ar(1/6),SinOsc.kr(1/11,0,0.2,0.5));o=SinOsc.ar(200*(t+0.1),t*0.5pi,t*6).tanh;o=o+LocalIn.ar(n);o=n.collect{|i|d=1/(i+1);x=o[n-1-i];DelayN.ar(OnePole.ar(x,0.25),d,d);};LocalOut.ar(tanh(LeakDC.ar(o)));Limiter.ar(Splay.ar(o));}</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://synthdef.art/assets/images/function-play-v2.png" /></entry></feed>
