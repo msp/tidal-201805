@@ -5,17 +5,27 @@ myRate = 128
 -- Backbone --------------------------------------------------------------------
 do
   unmute "rytm"
+  unmute "rytm-midi"
+  unmute "rytm-2"
+  unmute "rytm-2-midi"
+  unmute "rytm-5"
   unmute "ana4-1"
   unmute "ana4-2"
   unmute "ana4-3"
   unmute "ana4-4"
+  unmute "spectral-002"
 
 do
   mute "rytm"
+  mute "rytm-midi"
+  mute "rytm-2"
+  mute "rytm-2-midi"
+  mute "rytm-5"
   mute "ana4-1"
   mute "ana4-2"
   mute "ana4-3"
   mute "ana4-4"
+  mute "spectral-002"
 
 -- Percussion ------------------------------------------------------------------
 do
@@ -32,12 +42,14 @@ do
   unmute "hard-snares"
 
 do
+  mute "main"
   mute "riser"
   mute "pulse-sub"
   mute "hat-half"
   mute "hat-fast"
   mute "clicker"
   mute "snares-170"
+  mute "live-snares"
   mute "soundboi"
   mute "east-perc"
   mute "breakz-1"

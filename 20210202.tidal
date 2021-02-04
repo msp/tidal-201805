@@ -15,17 +15,14 @@ do -- pulse --------------------------------------------------------------------
   let sustainMod = (range 0.3 1 (slow myRate (cosine)))
   -- let slowMod = 0.25
   let slowMod = 1
-  let subMulti = 8
+  let subMulti = 1
   let samples = "[msp808*8]"
   let silence = "~"
   --
   p "pulse-sub"
     $ seqPLoop [
-     -- (00, 02, struct "0 0 1/2 1 0 1/3 0 0" $ sound samples)
-     (00, 02, struct "t(2,8)" $ sound samples)
+     (00, 02, struct "1 0 0 1/5 1 0 0 0" $ sound samples)
     -- ,(02, 04, sound silence)
-    -- (16, 32, struct "0 1 0 1 1 0 1 1" $ sound samples),
-    -- (32, 48, struct "0 1 0 1 1 1 1 0" $ sound samples)
     ]
     -- # pF "mAttackTime" attackMod
     -- # pF "mAttackTime" "[0.1 0.6]*4"
@@ -33,9 +30,10 @@ do -- pulse --------------------------------------------------------------------
     # pF "mSnap" "1"
     -- # speed "1"
     # speed speedMod
-    # sustain (sustainMod * subMulti)
-    -- # sustain "2"
+    # sustain "3 0 0 1 15 0 0 0"
+    |+ sustain (sustainMod * subMulti)
     -- # distort 0.17
+    # gain "1.1 0 0 0.5 0.85 0 0 0"
     # orbit out2
 
 p "pulse-sub" $ silence
@@ -56,7 +54,7 @@ p "main" -----------------------------------------------------------------------
   -- $ skip
   -- standard
   -- $ slow 2
-  $ struct "1 0 0 0 0 0 1/3 0 0 0 0 0 1/5 0 0 0"
+  $ struct "1/6 0 0 0 0 0 1/3 0 0 0 0 0 1/5 0 0 0"
   --
   -- $ sound "bd:4(<3 3 3 3 3 3 3 3 3 3 3 3 3 3 5 3 3 3 3 3 3 3 3 1 3 3 3 3 3 3 <3 2 5> <4 8>>, 8, <0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1>)"
   $ sound "feel:6"
@@ -81,11 +79,15 @@ solo "main"
 unsolo "main"
 
 p "test"
--- $ sound "bd(3,8)"
-$ sound "bd(4,8)"
-# gain 0.85
-# sustain 0.05
-# orbit out1
+  -- $ sound "bd(3,8)"
+  $ sound "sd:4"
+  # gain 0.85
+  -- # speed 4
+  -- # sustain 0.05
+  # orbit out1
+
+
+
 
 p "test" silence
 
@@ -153,15 +155,16 @@ solo "east-perc"
 unsolo "east-perc"
 
 p "hat-half" -------------------------------------------------------------------
-  $ struct "0 0 1/2 0"
+  $ slow 4
+  $ struct "0 0 1"
   $ press
   $ sound "mspsuperhat"
   # hpf (range 8000 14000 (slow 6 (cosine)))
   -- # lpf (range 1000 3900 (slow 3 (sine)))
-  # accelerate "3.01"
+  # accelerate "1.01"
   -- # sustain (range 0.3 1.2 (slow 16 (cosine)))
-  # attack 1.5
-  # sustain 2
+  # attack 2.5
+  # sustain 6
   -- # pan (choose [0.1,0.9])
   # shape 0.4
   # gain 0.85
@@ -199,23 +202,24 @@ solo "hat-fast"
 unsolo "hat-fast"
 
 do -- snares-170 ---------------------------------------------------------------
-  let probability = "<0.0 0.01 0.1>"
+  let probability = "<0.0 0.01 0.8>"
   let silence = "~"
   p "snares-170" ---------------------------------------------------------------
-    $ fix ((# gain 0.7)) ("iris-hits:3")
-    $ fix ((# gain 0.7)) ("iris-hits:6")
     $ every 5 skip
+    $ every 11 (# speed "-0.2")
+    $ every 11 (# gain 0.7)
+    $ every 7 (# speed 0.01)
     $ slow 2
     $ sometimesBy probability (fast 2)
     $ seqPLoop [
-     (00, 05, sound "~ ~ ~ ~ iris-hits:3 ~ ~ ~ ~ ~ ~ ~ ~ iris-hits:08 ~ ~")
+     (00, 05, sound "~ ~ ~ ~ iris-hits:4 ~ ~ ~ ~ ~ ~ ~ ~ iris-hits:08 ~ ~")
     ,(05, 10, sound silence)
-    ,(10, 17, sound "iris-hits:6 ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ iris-hits:08 ~ ~")
+    ,(10, 17, sound "iris-hits:6 ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ iris-hits:10 ~ ~")
+    ,(17, 23, sound silence)
     ]
-    # end (range 0.02 1 $ slow myRate (cosine))
-    # speed "<0.1 0.8 0.8 0.8 0.8> 0 0.8 0 0 0 0.85 -1"
-    |+ speed (range 0 0.15 $ rand)
     # speed 0.2
+    |+ speed (range 0 0.65 $ rand)
+    # gain 0.85
     # orbit out12
 
 p "snares-170" $ silence
@@ -243,20 +247,20 @@ unsolo "hard-snares"
 
 p "live-snares" ----------------------------------------------------------------
   $ sometimesBy 0.04 (fast 2)
-  $ every 1 (const
+  $ every 7 (const
     $ every 16 (skip)
     $ skip
     -- $ skip
     $ sound "~ <mspdxkSd3*2 mspdxkSd3*3 ~ mspdxkSd3> ~ [sd:2, mspdxkSd3]/5"
     -- $ sound "~ mspdxkSd3 ~ [mspdxkSd3]"
-    -- # shape 0.4
-    # distort "<0.1 0 0.1>"
-    # pF "basefreq" "~ 160 ~ 175"
-    -- # pF "basefreq" (wchoose [(50,0.1),(250,0.5), (260,0.5), (450,0.2),(850,0.1)])
+    # shape 0.4
+    -- # distort "<0.1 0 0.1>"
+    -- # pF "basefreq" "~ 160 ~ 175"
+    # pF "basefreq" (wchoose [(50,0.1),(250,0.5), (260,0.5), (450,0.2),(850,0.1)])
     -- # pF "len" "~ 0.5 ~ 0.3"
     # pF "tone" "1.5"
     -- # pF "tone" "~ 0.4 ~ 0.9"
-    -- # pF "rq" (range 0.05 0.3 $ slow myRate $ cosine)
+    # pF "rq" (range 0.05 0.3 $ slow myRate $ cosine)
     # gain "0.5 0.7 0.5 0.75"
     |- gain 0.28
     # pan (slow 3 $ rand) -- why does this not pan?!
@@ -283,7 +287,7 @@ do -- breakz -------------------------------------------------------------------
     $ striateBy 8 (range (1/64) (1/128) (slow 16 $ cosine))
     $ seqPLoop [
         (00, 03, sound "foo")
-       -- ,(03, 05, sound "~")
+       ,(03, 15, sound "~")
     ]
     -- # n 04
     -- # n 06
